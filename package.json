@@ -1,0 +1,45 @@
+{
+  "name": "expenses",
+  "version": "1.0.0",
+  "description": "App to manage food expenses along the month",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev:server": "npx ts-node-dev --transpile-only --inspect --ignore node_modules src/server.ts",
+    "typeorm": "npx ts-node-dev ./node_modules/typeorm/cli.js"
+  },
+  "keywords": [
+    "expenses",
+    "food",
+    "app"
+  ],
+  "author": "Ricardo Guizi",
+  "license": "ISC",
+  "dependencies": {
+    "@types/jsonwebtoken": "^8.5.0",
+    "bcryptjs": "^2.4.3",
+    "date-fns": "^2.15.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.2",
+    "pg": "^8.3.3",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.25",
+    "uuidv4": "^6.2.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/express": "^4.17.7",
+    "@types/multer": "^1.4.4",
+    "@typescript-eslint/eslint-plugin": "^3.9.0",
+    "@typescript-eslint/parser": "^3.9.0",
+    "eslint": "^7.6.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "ts-node-dev": "^1.0.0-pre.56",
+    "typescript": "^3.9.7"
+  }
+}

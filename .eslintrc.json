@@ -1,0 +1,31 @@
+{
+    "env": {
+        "es6": true,
+        "node": true
+    },
+    "extends": [
+      "standard"
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 11,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+      "no-unused-vars": "off",
+      "camelcase": "off",
+      "quotes": ["error", "single"],
+      "eqeqeq": "error",
+      "no-unused-expressions": 0,
+      "no-case-declarations": "off",
+      "no-class-assign": "off",
+      "semi": ["error", "never"]
+    }
+}
