@@ -11,16 +11,12 @@ const expensesRouter = Router()
 expensesRouter.use(ensureAuthenticated)
 
 expensesRouter.post('/', async (request, response) => {
-  try {
-    const { description, date, amount } = request.body
-    const { id: owner_id } = request.user
-    const parsedDate = parseISO(date)
-    const createExpense = new CreateExpenseService()
-    const expense = await createExpense.execute({ owner_id, description, date: parsedDate, amount })
-    return response.json(expense)
-  } catch (error) {
-    return response.status(400).json({ error: error.message })
-  }
+  const { description, date, amount } = request.body
+  const { id: owner_id } = request.user
+  const parsedDate = parseISO(date)
+  const createExpense = new CreateExpenseService()
+  const expense = await createExpense.execute({ owner_id, description, date: parsedDate, amount: amount * 100 })
+  return response.json(expense)
 })
 
 expensesRouter.get('/balance', async (request, response) => {
