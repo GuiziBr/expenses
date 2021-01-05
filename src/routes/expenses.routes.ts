@@ -15,7 +15,7 @@ expensesRouter.post('/', async (request, response) => {
   const { id: owner_id } = request.user
   const parsedDate = parseISO(date)
   const createExpense = new CreateExpenseService()
-  const expense = await createExpense.execute({ owner_id, description, date: parsedDate, amount: amount * 100 })
+  const expense = await createExpense.execute({ owner_id, description, date: parsedDate, amount: Math.round(amount * 100) })
   return response.json(expense)
 })
 
