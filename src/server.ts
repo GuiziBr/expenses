@@ -12,7 +12,7 @@ import './database'
 dotenv.config()
 const app = express()
 
-app.use(cors())
+app.use(cors({ origin: 'https://expenses-portal.herokuapp.com' }))
 app.use(express.json())
 app.use('/files', express.static(uploadConfig.directory))
 app.use(routes)
