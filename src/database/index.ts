@@ -1,3 +1,8 @@
 import { createConnection } from 'typeorm'
 
-createConnection(process.env.DATABASE_URL ? 'remote' : 'local')
+createConnection({
+  type: 'postgres',
+  url: process.env.DATABASE_URL
+})
+
+// createConnection(process.env.DATABASE_URL ? 'remote' : 'local')
