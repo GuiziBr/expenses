@@ -8,6 +8,6 @@ module.exports = {
     process.env.MIGRATIONS_REPO
   ],
   "cli": {
-    "migrationsDir": './src/database/migrations'
+    "migrationsDir": process.env.CLI
   }
 }
