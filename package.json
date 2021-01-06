@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "dev:server": "npx ts-node-dev --transpile-only --inspect --ignore node_modules src/server.ts",
-    "typeorm": "npx ts-node-dev ./node_modules/typeorm/cli.js"
+    "typeorm": "npx ts-node-dev ./node_modules/typeorm/cli.js",
+    "start": "node dist/server.js"
   },
   "keywords": [
     "expenses",
