@@ -1,3 +1,3 @@
 import { createConnection } from 'typeorm'
 
-createConnection()
+createConnection(process.env.DATABASE_ULR ? 'remote' : 'local')
