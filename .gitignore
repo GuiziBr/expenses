@@ -3,5 +3,5 @@ node_modules
 .vscode
 temp/
 tmp/*
-
+.env
 !tmp/.gitkeep

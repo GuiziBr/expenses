@@ -2,12 +2,14 @@ import 'reflect-metadata'
 import express, { Request, Response, NextFunction } from 'express'
 import cors from 'cors'
 import 'express-async-errors'
+import dotenv from 'dotenv'
 import routes from './routes/'
 import uploadConfig from './config/upload'
 import AppError from './errors/AppError'
 
 import './database'
 
+dotenv.config()
 const app = express()
 
 app.use(cors())
@@ -28,6 +30,6 @@ app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
   })
 })
 
-const port = process.env.PORT || 3333
+const port = process.env.PORT
 
-app.listen(port, () => console.log(`Server started on port ${port}`))
+app.listen(process.env.PORT, () => console.log(`Server started on port ${port}`))
