@@ -7,10 +7,12 @@ require("reflect-metadata");
 var express_1 = __importDefault(require("express"));
 var cors_1 = __importDefault(require("cors"));
 require("express-async-errors");
+var dotenv_1 = __importDefault(require("dotenv"));
 var routes_1 = __importDefault(require("./routes/"));
 var upload_1 = __importDefault(require("./config/upload"));
 var AppError_1 = __importDefault(require("./errors/AppError"));
 require("./database");
+dotenv_1.default.config();
 var app = express_1.default();
 app.use(cors_1.default());
 app.use(express_1.default.json());
@@ -29,4 +31,5 @@ app.use(function (err, request, response, _) {
         message: 'Internal server error'
     });
 });
-app.listen(3333, function () { return console.log('Server started on port 3333'); });
+var port = process.env.PORT;
+app.listen(process.env.PORT, function () { return console.log("Server started on port " + port); });
