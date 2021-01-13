@@ -1,4 +1,9 @@
-# Example App using nodejs with typescript
+
+# App create for managing a couple's expenses
+
+## Features
+
+* Create an expense
 
 A simple CRUD app backend built in nodejs + typescript with:
 
@@ -57,5 +62,5 @@ A simple CRUD app backend built in nodejs + typescript with:
 * Make a get request on the route /appointments to list the appointments
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwNDQwMTgyMzJdfQ==
+eyJoaXN0b3J5IjpbMjAzNDI4NDI5NSwtMTA0NDAxODIzMl19
 -->
