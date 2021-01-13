@@ -12,6 +12,7 @@ The goal of this application is helping in the expenses management of a couple. 
 
 * User authentication
 * User creation
+* Upload user's avatar
 * Expense creation
 * Expense + balance listing
 
@@ -45,6 +46,7 @@ The goal of this application is helping in the expenses management of a couple. 
 ```
 
 ###### The header of the next routes must contain the Bearer token provided by the session route
+
 * Make a post request with the following payload on the route /appointments to create an appointment
 
 ```
@@ -57,5 +59,5 @@ The goal of this application is helping in the expenses management of a couple. 
 * Make a get request on the route /appointments to list the appointments
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI0NDY2MDg1NywtMTA0NDAxODIzMl19
+eyJoaXN0b3J5IjpbLTEwODczOTIwMCwtMTA0NDAxODIzMl19
 -->
