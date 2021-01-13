@@ -4,7 +4,7 @@
 ## Features
 
 ### App's objective
-Utilizado
+Com o objetivo de ajudar no gerenciamento das despesas de um casal, esta aplicação mantém o cadastros das depesas que cada um realiza durante o mês 
 
 
 A simple CRUD app backend built in nodejs + typescript with:
@@ -64,6 +64,5 @@ A simple CRUD app backend built in nodejs + typescript with:
 * Make a get request on the route /appointments to list the appointments
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIwNjM3Mjc5MDYsLTEwNDQwMTgyMzJdfQ
-==
+eyJoaXN0b3J5IjpbLTMyNDIzNDk2NiwtMTA0NDAxODIzMl19
 -->
