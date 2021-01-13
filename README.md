@@ -11,8 +11,9 @@ The goal of this application is helping in the expenses management of a couple. 
  The backend is build in nodejs + typescript with the following:
 
 * User authentication
-* Appointment creation
-* Appointment listing
+* User creation
+* Expense creation
+* Expense + balance listing
 
 ## Technologies
 
@@ -23,13 +24,6 @@ The goal of this application is helping in the expenses management of a couple. 
 * Typeorm
 * Postgresql
 * Docker
-
-## Installation Guide
-
-1. Run "docker run --name [container_name] -e POSTGRES_PASSWORD=[password] -p 5434:5432 -d postgres" to deploy a postgresql docker container
-2. Run "npm install" do install all the dependencies
-3. Run "npx typeorm migration:run" to execute all the needed migrations
-4. Run "npm run dev:server" to bootstrap the development server
 
 ## How to use
 
@@ -63,5 +57,5 @@ The goal of this application is helping in the expenses management of a couple. 
 * Make a get request on the route /appointments to list the appointments
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQ2MTI0ODY3NSwtMTA0NDAxODIzMl19
+eyJoaXN0b3J5IjpbMTI0NDY2MDg1NywtMTA0NDAxODIzMl19
 -->
