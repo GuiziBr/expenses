@@ -3,7 +3,8 @@
 
 ## Features
 
-* Create an expense
+### App
+
 
 A simple CRUD app backend built in nodejs + typescript with:
 
@@ -62,5 +63,6 @@ A simple CRUD app backend built in nodejs + typescript with:
 * Make a get request on the route /appointments to list the appointments
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjAzNDI4NDI5NSwtMTA0NDAxODIzMl19
+eyJoaXN0b3J5IjpbLTE1MjEzOTYwNjAsLTEwNDQwMTgyMzJdfQ
+==
 -->
