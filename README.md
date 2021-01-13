@@ -8,7 +8,7 @@
 The goal of this application is helping in the expenses management of a couple. It keeps the expenses register that each one fills during the month and presents a dashboard of the registered expenses, it's amounts and the total difference between each person.
 
 
- The backend is build in nodejs + typescript with the following:
+ The backend is built with nodejs + typescript containing the following features:
 
 * User authentication
 * User creation
@@ -68,5 +68,5 @@ The goal of this application is helping in the expenses management of a couple. 
 * Make a get request on the route /expenses/balance to list the expenses and the current balance
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2Mjk5NjgzOSwtMTA0NDAxODIzMl19
+eyJoaXN0b3J5IjpbMTQ4Njc2NjM1LC0xMDQ0MDE4MjMyXX0=
 -->
