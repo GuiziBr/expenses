@@ -4,16 +4,13 @@
 ## Features
 
 ### App's objective
-Com o objetivo de ajudar no gerenciamento das despesas de um casal, esta aplicação mantém o cadastros das depesas que cada um realiza durante o mês e apresenta a relação de despesas cadastradas e seus valores juntamente com a diferença entre o total de cada, com sua própria visão.
 
-The goal of this application is helping in the expenses management of a couple. It keeps the expenses register that each one fills during the month and presents a dashboard of the registered expenses, it's amounts and the difference between each total amount in his/her own view.
+The goal of this application is helping in the expenses management of a couple. It keeps the expenses register that each one fills during the month and presents a dashboard of the registered expenses, it's amounts and the total difference between each person.
 
 
-A simple CRUD app backend built in nodejs + typescript with:
+ The backend is build in nodejs + typescript with the following:
 
 * User authentication
-* User creation
-* User's avatar upload and update
 * Appointment creation
 * Appointment listing
 
@@ -66,5 +63,5 @@ A simple CRUD app backend built in nodejs + typescript with:
 * Make a get request on the route /appointments to list the appointments
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTc5ODAwMzA0NiwtMTA0NDAxODIzMl19
+eyJoaXN0b3J5IjpbMTQ2MTI0ODY3NSwtMTA0NDAxODIzMl19
 -->
