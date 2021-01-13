@@ -47,17 +47,19 @@ The goal of this application is helping in the expenses management of a couple. 
 
 ###### The header of the next routes must contain the Bearer token provided by the session route
 
-* Make a post request with the following payload on the route /appointments to create an appointment
+* Make a post request with the following payload on the route /expenses to create an appointment
 
 ```
 {
-	"provider_id": "[user_id]",
-	"date": "[timestamp iso-8601]"
+	"description": [string],
+	"date": "[2021-01-01]",
+	"amount": [number]
 }
 ```
 
-* Make a get request on the route /appointments to list the appointments
+* Make a get request on the route /expenses/balance to list the expenses and the current balance
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwODczOTIwMCwtMTA0NDAxODIzMl19
+eyJoaXN0b3J5IjpbLTIwNDU4ODU1NzEsLTEwNDQwMTgyMzJdfQ
+==
 -->
