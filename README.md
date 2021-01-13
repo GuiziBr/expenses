@@ -1,9 +1,10 @@
 
-# App create for managing a couple's expenses
+# App created for managing a couple's expenses
 
 ## Features
 
-### App
+### App's objective
+Utilizado
 
 
 A simple CRUD app backend built in nodejs + typescript with:
@@ -63,6 +64,6 @@ A simple CRUD app backend built in nodejs + typescript with:
 * Make a get request on the route /appointments to list the appointments
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE1MjEzOTYwNjAsLTEwNDQwMTgyMzJdfQ
+eyJoaXN0b3J5IjpbLTIwNjM3Mjc5MDYsLTEwNDQwMTgyMzJdfQ
 ==
 -->
