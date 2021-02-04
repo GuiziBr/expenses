@@ -1,7 +1,7 @@
 import Expense from '../models/Expense'
-import { startOfMonth } from 'date-fns'
+import { startOfMonth, endOfMonth } from 'date-fns'
 
-import { Repository, EntityRepository, MoreThanOrEqual } from 'typeorm'
+import { Repository, EntityRepository, Between } from 'typeorm'
 
 enum Types {
   Income = 'income',
@@ -26,14 +26,15 @@ interface Balance {
 
 interface Request {
   owner_id: string
-  date?: Date
+  date: Date
 }
 
 @EntityRepository(Expense)
 class ExpensesRepository extends Repository<Expense> {
   public async getCurrentBalance ({ owner_id, date }: Request): Promise<Balance> {
-    const filterDate = date || MoreThanOrEqual(startOfMonth(new Date()))
-    const expenses = await this.find({ where: { date: filterDate } })
+    const startDate = startOfMonth(date)
+    const endDate = endOfMonth(date)
+    const expenses = await this.find({ where: { date: Between(startDate, endDate) } })
 
     const typedExpenses = expenses.map(expense => ({
       id: expense.id,
