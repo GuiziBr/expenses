@@ -65,7 +65,4 @@ The goal of this application is helping in the expenses management of a couple. 
 }
 ```
 
-* Make a get request on the route /expenses/balance to list the expenses and the current balance
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbLTUwMjUxOTUwN119
--->
+* Make a get request on the route /expenses/balance?date=YYYY-MM to list the expenses and the balance for a specif or current month
