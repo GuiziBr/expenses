@@ -1,4 +1,4 @@
-import { startOfDay } from 'date-fns'
+import { startOfDay, isFuture } from 'date-fns'
 import { getCustomRepository } from 'typeorm'
 import Expense from '../models/Expense'
 import ExpensesRepository from '../repositories/ExpensesRepository'
@@ -13,6 +13,7 @@ interface Request {
 
 class CrateExpenseService {
   public async execute ({ owner_id, description, date, amount }: Request): Promise<Expense> {
+    if (isFuture(date)) throw new AppError('Date must not be in the future')
     const expensesRepository = getCustomRepository(ExpensesRepository)
     const expenseDate = startOfDay(date)
     const isSameExpense = await expensesRepository.findByDescriptionAndDate(description, expenseDate)
