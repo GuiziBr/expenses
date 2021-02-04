@@ -24,10 +24,16 @@ interface Balance {
   total: number
 }
 
+interface Request {
+  owner_id: string
+  date?: Date
+}
+
 @EntityRepository(Expense)
 class ExpensesRepository extends Repository<Expense> {
-  public async getCurrentBalance (owner_id: string): Promise<Balance> {
-    const expenses = await this.find({ where: { date: MoreThanOrEqual(startOfMonth(new Date())) } })
+  public async getCurrentBalance ({ owner_id, date }: Request): Promise<Balance> {
+    const filterDate = date || MoreThanOrEqual(startOfMonth(new Date()))
+    const expenses = await this.find({ where: { date: filterDate } })
 
     const typedExpenses = expenses.map(expense => ({
       id: expense.id,

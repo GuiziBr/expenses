@@ -10,7 +10,7 @@ interface TokenPayload {
   sub: string
 }
 
-export default function ensureAuthenticated (request: Request, response: Response, next: NextFunction): void {
+export default function ensureAuthenticated (request: Request, _response: Response, next: NextFunction): void {
   const authHeader = request.headers.authorization
   if (!authHeader) throw new AppError('JWT token is missing', 401)
   const [, token] = authHeader.split(' ')
