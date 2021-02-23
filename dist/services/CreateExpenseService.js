@@ -47,31 +47,53 @@ var AppError_1 = __importDefault(require("../errors/AppError"));
 var CrateExpenseService = /** @class */ (function () {
     function CrateExpenseService() {
     }
-    CrateExpenseService.prototype.execute = function (_a) {
-        var owner_id = _a.owner_id, description = _a.description, date = _a.date, amount = _a.amount, category_id = _a.category_id;
+    CrateExpenseService.prototype.categoryExists = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var categoryRepository, category, expensesRepository, expenseDate, isSameExpense, expense;
+            var categoryRepository, category;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        categoryRepository = typeorm_1.getRepository(Category_1.default);
+                        return [4 /*yield*/, categoryRepository.findOne({ id: id })];
+                    case 1:
+                        category = _a.sent();
+                        return [2 /*return*/, !!category];
+                }
+            });
+        });
+    };
+    CrateExpenseService.prototype.calculateNetAmount = function (amount, shared) {
+        return shared ? Math.round(amount / 2) : amount;
+    };
+    CrateExpenseService.prototype.execute = function (_a) {
+        var owner_id = _a.owner_id, description = _a.description, date = _a.date, amount = _a.amount, category_id = _a.category_id, shared = _a.shared;
+        return __awaiter(this, void 0, void 0, function () {
+            var expensesRepository, expenseDate, isSameExpense, netAmount, expense;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        categoryRepository = typeorm_1.getRepository(Category_1.default);
-                        return [4 /*yield*/, categoryRepository.findOne({ id: category_id })];
-                    case 1:
-                        category = _b.sent();
-                        if (!category)
+                        if (!this.categoryExists(category_id))
                             throw new AppError_1.default('Category not found');
                         if (date_fns_1.isFuture(date))
                             throw new AppError_1.default('Date must not be in the future');
                         expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
                         expenseDate = date_fns_1.startOfDay(date);
                         return [4 /*yield*/, expensesRepository.findByDescriptionAndDate(description, expenseDate)];
-                    case 2:
+                    case 1:
                         isSameExpense = _b.sent();
                         if (isSameExpense)
                             throw new AppError_1.default('This expense is already registered');
-                        expense = expensesRepository.create({ owner_id: owner_id, description: description, date: date, amount: amount, category_id: category_id });
+                        netAmount = this.calculateNetAmount(amount, shared);
+                        expense = expensesRepository.create({
+                            owner_id: owner_id,
+                            description: description,
+                            date: date,
+                            amount: netAmount,
+                            category_id: category_id,
+                            shared: shared || false
+                        });
                         return [4 /*yield*/, expensesRepository.save(expense)];
-                    case 3:
+                    case 2:
                         _b.sent();
                         return [2 /*return*/, expense];
                 }

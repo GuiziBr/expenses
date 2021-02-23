@@ -12,7 +12,7 @@ const expensesRouter = Router()
 expensesRouter.use(ensureAuthenticated)
 
 expensesRouter.post('/', parseBodyDate, async (request, response) => {
-  const { description, date, amount, category_id } = request.body
+  const { description, date, amount, category_id, shared } = request.body
   const { id: owner_id } = request.user
   const createExpense = new CreateExpenseService()
   const expense = await createExpense.execute({
@@ -20,7 +20,8 @@ expensesRouter.post('/', parseBodyDate, async (request, response) => {
     category_id,
     description,
     date,
-    amount: Math.round(amount * 100)
+    amount: Math.round(amount * 100),
+    shared
   })
   return response.json(expense)
 })

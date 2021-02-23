@@ -11,19 +11,36 @@ interface Request {
   date: Date,
   amount: number,
   category_id: string
+  shared: boolean
 }
 
 class CrateExpenseService {
-  public async execute ({ owner_id, description, date, amount, category_id }: Request): Promise<Expense> {
+  private async categoryExists (id: string):Promise<boolean> {
     const categoryRepository = getRepository(Category)
-    const category = await categoryRepository.findOne({ id: category_id })
-    if (!category) throw new AppError('Category not found')
+    const category = await categoryRepository.findOne({ id })
+    return !!category
+  }
+
+  private calculateNetAmount (amount: number, shared: boolean):number {
+    return shared ? Math.round(amount / 2) : amount
+  }
+
+  public async execute ({ owner_id, description, date, amount, category_id, shared }: Request): Promise<Expense> {
+    if (!this.categoryExists(category_id)) throw new AppError('Category not found')
     if (isFuture(date)) throw new AppError('Date must not be in the future')
     const expensesRepository = getCustomRepository(ExpensesRepository)
     const expenseDate = startOfDay(date)
     const isSameExpense = await expensesRepository.findByDescriptionAndDate(description, expenseDate)
     if (isSameExpense) throw new AppError('This expense is already registered')
-    const expense = expensesRepository.create({ owner_id, description, date, amount, category_id })
+    const netAmount = this.calculateNetAmount(amount, shared)
+    const expense = expensesRepository.create({
+      owner_id,
+      description,
+      date,
+      amount: netAmount,
+      category_id,
+      shared: shared || false
+    })
     await expensesRepository.save(expense)
     return expense
   }
