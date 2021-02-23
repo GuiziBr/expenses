@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var jsonwebtoken_1 = require("jsonwebtoken");
 var auth_1 = __importDefault(require("../config/auth"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
-function ensureAuthenticated(request, response, next) {
+function ensureAuthenticated(request, _response, next) {
     var authHeader = request.headers.authorization;
     if (!authHeader)
         throw new AppError_1.default('JWT token is missing', 401);

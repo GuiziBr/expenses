@@ -35,47 +35,35 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var multer_1 = __importDefault(require("multer"));
-var upload_1 = __importDefault(require("../config/upload"));
-var CreateUserService_1 = __importDefault(require("../services/CreateUserService"));
-var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
-var UpdateUserAvatarService_1 = __importDefault(require("../services/UpdateUserAvatarService"));
-var userAssembler_1 = __importDefault(require("../assemblers/userAssembler"));
-var usersRouter = express_1.Router();
-var upload = multer_1.default(upload_1.default);
-usersRouter.post('/', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, name, email, password, createUser, user;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = request.body, name = _a.name, email = _a.email, password = _a.password;
-                createUser = new CreateUserService_1.default();
-                return [4 /*yield*/, createUser.execute({ name: name, email: email, password: password })];
-            case 1:
-                user = _b.sent();
-                return [2 /*return*/, response.json({ name: user.name, email: user.email })];
-        }
-    });
-}); });
-usersRouter.patch('/avatar', ensureAuthenticated_1.default, upload.single('avatar'), function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var updateUserAvatar, user;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                updateUserAvatar = new UpdateUserAvatarService_1.default();
-                return [4 /*yield*/, updateUserAvatar.execute({
-                        user_id: request.user.id,
-                        avatarFileName: request.file.filename
-                    })];
-            case 1:
-                user = _a.sent();
-                return [2 /*return*/, response.json(userAssembler_1.default(user))];
-        }
-    });
-}); });
-exports.default = usersRouter;
+exports.ChangeColumnCategoryId1613703681897 = void 0;
+var ChangeColumnCategoryId1613703681897 = /** @class */ (function () {
+    function ChangeColumnCategoryId1613703681897() {
+    }
+    ChangeColumnCategoryId1613703681897.prototype.up = function (queryRunner) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, queryRunner.query('ALTER TABLE public.expenses ALTER COLUMN category_id SET NOT NULL;')];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ChangeColumnCategoryId1613703681897.prototype.down = function (queryRunner) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, queryRunner.query('ALTER TABLE public.expenses ALTER COLUMN category_id DROP NOT NULL;')];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    return ChangeColumnCategoryId1613703681897;
+}());
+exports.ChangeColumnCategoryId1613703681897 = ChangeColumnCategoryId1613703681897;

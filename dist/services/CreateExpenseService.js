@@ -41,28 +41,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var date_fns_1 = require("date-fns");
 var typeorm_1 = require("typeorm");
+var Category_1 = __importDefault(require("../models/Category"));
 var ExpensesRepository_1 = __importDefault(require("../repositories/ExpensesRepository"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
 var CrateExpenseService = /** @class */ (function () {
     function CrateExpenseService() {
     }
     CrateExpenseService.prototype.execute = function (_a) {
-        var owner_id = _a.owner_id, description = _a.description, date = _a.date, amount = _a.amount;
+        var owner_id = _a.owner_id, description = _a.description, date = _a.date, amount = _a.amount, category_id = _a.category_id;
         return __awaiter(this, void 0, void 0, function () {
-            var expensesRepository, expenseDate, isSameExpense, expense;
+            var categoryRepository, category, expensesRepository, expenseDate, isSameExpense, expense;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
+                        categoryRepository = typeorm_1.getRepository(Category_1.default);
+                        return [4 /*yield*/, categoryRepository.findOne({ id: category_id })];
+                    case 1:
+                        category = _b.sent();
+                        if (!category)
+                            throw new AppError_1.default('Category not found');
+                        if (date_fns_1.isFuture(date))
+                            throw new AppError_1.default('Date must not be in the future');
                         expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
                         expenseDate = date_fns_1.startOfDay(date);
                         return [4 /*yield*/, expensesRepository.findByDescriptionAndDate(description, expenseDate)];
-                    case 1:
+                    case 2:
                         isSameExpense = _b.sent();
                         if (isSameExpense)
                             throw new AppError_1.default('This expense is already registered');
-                        expense = expensesRepository.create({ owner_id: owner_id, description: description, date: date, amount: amount });
+                        expense = expensesRepository.create({ owner_id: owner_id, description: description, date: date, amount: amount, category_id: category_id });
                         return [4 /*yield*/, expensesRepository.save(expense)];
-                    case 2:
+                    case 3:
                         _b.sent();
                         return [2 /*return*/, expense];
                 }

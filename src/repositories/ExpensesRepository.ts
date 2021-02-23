@@ -11,6 +11,10 @@ enum Types {
 interface TypedExpense {
   id: string,
   owner_id: string,
+  category: {
+    id: string,
+    description: string
+  },
   description: string,
   amount: number,
   date: Date,
@@ -39,6 +43,10 @@ class ExpensesRepository extends Repository<Expense> {
     const typedExpenses = expenses.map(expense => ({
       id: expense.id,
       owner_id: expense.owner_id,
+      category: {
+        id: expense.category.id,
+        description: expense.category.description
+      },
       description: expense.description,
       amount: expense.amount,
       date: expense.date,

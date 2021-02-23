@@ -14,11 +14,11 @@ var AppError_1 = __importDefault(require("./errors/AppError"));
 require("./database");
 dotenv_1.default.config();
 var app = express_1.default();
-app.use(cors_1.default({ origin: 'https://expenses-portal.herokuapp.com' }));
+app.use(cors_1.default({ origin: ['https://expenses-portal.herokuapp.com', 'http://localhost:3000'] }));
 app.use(express_1.default.json());
 app.use('/files', express_1.default.static(upload_1.default.directory));
 app.use(routes_1.default);
-app.use(function (err, request, response, _) {
+app.use(function (err, _request, response, _) {
     if (err instanceof AppError_1.default) {
         return response.status(err.statusCode).json({
             status: 'error',

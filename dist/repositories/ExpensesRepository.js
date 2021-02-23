@@ -71,29 +71,37 @@ var ExpensesRepository = /** @class */ (function (_super) {
     function ExpensesRepository() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    ExpensesRepository.prototype.getCurrentBalance = function (owner_id) {
+    ExpensesRepository.prototype.getCurrentBalance = function (_a) {
+        var owner_id = _a.owner_id, date = _a.date;
         return __awaiter(this, void 0, void 0, function () {
-            var expenses, typedExpenses, _a, paying, payed;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.find({ where: { date: typeorm_1.MoreThanOrEqual(date_fns_1.startOfMonth(new Date())) } })];
+            var startDate, endDate, expenses, typedExpenses, _b, paying, payed;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        startDate = date_fns_1.startOfMonth(date);
+                        endDate = date_fns_1.endOfMonth(date);
+                        return [4 /*yield*/, this.find({ where: { date: typeorm_1.Between(startDate, endDate) } })];
                     case 1:
-                        expenses = _b.sent();
+                        expenses = _c.sent();
                         typedExpenses = expenses.map(function (expense) { return ({
                             id: expense.id,
                             owner_id: expense.owner_id,
+                            category: {
+                                id: expense.category.id,
+                                description: expense.category.description
+                            },
                             description: expense.description,
                             amount: expense.amount,
                             date: expense.date,
                             type: expense.owner_id === owner_id ? Types.Income : Types.Outcome
                         }); });
-                        _a = typedExpenses.reduce(function (acc, typedExpense) {
+                        _b = typedExpenses.reduce(function (acc, typedExpense) {
                             if (typedExpense.owner_id === owner_id)
                                 acc.paying += typedExpense.amount;
                             else
                                 acc.payed += typedExpense.amount;
                             return acc;
-                        }, { paying: 0, payed: 0, total: 0 }), paying = _a.paying, payed = _a.payed;
+                        }, { paying: 0, payed: 0, total: 0 }), paying = _b.paying, payed = _b.payed;
                         return [2 /*return*/, {
                                 expenses: typedExpenses,
                                 paying: paying,
