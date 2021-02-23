@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
 var User_1 = __importDefault(require("./User"));
+var Category_1 = __importDefault(require("./Category"));
 var Expense = /** @class */ (function () {
     function Expense() {
     }
@@ -30,6 +31,15 @@ var Expense = /** @class */ (function () {
         typeorm_1.JoinColumn({ name: 'owner_id' }),
         __metadata("design:type", User_1.default)
     ], Expense.prototype, "owner", void 0);
+    __decorate([
+        typeorm_1.ManyToOne(function () { return Category_1.default; }, { eager: true }),
+        typeorm_1.JoinColumn({ name: 'category_id' }),
+        __metadata("design:type", Category_1.default)
+    ], Expense.prototype, "category", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Expense.prototype, "category_id", void 0);
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)

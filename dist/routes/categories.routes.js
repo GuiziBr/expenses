@@ -40,42 +40,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
-var multer_1 = __importDefault(require("multer"));
-var upload_1 = __importDefault(require("../config/upload"));
-var CreateUserService_1 = __importDefault(require("../services/CreateUserService"));
+var typeorm_1 = require("typeorm");
+var Category_1 = __importDefault(require("../models/Category"));
+var CreateCategoryService_1 = __importDefault(require("../services/CreateCategoryService"));
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
-var UpdateUserAvatarService_1 = __importDefault(require("../services/UpdateUserAvatarService"));
-var userAssembler_1 = __importDefault(require("../assemblers/userAssembler"));
-var usersRouter = express_1.Router();
-var upload = multer_1.default(upload_1.default);
-usersRouter.post('/', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, name, email, password, createUser, user;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = request.body, name = _a.name, email = _a.email, password = _a.password;
-                createUser = new CreateUserService_1.default();
-                return [4 /*yield*/, createUser.execute({ name: name, email: email, password: password })];
-            case 1:
-                user = _b.sent();
-                return [2 /*return*/, response.json({ name: user.name, email: user.email })];
-        }
-    });
-}); });
-usersRouter.patch('/avatar', ensureAuthenticated_1.default, upload.single('avatar'), function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var updateUserAvatar, user;
+var categoriesRouter = express_1.Router();
+categoriesRouter.use(ensureAuthenticated_1.default);
+categoriesRouter.get('/', function (_request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var categoriesRepository, categories;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                updateUserAvatar = new UpdateUserAvatarService_1.default();
-                return [4 /*yield*/, updateUserAvatar.execute({
-                        user_id: request.user.id,
-                        avatarFileName: request.file.filename
-                    })];
+                categoriesRepository = typeorm_1.getRepository(Category_1.default);
+                return [4 /*yield*/, categoriesRepository.find()];
             case 1:
-                user = _a.sent();
-                return [2 /*return*/, response.json(userAssembler_1.default(user))];
+                categories = _a.sent();
+                return [2 /*return*/, response.json(categories)];
         }
     });
 }); });
-exports.default = usersRouter;
+categoriesRouter.post('/', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var description, createCategory, category;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                description = request.body.description;
+                createCategory = new CreateCategoryService_1.default();
+                return [4 /*yield*/, createCategory.execute({ description: description })];
+            case 1:
+                category = _a.sent();
+                return [2 /*return*/, response.json(category)];
+        }
+    });
+}); });
+exports.default = categoriesRouter;

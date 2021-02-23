@@ -43,34 +43,42 @@ var express_1 = require("express");
 var date_fns_1 = require("date-fns");
 var typeorm_1 = require("typeorm");
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
+var validateDate_1 = require("../middlewares/validateDate");
 var ExpensesRepository_1 = __importDefault(require("../repositories/ExpensesRepository"));
 var CreateExpenseService_1 = __importDefault(require("../services/CreateExpenseService"));
 var expensesRouter = express_1.Router();
 expensesRouter.use(ensureAuthenticated_1.default);
-expensesRouter.post('/', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, description, date, amount, owner_id, parsedDate, createExpense, expense;
+expensesRouter.post('/', validateDate_1.parseBodyDate, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, description, date, amount, category_id, owner_id, createExpense, expense;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = request.body, description = _a.description, date = _a.date, amount = _a.amount;
+                _a = request.body, description = _a.description, date = _a.date, amount = _a.amount, category_id = _a.category_id;
                 owner_id = request.user.id;
-                parsedDate = date_fns_1.parseISO(date);
                 createExpense = new CreateExpenseService_1.default();
-                return [4 /*yield*/, createExpense.execute({ owner_id: owner_id, description: description, date: parsedDate, amount: Math.round(amount * 100) })];
+                return [4 /*yield*/, createExpense.execute({
+                        owner_id: owner_id,
+                        category_id: category_id,
+                        description: description,
+                        date: date,
+                        amount: Math.round(amount * 100)
+                    })];
             case 1:
                 expense = _b.sent();
                 return [2 /*return*/, response.json(expense)];
         }
     });
 }); });
-expensesRouter.get('/balance', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var expensesRepository, owner_id, currentBalance;
+expensesRouter.get('/balance', validateDate_1.validateQueryDate, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var expensesRepository, owner_id, date, parsedDate, currentBalance;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
                 owner_id = request.user.id;
-                return [4 /*yield*/, expensesRepository.getCurrentBalance(owner_id)];
+                date = request.query.date;
+                parsedDate = date ? date_fns_1.parseISO(date.toString()) : new Date();
+                return [4 /*yield*/, expensesRepository.getCurrentBalance({ owner_id: owner_id, date: parsedDate })];
             case 1:
                 currentBalance = _a.sent();
                 return [2 /*return*/, response.json(currentBalance)];
