@@ -8,12 +8,5 @@ interface User {
 }
 
 export default function user ({ id, name, email, avatar, created_at, updated_at }: User): object {
-  return {
-    id,
-    name,
-    email,
-    avatar,
-    created_at,
-    updated_at
-  }
+  return { id, name, email, avatar, created_at, updated_at }
 }

@@ -33,14 +33,7 @@ class CrateExpenseService {
     const isSameExpense = await expensesRepository.findByDescriptionAndDate(description, expenseDate)
     if (isSameExpense) throw new AppError('This expense is already registered')
     const netAmount = this.calculateNetAmount(amount, shared)
-    const expense = expensesRepository.create({
-      owner_id,
-      description,
-      date,
-      amount: netAmount,
-      category_id,
-      shared: shared || false
-    })
+    const expense = expensesRepository.create({ owner_id, description, date, amount: netAmount, category_id, shared: shared || false })
     await expensesRepository.save(expense)
     return expense
   }
