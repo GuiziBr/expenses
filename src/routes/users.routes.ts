@@ -17,18 +17,11 @@ usersRouter.post('/', async (request, response) => {
   return response.json({ name: user.name, email: user.email })
 })
 
-usersRouter.patch(
-  '/avatar',
-  ensureAuthenticated,
-  upload.single('avatar'),
-  async (request, response) => {
-    const updateUserAvatar = new UpdateUserAvatarService()
-    const user = await updateUserAvatar.execute({
-      user_id: request.user.id,
-      avatarFileName: request.file.filename
-    })
-    return response.json(userAssembler(user))
-  }
+usersRouter.patch('/avatar', ensureAuthenticated, upload.single('avatar'), async (request, response) => {
+  const updateUserAvatar = new UpdateUserAvatarService()
+  const user = await updateUserAvatar.execute({ user_id: request.user.id, avatarFileName: request.file.filename })
+  return response.json(userAssembler(user))
+}
 )
 
 export default usersRouter

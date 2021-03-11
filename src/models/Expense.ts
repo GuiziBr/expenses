@@ -36,6 +36,9 @@ class Expense {
 
   @UpdateDateColumn()
   updated_at: Date
+
+  @Column()
+  shared: boolean
 }
 
 export default Expense

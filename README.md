@@ -48,7 +48,7 @@ The goal of this application is helping in the expenses management of a couple. 
 
 ###### The header of the following routes must contain the Bearer token provided by the session route
 
-* Make a post request with the following payload on the route /expenses to create an appointment
+* Make a post request with the following payload on the route /expenses to create an expense
 
 ```
 {
@@ -56,6 +56,7 @@ The goal of this application is helping in the expenses management of a couple. 
   "category_id": [string]
 	"date": "[2021-01-01]",
 	"amount": [number]
+  "shared": [boolean]
 }
 ```
 

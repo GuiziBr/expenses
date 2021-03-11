@@ -43,10 +43,7 @@ class ExpensesRepository extends Repository<Expense> {
     const typedExpenses = expenses.map(expense => ({
       id: expense.id,
       owner_id: expense.owner_id,
-      category: {
-        id: expense.category.id,
-        description: expense.category.description
-      },
+      category: { id: expense.category.id, description: expense.category.description },
       description: expense.description,
       amount: expense.amount,
       date: expense.date,
@@ -59,12 +56,7 @@ class ExpensesRepository extends Repository<Expense> {
       return acc
     }, { paying: 0, payed: 0, total: 0 })
 
-    return {
-      expenses: typedExpenses,
-      paying,
-      payed,
-      total: paying - payed
-    }
+    return { expenses: typedExpenses, paying, payed, total: paying - payed }
   }
 
   public async findByDescriptionAndDate (description: string, date: Date): Promise<Expense | null> {
