@@ -1,6 +1,9 @@
 {
   "name": "expenses",
   "version": "1.0.0",
+  "engines": {
+    "node": "14.x"
+  },
   "description": "App to manage food expenses along the month",
   "main": "index.js",
   "scripts": {
