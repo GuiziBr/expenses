@@ -86,10 +86,7 @@ var ExpensesRepository = /** @class */ (function (_super) {
                         typedExpenses = expenses.map(function (expense) { return ({
                             id: expense.id,
                             owner_id: expense.owner_id,
-                            category: {
-                                id: expense.category.id,
-                                description: expense.category.description
-                            },
+                            category: { id: expense.category.id, description: expense.category.description },
                             description: expense.description,
                             amount: expense.amount,
                             date: expense.date,
@@ -102,12 +99,7 @@ var ExpensesRepository = /** @class */ (function (_super) {
                                 acc.payed += typedExpense.amount;
                             return acc;
                         }, { paying: 0, payed: 0, total: 0 }), paying = _b.paying, payed = _b.payed;
-                        return [2 /*return*/, {
-                                expenses: typedExpenses,
-                                paying: paying,
-                                payed: payed,
-                                total: paying - payed
-                            }];
+                        return [2 /*return*/, { expenses: typedExpenses, paying: paying, payed: payed, total: paying - payed }];
                 }
             });
         });

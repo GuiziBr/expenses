@@ -30,7 +30,8 @@
     "pg": "^8.3.3",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.25",
-    "uuidv4": "^6.2.2"
+    "uuidv4": "^6.2.2",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",

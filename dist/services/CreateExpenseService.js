@@ -84,14 +84,7 @@ var CrateExpenseService = /** @class */ (function () {
                         if (isSameExpense)
                             throw new AppError_1.default('This expense is already registered');
                         netAmount = this.calculateNetAmount(amount, shared);
-                        expense = expensesRepository.create({
-                            owner_id: owner_id,
-                            description: description,
-                            date: date,
-                            amount: netAmount,
-                            category_id: category_id,
-                            shared: shared || false
-                        });
+                        expense = expensesRepository.create({ owner_id: owner_id, description: description, date: date, amount: netAmount, category_id: category_id, shared: shared || false });
                         return [4 /*yield*/, expensesRepository.save(expense)];
                     case 2:
                         _b.sent();

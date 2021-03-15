@@ -3,6 +3,7 @@ import { getRepository } from 'typeorm'
 import Category from '../models/Category'
 import CreateCategoryService from '../services/CreateCategoryService'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
+import { validateCategory } from '../middlewares/validateInput'
 
 const categoriesRouter = Router()
 
@@ -14,7 +15,7 @@ categoriesRouter.get('/', async (_request, response) => {
   return response.json(categories)
 })
 
-categoriesRouter.post('/', async (request, response) => {
+categoriesRouter.post('/', validateCategory, async (request, response) => {
   const { description } = request.body
   const createCategory = new CreateCategoryService()
   const category = await createCategory.execute({ description })

@@ -4,13 +4,14 @@ import multer from 'multer'
 import uploadConfig from '../config/upload'
 import CreateUserService from '../services/CreateUserService'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
+import { validateUser } from '../middlewares/validateInput'
 import UpdateUserAvatarService from '../services/UpdateUserAvatarService'
 import userAssembler from '../assemblers/userAssembler'
 
 const usersRouter = Router()
 const upload = multer(uploadConfig)
 
-usersRouter.post('/', async (request, response) => {
+usersRouter.post('/', validateUser, async (request, response) => {
   const { name, email, password } = request.body
   const createUser = new CreateUserService()
   const user = await createUser.execute({ name, email, password })
@@ -21,7 +22,6 @@ usersRouter.patch('/avatar', ensureAuthenticated, upload.single('avatar'), async
   const updateUserAvatar = new UpdateUserAvatarService()
   const user = await updateUserAvatar.execute({ user_id: request.user.id, avatarFileName: request.file.filename })
   return response.json(userAssembler(user))
-}
-)
+})
 
 export default usersRouter

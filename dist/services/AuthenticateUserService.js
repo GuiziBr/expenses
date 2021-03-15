@@ -66,10 +66,7 @@ var AuthenticateUserService = /** @class */ (function () {
                         passwordMatched = _b.sent();
                         if (!passwordMatched)
                             throw new AppError_1.default('Incorrect email/password combination', 401);
-                        token = jsonwebtoken_1.sign({}, auth_1.default.jwt.secret, {
-                            subject: user.id,
-                            expiresIn: auth_1.default.jwt.expiresIn
-                        });
+                        token = jsonwebtoken_1.sign({}, auth_1.default.jwt.secret, { subject: user.id, expiresIn: auth_1.default.jwt.expiresIn });
                         return [2 /*return*/, { user: user, token: token }];
                 }
             });

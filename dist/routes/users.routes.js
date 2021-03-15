@@ -44,11 +44,12 @@ var multer_1 = __importDefault(require("multer"));
 var upload_1 = __importDefault(require("../config/upload"));
 var CreateUserService_1 = __importDefault(require("../services/CreateUserService"));
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
+var validateInput_1 = require("../middlewares/validateInput");
 var UpdateUserAvatarService_1 = __importDefault(require("../services/UpdateUserAvatarService"));
 var userAssembler_1 = __importDefault(require("../assemblers/userAssembler"));
 var usersRouter = express_1.Router();
 var upload = multer_1.default(upload_1.default);
-usersRouter.post('/', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+usersRouter.post('/', validateInput_1.validateUser, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, name, email, password, createUser, user;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -68,10 +69,7 @@ usersRouter.patch('/avatar', ensureAuthenticated_1.default, upload.single('avata
         switch (_a.label) {
             case 0:
                 updateUserAvatar = new UpdateUserAvatarService_1.default();
-                return [4 /*yield*/, updateUserAvatar.execute({
-                        user_id: request.user.id,
-                        avatarFileName: request.file.filename
-                    })];
+                return [4 /*yield*/, updateUserAvatar.execute({ user_id: request.user.id, avatarFileName: request.file.filename })];
             case 1:
                 user = _a.sent();
                 return [2 /*return*/, response.json(userAssembler_1.default(user))];
