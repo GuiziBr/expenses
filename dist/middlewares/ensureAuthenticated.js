@@ -14,9 +14,7 @@ function ensureAuthenticated(request, _response, next) {
     try {
         var decoded = jsonwebtoken_1.verify(token, auth_1.default.jwt.secret);
         var sub = decoded.sub;
-        request.user = {
-            id: sub
-        };
+        request.user = { id: sub };
         return next();
     }
     catch (_b) {

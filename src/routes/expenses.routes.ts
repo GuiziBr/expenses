@@ -4,6 +4,7 @@ import { getCustomRepository } from 'typeorm'
 
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 import { parseBodyDate, validateQueryDate } from '../middlewares/validateDate'
+import { validateExpense } from '../middlewares/validateInput'
 import ExpensesRepository from '../repositories/ExpensesRepository'
 import CreateExpenseService from '../services/CreateExpenseService'
 
@@ -11,7 +12,7 @@ const expensesRouter = Router()
 
 expensesRouter.use(ensureAuthenticated)
 
-expensesRouter.post('/', parseBodyDate, async (request, response) => {
+expensesRouter.post('/', validateExpense, parseBodyDate, async (request, response) => {
   const { description, date, amount, category_id, shared } = request.body
   const { id: owner_id } = request.user
   const createExpense = new CreateExpenseService()

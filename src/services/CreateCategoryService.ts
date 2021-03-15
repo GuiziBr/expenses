@@ -15,7 +15,6 @@ interface IRequest {
 
 class CreateCategoryService {
   public async execute ({ description }: IRequest): Promise<ICategory> {
-    if (!description) throw new AppError('Description is required')
     const categoryRepository = getRepository(Category)
     const categoryExists = await categoryRepository.findOne({ where: { description } })
     if (categoryExists) throw new AppError('Category already exists')

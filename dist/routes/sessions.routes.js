@@ -41,9 +41,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var AuthenticateUserService_1 = __importDefault(require("../services/AuthenticateUserService"));
+var validateInput_1 = require("../middlewares/validateInput");
 var sessionAssembler_1 = __importDefault(require("../assemblers/sessionAssembler"));
 var sessionsRouter = express_1.Router();
-sessionsRouter.post('/', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+sessionsRouter.post('/', validateInput_1.validateSession, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, email, password, authenticateUser, _b, user, token;
     return __generator(this, function (_c) {
         switch (_c.label) {

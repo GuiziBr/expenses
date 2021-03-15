@@ -44,6 +44,7 @@ var typeorm_1 = require("typeorm");
 var Category_1 = __importDefault(require("../models/Category"));
 var CreateCategoryService_1 = __importDefault(require("../services/CreateCategoryService"));
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
+var validateInput_1 = require("../middlewares/validateInput");
 var categoriesRouter = express_1.Router();
 categoriesRouter.use(ensureAuthenticated_1.default);
 categoriesRouter.get('/', function (_request, response) { return __awaiter(void 0, void 0, void 0, function () {
@@ -59,7 +60,7 @@ categoriesRouter.get('/', function (_request, response) { return __awaiter(void 
         }
     });
 }); });
-categoriesRouter.post('/', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+categoriesRouter.post('/', validateInput_1.validateCategory, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
     var description, createCategory, category;
     return __generator(this, function (_a) {
         switch (_a.label) {

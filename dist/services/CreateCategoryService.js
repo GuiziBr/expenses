@@ -52,8 +52,6 @@ var CreateCategoryService = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        if (!description)
-                            throw new AppError_1.default('Description is required');
                         categoryRepository = typeorm_1.getRepository(Category_1.default);
                         return [4 /*yield*/, categoryRepository.findOne({ where: { description: description } })];
                     case 1:

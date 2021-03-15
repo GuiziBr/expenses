@@ -54,21 +54,15 @@ var CreateUserService = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         usersRepository = typeorm_1.getRepository(User_1.default);
-                        return [4 /*yield*/, usersRepository.findOne({
-                                where: { email: email }
-                            })];
+                        return [4 /*yield*/, usersRepository.findOne({ where: { email: email } })];
                     case 1:
                         userExists = _b.sent();
                         if (userExists)
-                            throw new AppError_1.default('Email address already used');
+                            throw new AppError_1.default('Email address is already in use');
                         return [4 /*yield*/, bcryptjs_1.hash(password, 8)];
                     case 2:
                         hashedPassword = _b.sent();
-                        user = usersRepository.create({
-                            name: name,
-                            email: email,
-                            password: hashedPassword
-                        });
+                        user = usersRepository.create({ name: name, email: email, password: hashedPassword });
                         return [4 /*yield*/, usersRepository.save(user)];
                     case 3:
                         _b.sent();
