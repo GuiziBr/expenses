@@ -17,6 +17,9 @@
     "food",
     "app"
   ],
+  "optionalDependencies": {
+    "fsevents": "2.3.1"
+  },
   "author": "Ricardo Guizi",
   "license": "ISC",
   "dependencies": {
