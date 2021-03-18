@@ -58,9 +58,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Expense_1 = __importDefault(require("../models/Expense"));
 var date_fns_1 = require("date-fns");
 var typeorm_1 = require("typeorm");
+var Expense_1 = __importDefault(require("../models/Expense"));
 var Types;
 (function (Types) {
     Types["Income"] = "income";
@@ -113,6 +113,32 @@ var ExpensesRepository = /** @class */ (function (_super) {
                     case 1:
                         isSameExpense = _a.sent();
                         return [2 /*return*/, isSameExpense || null];
+                }
+            });
+        });
+    };
+    ExpensesRepository.prototype.getPersonalExpenses = function (_a) {
+        var owner_id = _a.owner_id, date = _a.date;
+        return __awaiter(this, void 0, void 0, function () {
+            var startDate, endDate, expenses, formattedExpenses, balance;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        startDate = date_fns_1.startOfMonth(date);
+                        endDate = date_fns_1.endOfMonth(date);
+                        return [4 /*yield*/, this.find({ where: { owner_id: owner_id, date: typeorm_1.Between(startDate, endDate) } })];
+                    case 1:
+                        expenses = _b.sent();
+                        formattedExpenses = expenses.map(function (expense) { return ({
+                            id: expense.id,
+                            owner_id: expense.owner_id,
+                            category: { id: expense.category.id, description: expense.category.description },
+                            description: expense.description,
+                            amount: expense.amount,
+                            date: expense.date
+                        }); });
+                        balance = formattedExpenses.reduce(function (acc, typedExpense) { return acc + typedExpense.amount; }, 0);
+                        return [2 /*return*/, { expenses: formattedExpenses, balance: balance }];
                 }
             });
         });

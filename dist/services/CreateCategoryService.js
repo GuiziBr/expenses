@@ -40,8 +40,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
-var Category_1 = __importDefault(require("../models/Category"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
+var Category_1 = __importDefault(require("../models/Category"));
 var CreateCategoryService = /** @class */ (function () {
     function CreateCategoryService() {
     }

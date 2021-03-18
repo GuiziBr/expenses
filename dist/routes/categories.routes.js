@@ -41,10 +41,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var typeorm_1 = require("typeorm");
-var Category_1 = __importDefault(require("../models/Category"));
-var CreateCategoryService_1 = __importDefault(require("../services/CreateCategoryService"));
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
 var validateInput_1 = require("../middlewares/validateInput");
+var Category_1 = __importDefault(require("../models/Category"));
+var CreateCategoryService_1 = __importDefault(require("../services/CreateCategoryService"));
 var categoriesRouter = express_1.Router();
 categoriesRouter.use(ensureAuthenticated_1.default);
 categoriesRouter.get('/', function (_request, response) { return __awaiter(void 0, void 0, void 0, function () {

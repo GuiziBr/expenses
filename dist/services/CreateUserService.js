@@ -39,10 +39,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var typeorm_1 = require("typeorm");
 var bcryptjs_1 = require("bcryptjs");
-var User_1 = __importDefault(require("../models/User"));
+var typeorm_1 = require("typeorm");
 var AppError_1 = __importDefault(require("../errors/AppError"));
+var User_1 = __importDefault(require("../models/User"));
 var CreateUserService = /** @class */ (function () {
     function CreateUserService() {
     }
