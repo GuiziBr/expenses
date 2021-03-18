@@ -39,8 +39,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
 var date_fns_1 = require("date-fns");
+var express_1 = require("express");
 var typeorm_1 = require("typeorm");
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
 var validateDate_1 = require("../middlewares/validateDate");
@@ -77,6 +77,22 @@ expensesRouter.get('/balance', validateDate_1.validateQueryDate, function (reque
             case 1:
                 currentBalance = _a.sent();
                 return [2 /*return*/, response.json(currentBalance)];
+        }
+    });
+}); });
+expensesRouter.get('/personalBalance', validateDate_1.validateQueryDate, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var expensesRepository, owner_id, date, parsedDate, personalBalance;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
+                owner_id = request.user.id;
+                date = request.query.date;
+                parsedDate = date ? date_fns_1.parseISO(date.toString()) : new Date();
+                return [4 /*yield*/, expensesRepository.getPersonalExpenses({ owner_id: owner_id, date: parsedDate })];
+            case 1:
+                personalBalance = _a.sent();
+                return [2 /*return*/, response.json(personalBalance)];
         }
     });
 }); });

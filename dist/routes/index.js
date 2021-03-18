@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
-var expenses_routes_1 = __importDefault(require("./expenses.routes"));
-var users_routes_1 = __importDefault(require("./users.routes"));
-var sessions_routes_1 = __importDefault(require("./sessions.routes"));
 var categories_routes_1 = __importDefault(require("./categories.routes"));
+var expenses_routes_1 = __importDefault(require("./expenses.routes"));
+var sessions_routes_1 = __importDefault(require("./sessions.routes"));
+var users_routes_1 = __importDefault(require("./users.routes"));
 var routes = express_1.Router();
 routes.use('/expenses', expenses_routes_1.default);
 routes.use('/users', users_routes_1.default);

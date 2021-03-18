@@ -39,12 +39,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var typeorm_1 = require("typeorm");
-var path_1 = __importDefault(require("path"));
 var fs_1 = __importDefault(require("fs"));
-var User_1 = __importDefault(require("../models/User"));
+var path_1 = __importDefault(require("path"));
+var typeorm_1 = require("typeorm");
 var upload_1 = __importDefault(require("../config/upload"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
+var User_1 = __importDefault(require("../models/User"));
 var UpdateUserAvatarService = /** @class */ (function () {
     function UpdateUserAvatarService() {
     }

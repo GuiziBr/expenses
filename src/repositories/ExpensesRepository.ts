@@ -1,7 +1,6 @@
+import { endOfMonth, startOfMonth } from 'date-fns'
+import { Between, EntityRepository, Repository } from 'typeorm'
 import Expense from '../models/Expense'
-import { startOfMonth, endOfMonth } from 'date-fns'
-
-import { Repository, EntityRepository, Between } from 'typeorm'
 
 enum Types {
   Income = 'income',
@@ -33,13 +32,17 @@ interface Request {
   date: Date
 }
 
+interface PersonalBalance {
+  expenses: Array<Omit<TypedExpense, 'type'>>,
+  balance: number
+}
+
 @EntityRepository(Expense)
 class ExpensesRepository extends Repository<Expense> {
-  public async getCurrentBalance ({ owner_id, date }: Request): Promise<Balance> {
+  public async getCurrentBalance({ owner_id, date }: Request): Promise<Balance> {
     const startDate = startOfMonth(date)
     const endDate = endOfMonth(date)
     const expenses = await this.find({ where: { date: Between(startDate, endDate) } })
-
     const typedExpenses = expenses.map(expense => ({
       id: expense.id,
       owner_id: expense.owner_id,
@@ -49,19 +52,33 @@ class ExpensesRepository extends Repository<Expense> {
       date: expense.date,
       type: expense.owner_id === owner_id ? Types.Income : Types.Outcome
     }))
-
     const { paying, payed } = typedExpenses.reduce((acc, typedExpense) => {
       if (typedExpense.owner_id === owner_id) acc.paying += typedExpense.amount
       else acc.payed += typedExpense.amount
       return acc
     }, { paying: 0, payed: 0, total: 0 })
-
     return { expenses: typedExpenses, paying, payed, total: paying - payed }
   }
 
-  public async findByDescriptionAndDate (description: string, date: Date): Promise<Expense | null> {
+  public async findByDescriptionAndDate(description: string, date: Date): Promise<Expense | null> {
     const isSameExpense = await this.findOne({ where: { description, date } })
     return isSameExpense || null
+  }
+
+  public async getPersonalExpenses({ owner_id, date }: Request): Promise<PersonalBalance> {
+    const startDate = startOfMonth(date)
+    const endDate = endOfMonth(date)
+    const expenses = await this.find({ where: { owner_id, date: Between(startDate, endDate) } })
+    const formattedExpenses = expenses.map(expense => ({
+      id: expense.id,
+      owner_id: expense.owner_id,
+      category: { id: expense.category.id, description: expense.category.description },
+      description: expense.description,
+      amount: expense.amount,
+      date: expense.date
+    }))
+    const balance = formattedExpenses.reduce((acc, typedExpense) => acc + typedExpense.amount, 0)
+    return { expenses: formattedExpenses, balance }
   }
 }
 

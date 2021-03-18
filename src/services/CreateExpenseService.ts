@@ -1,9 +1,9 @@
-import { startOfDay, isFuture } from 'date-fns'
+import { isFuture, startOfDay } from 'date-fns'
 import { getCustomRepository, getRepository } from 'typeorm'
-import Expense from '../models/Expense'
-import Category from '../models/Category'
-import ExpensesRepository from '../repositories/ExpensesRepository'
 import AppError from '../errors/AppError'
+import Category from '../models/Category'
+import Expense from '../models/Expense'
+import ExpensesRepository from '../repositories/ExpensesRepository'
 
 interface Request {
   owner_id: string,
@@ -15,17 +15,17 @@ interface Request {
 }
 
 class CrateExpenseService {
-  private async categoryExists (id: string):Promise<boolean> {
+  private async categoryExists(id: string): Promise<boolean> {
     const categoryRepository = getRepository(Category)
     const category = await categoryRepository.findOne({ id })
     return !!category
   }
 
-  private calculateNetAmount (amount: number, shared: boolean):number {
+  private calculateNetAmount(amount: number, shared: boolean): number {
     return shared ? Math.round(amount / 2) : amount
   }
 
-  public async execute ({ owner_id, description, date, amount, category_id, shared }: Request): Promise<Expense> {
+  public async execute({ owner_id, description, date, amount, category_id, shared }: Request): Promise<Expense> {
     if (!this.categoryExists(category_id)) throw new AppError('Category not found')
     if (isFuture(date)) throw new AppError('Date must not be in the future')
     const expensesRepository = getCustomRepository(ExpensesRepository)

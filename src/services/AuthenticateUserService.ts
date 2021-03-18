@@ -16,7 +16,7 @@ interface Response {
 }
 
 class AuthenticateUserService {
-  public async execute ({ email, password }: Request): Promise<Response> {
+  public async execute({ email, password }: Request): Promise<Response> {
     const usersRepository = getRepository(User)
     const user = await usersRepository.findOne({ where: { email } })
     if (!user) throw new AppError('Incorrect email/password combination', 401)
