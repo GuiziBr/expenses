@@ -1,6 +1,6 @@
 import { getRepository } from 'typeorm'
-import Category from '../models/Category'
 import AppError from '../errors/AppError'
+import Category from '../models/Category'
 
 interface ICategory {
   id: string
@@ -14,7 +14,7 @@ interface IRequest {
 }
 
 class CreateCategoryService {
-  public async execute ({ description }: IRequest): Promise<ICategory> {
+  public async execute({ description }: IRequest): Promise<ICategory> {
     const categoryRepository = getRepository(Category)
     const categoryExists = await categoryRepository.findOne({ where: { description } })
     if (categoryExists) throw new AppError('Category already exists')

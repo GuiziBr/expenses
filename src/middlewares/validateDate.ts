@@ -1,9 +1,8 @@
-import { Request, Response, NextFunction } from 'express'
-import { parseISO, isValid } from 'date-fns'
-
+import { isValid, parseISO } from 'date-fns'
+import { NextFunction, Request, Response } from 'express'
 import AppError from '../errors/AppError'
 
-export function parseBodyDate (request: Request, _response: Response, next: NextFunction): void {
+export function parseBodyDate(request: Request, _response: Response, next: NextFunction): void {
   const { date } = request.body
   const parsedDate = parseISO(date)
   if (!isValid(parsedDate)) throw new AppError('Date format must be YYYY-MM-DD')
@@ -11,7 +10,7 @@ export function parseBodyDate (request: Request, _response: Response, next: Next
   return next()
 }
 
-export function validateQueryDate (request: Request, _response: Response, next: NextFunction): void {
+export function validateQueryDate(request: Request, _response: Response, next: NextFunction): void {
   const { date } = request.query
   if (date && !isValid(parseISO(date.toString()))) throw new AppError('Date format must be YYYY-MM')
   return next()

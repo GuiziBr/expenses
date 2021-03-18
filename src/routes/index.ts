@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import expensesRouter from './expenses.routes'
-import usersRouter from './users.routes'
-import sessionsRouter from './sessions.routes'
 import categoriesRouter from './categories.routes'
+import expensesRouter from './expenses.routes'
+import sessionsRouter from './sessions.routes'
+import usersRouter from './users.routes'
 
 const routes = Router()
 

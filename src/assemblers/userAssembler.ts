@@ -7,6 +7,6 @@ interface User {
   avatar: string
 }
 
-export default function user ({ id, name, email, avatar, created_at, updated_at }: User): object {
+export default function user({ id, name, email, avatar, created_at, updated_at }: User): object {
   return { id, name, email, avatar, created_at, updated_at }
 }

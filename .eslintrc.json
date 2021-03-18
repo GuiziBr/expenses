@@ -1,33 +1,57 @@
 {
-    "env": {
-        "es6": true,
-        "node": true
-    },
-    "extends": [
-      "standard"
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": [
+    "standard"
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 11,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "_"
+      }
     ],
-    "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
-    },
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": 11,
-        "sourceType": "module"
-    },
-    "plugins": [
-        "@typescript-eslint"
+    "camelcase": "off",
+    "quotes": [
+      "error",
+      "single"
     ],
-    "rules": {
-      "@typescript-eslint/no-unused-vars":["error", {
-        "argsIgnorePattern":"_"
-      }],
-      "camelcase": "off",
-      "quotes": ["error", "single"],
-      "eqeqeq": "error",
-      "no-unused-expressions": 0,
-      "no-case-declarations": "off",
-      "no-class-assign": "off",
-      "semi": ["error", "never"]
-    }
+    "eqeqeq": "error",
+    "no-unused-expressions": 0,
+    "no-case-declarations": "off",
+    "no-class-assign": "off",
+    "semi": [
+      "error",
+      "never"
+    ],
+    "object-curly-spacing": [
+      "warn",
+      "always",
+      {
+        "objectsInObjects": false
+      }
+    ],
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ]
+  }
 }

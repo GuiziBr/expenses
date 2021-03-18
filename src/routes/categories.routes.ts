@@ -1,9 +1,9 @@
 import { Router } from 'express'
 import { getRepository } from 'typeorm'
-import Category from '../models/Category'
-import CreateCategoryService from '../services/CreateCategoryService'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 import { validateCategory } from '../middlewares/validateInput'
+import Category from '../models/Category'
+import CreateCategoryService from '../services/CreateCategoryService'
 
 const categoriesRouter = Router()
 

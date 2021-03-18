@@ -1,8 +1,7 @@
 import { Router } from 'express'
-
-import AuthenticateUserService from '../services/AuthenticateUserService'
-import { validateSession } from '../middlewares/validateInput'
 import sessionAssembler from '../assemblers/sessionAssembler'
+import { validateSession } from '../middlewares/validateInput'
+import AuthenticateUserService from '../services/AuthenticateUserService'
 
 const sessionsRouter = Router()
 
