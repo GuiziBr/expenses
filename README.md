@@ -56,7 +56,8 @@ The goal of this application is helping in the expenses management of a couple. 
   "category_id": [string]
 	"date": "[2021-01-01]",
 	"amount": [number]
-  "shared": [boolean]
+  "personal":[boolean]
+  "split": [boolean]
 }
 ```
 
