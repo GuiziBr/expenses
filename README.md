@@ -57,7 +57,7 @@ The goal of this application is helping in the expenses management of a couple. 
 	"date": "[2021-01-01]",
 	"amount": [number]
   "personal":[boolean]
-  "splitted": [boolean]
+  "split": [boolean]
 }
 ```
 

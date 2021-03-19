@@ -1,8 +1,8 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-export class ChangeColumnNameSharedToSplitted1616123056904 implements MigrationInterface {
+export class ChangeColumnNameSharedToSplit1616123056904 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('ALTER TABLE public.expenses RENAME COLUMN shared TO splitted;')
+    await queryRunner.query('ALTER TABLE public.expenses RENAME COLUMN shared TO split;')
     await queryRunner.addColumn('expenses', new TableColumn({
       name: 'personal',
       type: 'boolean',
@@ -13,7 +13,7 @@ export class ChangeColumnNameSharedToSplitted1616123056904 implements MigrationI
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('ALTER TABLE public.expenses RENAME COLUMN splitted to shared;')
+    await queryRunner.query('ALTER TABLE public.expenses RENAME COLUMN split to shared;')
     await queryRunner.dropColumn('expenses', 'personal')
   }
 }

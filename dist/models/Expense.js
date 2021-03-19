@@ -63,7 +63,7 @@ var Expense = /** @class */ (function () {
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", Boolean)
-    ], Expense.prototype, "splitted", void 0);
+    ], Expense.prototype, "split", void 0);
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", Boolean)

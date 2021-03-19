@@ -37,7 +37,7 @@ class Expense {
   updated_at: Date
 
   @Column()
-  splitted: boolean
+  split: boolean
 
   @Column()
   personal: boolean
