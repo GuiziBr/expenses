@@ -80,7 +80,7 @@ var ExpensesRepository = /** @class */ (function (_super) {
                     case 0:
                         startDate = date_fns_1.startOfMonth(date);
                         endDate = date_fns_1.endOfMonth(date);
-                        return [4 /*yield*/, this.find({ where: { date: typeorm_1.Between(startDate, endDate) } })];
+                        return [4 /*yield*/, this.find({ where: { personal: false, date: typeorm_1.Between(startDate, endDate) } })];
                     case 1:
                         expenses = _c.sent();
                         typedExpenses = expenses.map(function (expense) { return ({

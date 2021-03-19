@@ -42,7 +42,7 @@ class ExpensesRepository extends Repository<Expense> {
   public async getCurrentBalance({ owner_id, date }: Request): Promise<Balance> {
     const startDate = startOfMonth(date)
     const endDate = endOfMonth(date)
-    const expenses = await this.find({ where: { date: Between(startDate, endDate) } })
+    const expenses = await this.find({ where: { personal: false, date: Between(startDate, endDate) } })
     const typedExpenses = expenses.map(expense => ({
       id: expense.id,
       owner_id: expense.owner_id,

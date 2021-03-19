@@ -50,14 +50,22 @@ var CreateExpenseService_1 = __importDefault(require("../services/CreateExpenseS
 var expensesRouter = express_1.Router();
 expensesRouter.use(ensureAuthenticated_1.default);
 expensesRouter.post('/', validateInput_1.validateExpense, validateDate_1.parseBodyDate, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, description, date, amount, category_id, shared, owner_id, createExpense, expense;
+    var _a, description, date, amount, category_id, personal, splitted, owner_id, createExpense, expense;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = request.body, description = _a.description, date = _a.date, amount = _a.amount, category_id = _a.category_id, shared = _a.shared;
+                _a = request.body, description = _a.description, date = _a.date, amount = _a.amount, category_id = _a.category_id, personal = _a.personal, splitted = _a.splitted;
                 owner_id = request.user.id;
                 createExpense = new CreateExpenseService_1.default();
-                return [4 /*yield*/, createExpense.execute({ owner_id: owner_id, category_id: category_id, description: description, date: date, amount: Math.round(amount * 100), shared: shared })];
+                return [4 /*yield*/, createExpense.execute({
+                        owner_id: owner_id,
+                        category_id: category_id,
+                        description: description,
+                        date: date,
+                        amount: Math.round(amount * 100),
+                        personal: personal,
+                        splitted: splitted
+                    })];
             case 1:
                 expense = _b.sent();
                 return [2 /*return*/, response.json(expense)];

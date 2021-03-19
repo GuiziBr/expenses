@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner, TableColumn, TableForeignKey } from 'typeorm'
 
 export default class AlterOwnerFieldToOwnerId1598575338800 implements MigrationInterface {
-  public async up (queryRunner: QueryRunner): Promise<void> {
+  public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropColumn('expenses', 'owner')
     await queryRunner.addColumn('expenses', new TableColumn({
       name: 'owner_id',
@@ -17,7 +17,7 @@ export default class AlterOwnerFieldToOwnerId1598575338800 implements MigrationI
     }))
   }
 
-  public async down (queryRunner: QueryRunner): Promise<void> {
+  public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropForeignKey('expenses', 'ExpenseOwner')
     await queryRunner.dropColumn('expenses', 'owner_id')
     await queryRunner.addColumn('expenses', new TableColumn({

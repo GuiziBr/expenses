@@ -63,7 +63,11 @@ var Expense = /** @class */ (function () {
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", Boolean)
-    ], Expense.prototype, "shared", void 0);
+    ], Expense.prototype, "splitted", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", Boolean)
+    ], Expense.prototype, "personal", void 0);
     Expense = __decorate([
         typeorm_1.Entity('expenses')
     ], Expense);

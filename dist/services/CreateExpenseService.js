@@ -62,11 +62,11 @@ var CrateExpenseService = /** @class */ (function () {
             });
         });
     };
-    CrateExpenseService.prototype.calculateNetAmount = function (amount, shared) {
-        return shared ? Math.round(amount / 2) : amount;
+    CrateExpenseService.prototype.calculateNetAmount = function (amount, personal, splitted) {
+        return personal ? amount : (splitted ? Math.round(amount / 2) : amount);
     };
     CrateExpenseService.prototype.execute = function (_a) {
-        var owner_id = _a.owner_id, description = _a.description, date = _a.date, amount = _a.amount, category_id = _a.category_id, shared = _a.shared;
+        var owner_id = _a.owner_id, description = _a.description, date = _a.date, amount = _a.amount, category_id = _a.category_id, splitted = _a.splitted, personal = _a.personal;
         return __awaiter(this, void 0, void 0, function () {
             var expensesRepository, expenseDate, isSameExpense, netAmount, expense;
             return __generator(this, function (_b) {
@@ -83,8 +83,16 @@ var CrateExpenseService = /** @class */ (function () {
                         isSameExpense = _b.sent();
                         if (isSameExpense)
                             throw new AppError_1.default('This expense is already registered');
-                        netAmount = this.calculateNetAmount(amount, shared);
-                        expense = expensesRepository.create({ owner_id: owner_id, description: description, date: date, amount: netAmount, category_id: category_id, shared: shared || false });
+                        netAmount = this.calculateNetAmount(amount, personal, splitted);
+                        expense = expensesRepository.create({
+                            owner_id: owner_id,
+                            description: description,
+                            date: date,
+                            amount: netAmount,
+                            category_id: category_id,
+                            personal: personal || false,
+                            splitted: personal ? false : (splitted || false)
+                        });
                         return [4 /*yield*/, expensesRepository.save(expense)];
                     case 2:
                         _b.sent();

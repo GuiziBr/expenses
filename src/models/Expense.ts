@@ -37,7 +37,10 @@ class Expense {
   updated_at: Date
 
   @Column()
-  shared: boolean
+  splitted: boolean
+
+  @Column()
+  personal: boolean
 }
 
 export default Expense

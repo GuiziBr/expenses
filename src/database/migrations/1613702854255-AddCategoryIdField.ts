@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner, TableColumn, TableForeignKey } from 'typeorm'
 
 export class AddCategoryIdField1613702854255 implements MigrationInterface {
-  public async up (queryRunner: QueryRunner): Promise<void> {
+  public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.addColumn('expenses', new TableColumn({
       name: 'category_id',
       type: 'uuid',
@@ -17,7 +17,7 @@ export class AddCategoryIdField1613702854255 implements MigrationInterface {
     }))
   }
 
-  public async down (queryRunner: QueryRunner): Promise<void> {
+  public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropColumn('expenses', 'category_id')
   }
 }
