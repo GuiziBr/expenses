@@ -47,7 +47,7 @@ export async function validateExpense({ body }: Request, _response: Response, ne
       amount: Yup.number().required('Amount is required'),
       category_id: Yup.string().required('Category Id is required'),
       personal: Yup.boolean(),
-      splitted: Yup.boolean()
+      split: Yup.boolean()
     })
     await schema.validate(body, { abortEarly: false })
   } catch (err) {

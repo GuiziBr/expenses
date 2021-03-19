@@ -154,7 +154,7 @@ function validateExpense(_a, _response, next) {
                         amount: Yup.number().required('Amount is required'),
                         category_id: Yup.string().required('Category Id is required'),
                         personal: Yup.boolean(),
-                        splitted: Yup.boolean()
+                        split: Yup.boolean()
                     });
                     return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
                 case 1:
