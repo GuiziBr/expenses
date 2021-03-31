@@ -1,5 +1,5 @@
 import { endOfMonth, startOfMonth } from 'date-fns'
-import { Between, EntityRepository, Repository } from 'typeorm'
+import { Between, EntityRepository, Repository, Not } from 'typeorm'
 import Expense from '../models/Expense'
 
 enum Types {
@@ -42,7 +42,7 @@ class ExpensesRepository extends Repository<Expense> {
   public async getCurrentBalance({ owner_id, date }: Request): Promise<Balance> {
     const startDate = startOfMonth(date)
     const endDate = endOfMonth(date)
-    const expenses = await this.find({ where: { personal: false, date: Between(startDate, endDate) } })
+    const expenses = await this.find({ where: { personal: false, date: Between(startDate, endDate) }})
     const typedExpenses = expenses.map(expense => ({
       id: expense.id,
       owner_id: expense.owner_id,
@@ -61,14 +61,19 @@ class ExpensesRepository extends Repository<Expense> {
   }
 
   public async findByDescriptionAndDate(description: string, date: Date): Promise<Expense | null> {
-    const isSameExpense = await this.findOne({ where: { description, date } })
+    const isSameExpense = await this.findOne({ where: { description, date }})
     return isSameExpense || null
   }
 
   public async getPersonalExpenses({ owner_id, date }: Request): Promise<PersonalBalance> {
-    const startDate = startOfMonth(date)
-    const endDate = endOfMonth(date)
-    const expenses = await this.find({ where: { owner_id, date: Between(startDate, endDate) } })
+    const searchDate = Between(startOfMonth(date), endOfMonth(date))
+    const expenses = await this.find({
+      where: [
+        { owner_id, date: searchDate, personal: true },
+        { owner_id, date: searchDate, split: true },
+        { owner_id: Not(owner_id), date: searchDate, personal: false }
+      ]
+    })
     const formattedExpenses = expenses.map(expense => ({
       id: expense.id,
       owner_id: expense.owner_id,
