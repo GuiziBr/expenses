@@ -1,24 +1,27 @@
 {
   "env": {
-    "es6": true,
+    "es2021": true,
     "node": true
   },
   "extends": [
-    "standard"
+    "airbnb-base"
   ],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
-  },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 11,
+    "ecmaVersion": 12,
     "sourceType": "module"
   },
   "plugins": [
     "@typescript-eslint"
   ],
   "rules": {
+    "max-len": [
+      "warn",
+      {
+        "code": 150
+      }
+    ],
+    "class-methods-use-this": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
       {
@@ -26,14 +29,13 @@
       }
     ],
     "camelcase": "off",
-    "quotes": [
-      "error",
-      "single"
-    ],
     "eqeqeq": "error",
-    "no-unused-expressions": 0,
-    "no-case-declarations": "off",
-    "no-class-assign": "off",
+    "no-unused-expressions": [
+      "error",
+      {
+        "allowTaggedTemplates": true
+      }
+    ],
     "semi": [
       "error",
       "never"
@@ -52,6 +54,39 @@
         "named": "never",
         "asyncArrow": "always"
       }
+    ],
+    "comma-dangle": [
+      "error",
+      "never"
+    ],
+    "object-curly-newline": [
+      "error",
+      {
+        "multiline": true
+      }
+    ],
+    "import/prefer-default-export": "off",
+    "import/no-unresolved": "error",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "ts": "never"
+      }
     ]
-  }
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true
+      }
+    }
+  },
+  "no-shadow": [
+    "error",
+    {
+      "hoist": "functions"
+    }
+  ]
 }

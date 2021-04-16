@@ -29,7 +29,9 @@ interface Balance {
 
 interface Request {
   owner_id: string
-  date: Date
+  date: Date,
+  offset: number,
+  limit: number
 }
 
 interface PersonalBalance {
@@ -39,11 +41,11 @@ interface PersonalBalance {
 
 @EntityRepository(Expense)
 class ExpensesRepository extends Repository<Expense> {
-  public async getCurrentBalance({ owner_id, date }: Request): Promise<Balance> {
+  public async getCurrentBalance({ owner_id, date, offset, limit }: Request): Promise<Balance> {
     const startDate = startOfMonth(date)
     const endDate = endOfMonth(date)
-    const expenses = await this.find({ where: { personal: false, date: Between(startDate, endDate) }})
-    const typedExpenses = expenses.map(expense => ({
+    const expenses = await this.find({ where: { personal: false, date: Between(startDate, endDate)}, skip: offset, take: limit })
+    const typedExpenses = expenses.map((expense) => ({
       id: expense.id,
       owner_id: expense.owner_id,
       category: { id: expense.category.id, description: expense.category.description },
@@ -65,16 +67,18 @@ class ExpensesRepository extends Repository<Expense> {
     return isSameExpense || null
   }
 
-  public async getPersonalExpenses({ owner_id, date }: Request): Promise<PersonalBalance> {
+  public async getPersonalExpenses({ owner_id, date, offset, limit }: Request): Promise<PersonalBalance> {
     const searchDate = Between(startOfMonth(date), endOfMonth(date))
     const expenses = await this.find({
       where: [
         { owner_id, date: searchDate, personal: true },
         { owner_id, date: searchDate, split: true },
-        { owner_id: Not(owner_id), date: searchDate, personal: false }
-      ]
+        { owner_id: Not(owner_id), date: searchDate, personal: false },
+      ],
+      skip: offset,
+      take: limit
     })
-    const formattedExpenses = expenses.map(expense => ({
+    const formattedExpenses = expenses.map((expense) => ({
       id: expense.id,
       owner_id: expense.owner_id,
       category: { id: expense.category.id, description: expense.category.description },
