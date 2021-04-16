@@ -38,6 +38,7 @@ expensesRouter.get('/balance', validateGetBalance, async ({ user, query }, respo
     offset: Number(offset),
     limit: Number(limit)
   })
+  response.setHeader('X-Total-Count', currentBalance.totalCount)
   return response.json(currentBalance)
 })
 
@@ -52,6 +53,7 @@ expensesRouter.get('/personalBalance', validateGetBalance, async ({ user, query 
     offset: Number(offset),
     limit: Number(limit)
   })
+  response.setHeader('X-Total-Count', personalBalance.totalCount)
   return response.json(personalBalance)
 })
 

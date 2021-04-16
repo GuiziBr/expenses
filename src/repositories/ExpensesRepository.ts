@@ -25,6 +25,7 @@ interface Balance {
   paying: number,
   payed: number,
   total: number
+  totalCount: number
 }
 
 interface Request {
@@ -36,7 +37,8 @@ interface Request {
 
 interface PersonalBalance {
   expenses: Array<Omit<TypedExpense, 'type'>>,
-  balance: number
+  balance: number,
+  totalCount: number
 }
 
 @EntityRepository(Expense)
@@ -44,7 +46,12 @@ class ExpensesRepository extends Repository<Expense> {
   public async getCurrentBalance({ owner_id, date, offset, limit }: Request): Promise<Balance> {
     const startDate = startOfMonth(date)
     const endDate = endOfMonth(date)
-    const expenses = await this.find({ where: { personal: false, date: Between(startDate, endDate)}, skip: offset, take: limit })
+    const [expenses, totalCount] = await this.findAndCount({ where: {
+      personal: false,
+      date: Between(startDate, endDate)},
+      skip: offset,
+      take: limit,
+    })
     const typedExpenses = expenses.map((expense) => ({
       id: expense.id,
       owner_id: expense.owner_id,
@@ -59,7 +66,7 @@ class ExpensesRepository extends Repository<Expense> {
       else acc.payed += typedExpense.amount
       return acc
     }, { paying: 0, payed: 0, total: 0 })
-    return { expenses: typedExpenses, paying, payed, total: paying - payed }
+    return { expenses: typedExpenses, paying, payed, total: paying - payed, totalCount }
   }
 
   public async findByDescriptionAndDate(description: string, date: Date): Promise<Expense | null> {
@@ -69,7 +76,7 @@ class ExpensesRepository extends Repository<Expense> {
 
   public async getPersonalExpenses({ owner_id, date, offset, limit }: Request): Promise<PersonalBalance> {
     const searchDate = Between(startOfMonth(date), endOfMonth(date))
-    const expenses = await this.find({
+    const [expenses, totalCount] = await this.findAndCount({
       where: [
         { owner_id, date: searchDate, personal: true },
         { owner_id, date: searchDate, split: true },
@@ -87,7 +94,7 @@ class ExpensesRepository extends Repository<Expense> {
       date: expense.date
     }))
     const balance = formattedExpenses.reduce((acc, typedExpense) => acc + typedExpense.amount, 0)
-    return { expenses: formattedExpenses, balance }
+    return { expenses: formattedExpenses, balance, totalCount }
   }
 }
 
