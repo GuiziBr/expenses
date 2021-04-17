@@ -31,22 +31,22 @@ expensesRouter.post('/', validateExpense, parseBodyDate, async ({ user, body }, 
 expensesRouter.get('/balance', validateGetBalance, async ({ user, query }, response) => {
   const expensesRepository = getCustomRepository(ExpensesRepository)
   const { id: owner_id } = user
-  const { date, offset, limit } = query
+  const { date, offset = constants.defaultOffset, limit = constants.defaultLimit } = query
   const parsedDate = date ? parseISO(date.toString()) : new Date()
-  const currentBalance = await expensesRepository.getCurrentBalance({
+  const { expenses, totalCount } = await expensesRepository.getCurrentBalance({
     owner_id,
     date: parsedDate,
     offset: Number(offset),
     limit: Number(limit)
   })
-  response.setHeader(constants.headerTypes.totalCount, currentBalance.totalCount)
-  return response.json(currentBalance)
+  response.setHeader(constants.headerTypes.totalCount, totalCount)
+  return response.json(expenses)
 })
 
 expensesRouter.get('/personalBalance', validateGetBalance, async ({ user, query }, response) => {
   const expensesRepository = getCustomRepository(ExpensesRepository)
   const { id: owner_id } = user
-  const { date, offset, limit } = query
+  const { date, offset = constants.defaultOffset, limit = constants.defaultLimit } = query
   const parsedDate = date ? parseISO(date.toString()) : new Date()
   const { personalBalance, totalCount } = await expensesRepository.getPersonalExpenses({
     owner_id,
