@@ -1,6 +1,5 @@
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { Between, EntityRepository, Repository, Not } from 'typeorm'
-import constants from '../constants'
 import Expense from '../models/Expense'
 
 enum Types {
@@ -21,11 +20,13 @@ interface TypedExpense {
   type: Types
 }
 
-interface Balance {
-  expenses: Array<TypedExpense>,
-  paying: number,
-  payed: number,
-  total: number
+interface CurrentBalanceResponse {
+  currentBalance: {
+    expenses: Array<TypedExpense>,
+    paying: number,
+    payed: number,
+    total: number
+  }
   totalCount: number
 }
 
@@ -36,7 +37,7 @@ interface Request {
   limit: number
 }
 
-interface Response {
+interface PersonalBalanceResponse {
   personalBalance: {
     expenses: Array<Omit<TypedExpense, 'type'>>,
     balance: number,
@@ -46,7 +47,7 @@ interface Response {
 
 @EntityRepository(Expense)
 class ExpensesRepository extends Repository<Expense> {
-  public async getCurrentBalance({ owner_id, date, offset, limit }: Request): Promise<Balance> {
+  public async getCurrentBalance({ owner_id, date, offset, limit }: Request): Promise<CurrentBalanceResponse> {
     const startDate = startOfMonth(date)
     const endDate = endOfMonth(date)
 
@@ -70,7 +71,7 @@ class ExpensesRepository extends Repository<Expense> {
         type: expense.owner_id === owner_id ? Types.Income : Types.Outcome
       }))
 
-    return { expenses: typedExpenses, paying, payed, total: paying - payed, totalCount }
+    return { currentBalance: { expenses: typedExpenses, paying, payed, total: paying - payed }, totalCount }
   }
 
   public async findByDescriptionAndDate(description: string, date: Date): Promise<Expense | null> {
@@ -78,7 +79,7 @@ class ExpensesRepository extends Repository<Expense> {
     return isSameExpense || null
   }
 
-  public async getPersonalExpenses({ owner_id, date, offset, limit }: Request): Promise<Response> {
+  public async getPersonalExpenses({ owner_id, date, offset, limit }: Request): Promise<PersonalBalanceResponse> {
     const searchDate = Between(startOfMonth(date), endOfMonth(date))
     const [expenses, totalCount] = await this.findAndCount({
       where: [
