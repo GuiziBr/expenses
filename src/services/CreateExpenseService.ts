@@ -1,5 +1,6 @@
 import { isFuture, startOfDay } from 'date-fns'
 import { getCustomRepository, getRepository } from 'typeorm'
+import constants from '../constants'
 import AppError from '../errors/AppError'
 import Category from '../models/Category'
 import Expense from '../models/Expense'
@@ -27,12 +28,12 @@ class CrateExpenseService {
   }
 
   public async execute({ owner_id, description, date, amount, category_id, personal, split }: Request): Promise<Expense> {
-    if (!this.categoryExists(category_id)) throw new AppError('Category not found')
-    if (isFuture(date)) throw new AppError('Date must not be in the future')
+    if (!this.categoryExists(category_id)) throw new AppError(constants.errorMessages.notFoundCategory)
+    if (isFuture(date)) throw new AppError(constants.errorMessages.futureDate)
     const expensesRepository = getCustomRepository(ExpensesRepository)
     const expenseDate = startOfDay(date)
     const isSameExpense = await expensesRepository.findByDescriptionAndDate(description, expenseDate)
-    if (isSameExpense) throw new AppError('This expense is already registered')
+    if (isSameExpense) throw new AppError(constants.errorMessages.existingExpense)
     const netAmount = this.calculateNetAmount(amount, personal, split)
     const expense = expensesRepository.create({
       owner_id,

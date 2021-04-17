@@ -39,12 +39,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var typeorm_1 = require("typeorm");
 var bcryptjs_1 = require("bcryptjs");
 var jsonwebtoken_1 = require("jsonwebtoken");
-var User_1 = __importDefault(require("../models/User"));
+var typeorm_1 = require("typeorm");
 var auth_1 = __importDefault(require("../config/auth"));
+var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
+var User_1 = __importDefault(require("../models/User"));
 var AuthenticateUserService = /** @class */ (function () {
     function AuthenticateUserService() {
     }
@@ -60,12 +61,12 @@ var AuthenticateUserService = /** @class */ (function () {
                     case 1:
                         user = _b.sent();
                         if (!user)
-                            throw new AppError_1.default('Incorrect email/password combination', 401);
+                            throw new AppError_1.default(constants_1.default.errorMessages.incorrectLogin, 401);
                         return [4 /*yield*/, bcryptjs_1.compare(password, user.password)];
                     case 2:
                         passwordMatched = _b.sent();
                         if (!passwordMatched)
-                            throw new AppError_1.default('Incorrect email/password combination', 401);
+                            throw new AppError_1.default(constants_1.default.errorMessages.incorrectLogin, 401);
                         token = jsonwebtoken_1.sign({}, auth_1.default.jwt.secret, { subject: user.id, expiresIn: auth_1.default.jwt.expiresIn });
                         return [2 /*return*/, { user: user, token: token }];
                 }

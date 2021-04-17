@@ -35,9 +35,11 @@ interface Request {
   limit: number
 }
 
-interface PersonalBalance {
-  expenses: Array<Omit<TypedExpense, 'type'>>,
-  balance: number,
+interface Response {
+  personalBalance: {
+    expenses: Array<Omit<TypedExpense, 'type'>>,
+    balance: number,
+  },
   totalCount: number
 }
 
@@ -46,26 +48,27 @@ class ExpensesRepository extends Repository<Expense> {
   public async getCurrentBalance({ owner_id, date, offset, limit }: Request): Promise<Balance> {
     const startDate = startOfMonth(date)
     const endDate = endOfMonth(date)
-    const [expenses, totalCount] = await this.findAndCount({ where: {
-      personal: false,
-      date: Between(startDate, endDate)},
-      skip: offset,
-      take: limit,
-    })
-    const typedExpenses = expenses.map((expense) => ({
-      id: expense.id,
-      owner_id: expense.owner_id,
-      category: { id: expense.category.id, description: expense.category.description },
-      description: expense.description,
-      amount: expense.amount,
-      date: expense.date,
-      type: expense.owner_id === owner_id ? Types.Income : Types.Outcome
-    }))
-    const { paying, payed } = typedExpenses.reduce((acc, typedExpense) => {
-      if (typedExpense.owner_id === owner_id) acc.paying += typedExpense.amount
-      else acc.payed += typedExpense.amount
+
+    const [expenses, totalCount] = await this.findAndCount({ where: { personal: false, date: Between(startDate, endDate) }})
+
+    const { paying, payed } = expenses.reduce((acc, expense) => {
+      if (expense.owner_id === owner_id) acc.paying += expense.amount
+      else acc.payed += expense.amount
       return acc
     }, { paying: 0, payed: 0, total: 0 })
+
+    const typedExpenses = expenses
+      .splice(offset, limit)
+      .map((expense) => ({
+        id: expense.id,
+        owner_id: expense.owner_id,
+        category: { id: expense.category.id, description: expense.category.description },
+        description: expense.description,
+        amount: expense.amount,
+        date: expense.date,
+        type: expense.owner_id === owner_id ? Types.Income : Types.Outcome
+      }))
+
     return { expenses: typedExpenses, paying, payed, total: paying - payed, totalCount }
   }
 
@@ -74,27 +77,27 @@ class ExpensesRepository extends Repository<Expense> {
     return isSameExpense || null
   }
 
-  public async getPersonalExpenses({ owner_id, date, offset, limit }: Request): Promise<PersonalBalance> {
+  public async getPersonalExpenses({ owner_id, date, offset, limit }: Request): Promise<Response> {
     const searchDate = Between(startOfMonth(date), endOfMonth(date))
     const [expenses, totalCount] = await this.findAndCount({
       where: [
         { owner_id, date: searchDate, personal: true },
         { owner_id, date: searchDate, split: true },
-        { owner_id: Not(owner_id), date: searchDate, personal: false },
-      ],
-      skip: offset,
-      take: limit
+        { owner_id: Not(owner_id), date: searchDate, personal: false }
+      ]
     })
-    const formattedExpenses = expenses.map((expense) => ({
-      id: expense.id,
-      owner_id: expense.owner_id,
-      category: { id: expense.category.id, description: expense.category.description },
-      description: expense.description,
-      amount: expense.amount,
-      date: expense.date
-    }))
-    const balance = formattedExpenses.reduce((acc, typedExpense) => acc + typedExpense.amount, 0)
-    return { expenses: formattedExpenses, balance, totalCount }
+    const balance = expenses.reduce((acc, expense) => acc + expense.amount, 0)
+    const formattedExpenses = expenses
+      .splice(offset, limit)
+      .map((expense) => ({
+        id: expense.id,
+        owner_id: expense.owner_id,
+        category: { id: expense.category.id, description: expense.category.description },
+        description: expense.description,
+        amount: expense.amount,
+        date: expense.date
+      }))
+    return { personalBalance: { expenses: formattedExpenses, balance }, totalCount }
   }
 }
 

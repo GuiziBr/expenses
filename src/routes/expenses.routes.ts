@@ -1,6 +1,7 @@
 import { parseISO } from 'date-fns'
 import { Router } from 'express'
 import { getCustomRepository } from 'typeorm'
+import constants from '../constants'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 import { parseBodyDate } from '../middlewares/parseDate'
 import { validateExpense, validateGetBalance } from '../middlewares/validateInput'
@@ -38,7 +39,7 @@ expensesRouter.get('/balance', validateGetBalance, async ({ user, query }, respo
     offset: Number(offset),
     limit: Number(limit)
   })
-  response.setHeader('X-Total-Count', currentBalance.totalCount)
+  response.setHeader(constants.headerTypes.totalCount, currentBalance.totalCount)
   return response.json(currentBalance)
 })
 
@@ -47,13 +48,13 @@ expensesRouter.get('/personalBalance', validateGetBalance, async ({ user, query 
   const { id: owner_id } = user
   const { date, offset, limit } = query
   const parsedDate = date ? parseISO(date.toString()) : new Date()
-  const personalBalance = await expensesRepository.getPersonalExpenses({
+  const { personalBalance, totalCount } = await expensesRepository.getPersonalExpenses({
     owner_id,
     date: parsedDate,
     offset: Number(offset),
     limit: Number(limit)
   })
-  response.setHeader('X-Total-Count', personalBalance.totalCount)
+  response.setHeader(constants.headerTypes.totalCount, totalCount)
   return response.json(personalBalance)
 })
 

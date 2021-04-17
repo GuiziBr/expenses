@@ -43,6 +43,7 @@ var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
 var typeorm_1 = require("typeorm");
 var upload_1 = __importDefault(require("../config/upload"));
+var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
 var User_1 = __importDefault(require("../models/User"));
 var UpdateUserAvatarService = /** @class */ (function () {
@@ -60,7 +61,7 @@ var UpdateUserAvatarService = /** @class */ (function () {
                     case 1:
                         user = _b.sent();
                         if (!user)
-                            throw new AppError_1.default('Only authenticated users can change avatar', 401);
+                            throw new AppError_1.default(constants_1.default.errorMessages.changeAvatarNotAllowed, 401);
                         if (!user.avatar) return [3 /*break*/, 4];
                         userAvatarFilePath = path_1.default.join(upload_1.default.directory, user.avatar);
                         return [4 /*yield*/, fs_1.default.promises.stat(userAvatarFilePath)];

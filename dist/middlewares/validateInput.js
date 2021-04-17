@@ -58,9 +58,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateExpense = exports.validateCategory = exports.validateSession = exports.validateUser = void 0;
+exports.validateGetBalance = exports.validateExpense = exports.validateCategory = exports.validateSession = exports.validateUser = void 0;
+var date_fns_1 = require("date-fns");
 var Yup = __importStar(require("yup"));
+var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
+function parseDateString(dateValue, date) {
+    return date_fns_1.isValid(date_fns_1.parseISO(date.toString())) && dateValue;
+}
 function validateUser(_a, _response, next) {
     var body = _a.body;
     return __awaiter(this, void 0, void 0, function () {
@@ -70,9 +75,9 @@ function validateUser(_a, _response, next) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
                     schema = Yup.object().shape({
-                        name: Yup.string().required('Name is required'),
-                        email: Yup.string().required('Email is required'),
-                        password: Yup.string().required('Password is required')
+                        name: Yup.string().required(constants_1.default.schemaValidationErrors.nameRequired),
+                        email: Yup.string().required(constants_1.default.schemaValidationErrors.emailRequired),
+                        password: Yup.string().required(constants_1.default.schemaValidationErrors.passwordRequired)
                     });
                     return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
                 case 1:
@@ -98,8 +103,8 @@ function validateSession(_a, _response, next) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
                     schema = Yup.object().shape({
-                        email: Yup.string().required('Email is required'),
-                        password: Yup.string().required('Password is required')
+                        email: Yup.string().required(constants_1.default.schemaValidationErrors.emailRequired),
+                        password: Yup.string().required(constants_1.default.schemaValidationErrors.passwordRequired)
                     });
                     return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
                 case 1:
@@ -124,7 +129,7 @@ function validateCategory(_a, _response, next) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
-                    schema = Yup.object().shape({ description: Yup.string().required('Description is required') });
+                    schema = Yup.object().shape({ description: Yup.string().required(constants_1.default.schemaValidationErrors.descriptionRequired) });
                     return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
                 case 1:
                     _b.sent();
@@ -149,10 +154,10 @@ function validateExpense(_a, _response, next) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
                     schema = Yup.object().shape({
-                        description: Yup.string().required('Description is required'),
-                        date: Yup.date().required('Date is required'),
-                        amount: Yup.number().required('Amount is required'),
-                        category_id: Yup.string().required('Category Id is required'),
+                        description: Yup.string().required(constants_1.default.schemaValidationErrors.descriptionRequired),
+                        date: Yup.date().transform(parseDateString).typeError(constants_1.default.schemaValidationErrors.dateRequired),
+                        amount: Yup.number().required(constants_1.default.schemaValidationErrors.amountRequired),
+                        category_id: Yup.string().required(constants_1.default.schemaValidationErrors.categoryRequired),
                         personal: Yup.boolean(),
                         split: Yup.boolean()
                     });
@@ -171,3 +176,32 @@ function validateExpense(_a, _response, next) {
     });
 }
 exports.validateExpense = validateExpense;
+function validateGetBalance(_a, _response, next) {
+    var query = _a.query;
+    return __awaiter(this, void 0, void 0, function () {
+        var schema, err_5;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    schema = Yup.object().shape({
+                        date: Yup.date().transform(parseDateString).typeError(constants_1.default.schemaValidationErrors.dateFormat),
+                        offset: Yup.number().min(0).default(1).typeError(constants_1.default.schemaValidationErrors.offsetType),
+                        limit: Yup.number().min(1).max(20).default(20)
+                            .typeError(constants_1.default.schemaValidationErrors.limitType)
+                    });
+                    return [4 /*yield*/, schema.validate(query, { abortEarly: false })];
+                case 1:
+                    _b.sent();
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_5 = _b.sent();
+                    if (err_5 instanceof Yup.ValidationError)
+                        throw new AppError_1.default(err_5.message);
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/, next()];
+            }
+        });
+    });
+}
+exports.validateGetBalance = validateGetBalance;
