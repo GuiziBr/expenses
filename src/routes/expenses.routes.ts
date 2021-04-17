@@ -33,14 +33,14 @@ expensesRouter.get('/balance', validateGetBalance, async ({ user, query }, respo
   const { id: owner_id } = user
   const { date, offset = constants.defaultOffset, limit = constants.defaultLimit } = query
   const parsedDate = date ? parseISO(date.toString()) : new Date()
-  const { expenses, totalCount } = await expensesRepository.getCurrentBalance({
+  const { currentBalance, totalCount } = await expensesRepository.getCurrentBalance({
     owner_id,
     date: parsedDate,
     offset: Number(offset),
     limit: Number(limit)
   })
   response.setHeader(constants.headerTypes.totalCount, totalCount)
-  return response.json(expenses)
+  return response.json(currentBalance)
 })
 
 expensesRouter.get('/personalBalance', validateGetBalance, async ({ user, query }, response) => {
