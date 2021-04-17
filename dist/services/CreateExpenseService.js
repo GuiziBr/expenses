@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var date_fns_1 = require("date-fns");
 var typeorm_1 = require("typeorm");
+var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
 var Category_1 = __importDefault(require("../models/Category"));
 var ExpensesRepository_1 = __importDefault(require("../repositories/ExpensesRepository"));
@@ -73,16 +74,16 @@ var CrateExpenseService = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         if (!this.categoryExists(category_id))
-                            throw new AppError_1.default('Category not found');
+                            throw new AppError_1.default(constants_1.default.errorMessages.notFoundCategory);
                         if (date_fns_1.isFuture(date))
-                            throw new AppError_1.default('Date must not be in the future');
+                            throw new AppError_1.default(constants_1.default.errorMessages.futureDate);
                         expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
                         expenseDate = date_fns_1.startOfDay(date);
                         return [4 /*yield*/, expensesRepository.findByDescriptionAndDate(description, expenseDate)];
                     case 1:
                         isSameExpense = _b.sent();
                         if (isSameExpense)
-                            throw new AppError_1.default('This expense is already registered');
+                            throw new AppError_1.default(constants_1.default.errorMessages.existingExpense);
                         netAmount = this.calculateNetAmount(amount, personal, split);
                         expense = expensesRepository.create({
                             owner_id: owner_id,

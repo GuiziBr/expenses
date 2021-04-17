@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var bcryptjs_1 = require("bcryptjs");
 var typeorm_1 = require("typeorm");
+var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
 var User_1 = __importDefault(require("../models/User"));
 var CreateUserService = /** @class */ (function () {
@@ -58,7 +59,7 @@ var CreateUserService = /** @class */ (function () {
                     case 1:
                         userExists = _b.sent();
                         if (userExists)
-                            throw new AppError_1.default('Email address is already in use');
+                            throw new AppError_1.default(constants_1.default.errorMessages.emailInUse);
                         return [4 /*yield*/, bcryptjs_1.hash(password, 8)];
                     case 2:
                         hashedPassword = _b.sent();

@@ -1,13 +1,19 @@
+import { isValid, parseISO } from 'date-fns'
 import { NextFunction, Request, Response } from 'express'
 import * as Yup from 'yup'
+import constants from '../constants'
 import AppError from '../errors/AppError'
+
+function parseDateString(dateValue: Date, date: string) {
+  return isValid(parseISO(date.toString())) && dateValue
+}
 
 export async function validateUser({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
     const schema = Yup.object().shape({
-      name: Yup.string().required('Name is required'),
-      email: Yup.string().required('Email is required'),
-      password: Yup.string().required('Password is required')
+      name: Yup.string().required(constants.schemaValidationErrors.nameRequired),
+      email: Yup.string().required(constants.schemaValidationErrors.emailRequired),
+      password: Yup.string().required(constants.schemaValidationErrors.passwordRequired)
     })
     await schema.validate(body, { abortEarly: false })
   } catch (err) {
@@ -19,8 +25,8 @@ export async function validateUser({ body }: Request, _response: Response, next:
 export async function validateSession({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
     const schema = Yup.object().shape({
-      email: Yup.string().required('Email is required'),
-      password: Yup.string().required('Password is required')
+      email: Yup.string().required(constants.schemaValidationErrors.emailRequired),
+      password: Yup.string().required(constants.schemaValidationErrors.passwordRequired)
     })
     await schema.validate(body, { abortEarly: false })
   } catch (err) {
@@ -31,7 +37,7 @@ export async function validateSession({ body }: Request, _response: Response, ne
 
 export async function validateCategory({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
-    const schema = Yup.object().shape({ description: Yup.string().required('Description is required') })
+    const schema = Yup.object().shape({ description: Yup.string().required(constants.schemaValidationErrors.descriptionRequired) })
     await schema.validate(body, { abortEarly: false })
   } catch (err) {
     if (err instanceof Yup.ValidationError) throw new AppError(err.message)
@@ -42,14 +48,29 @@ export async function validateCategory({ body }: Request, _response: Response, n
 export async function validateExpense({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
     const schema = Yup.object().shape({
-      description: Yup.string().required('Description is required'),
-      date: Yup.date().required('Date is required'),
-      amount: Yup.number().required('Amount is required'),
-      category_id: Yup.string().required('Category Id is required'),
+      description: Yup.string().required(constants.schemaValidationErrors.descriptionRequired),
+      date: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateRequired),
+      amount: Yup.number().required(constants.schemaValidationErrors.amountRequired),
+      category_id: Yup.string().required(constants.schemaValidationErrors.categoryRequired),
       personal: Yup.boolean(),
       split: Yup.boolean()
     })
     await schema.validate(body, { abortEarly: false })
+  } catch (err) {
+    if (err instanceof Yup.ValidationError) throw new AppError(err.message)
+  }
+  return next()
+}
+
+export async function validateGetBalance({ query }: Request, _response: Response, next: NextFunction): Promise<void> {
+  try {
+    const schema = Yup.object().shape({
+      date: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat),
+      offset: Yup.number().min(0).default(1).typeError(constants.schemaValidationErrors.offsetType),
+      limit: Yup.number().min(1).max(20).default(20)
+        .typeError(constants.schemaValidationErrors.limitType)
+    })
+    await schema.validate(query, { abortEarly: false })
   } catch (err) {
     if (err instanceof Yup.ValidationError) throw new AppError(err.message)
   }

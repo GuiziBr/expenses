@@ -1,9 +1,10 @@
 import { parseISO } from 'date-fns'
 import { Router } from 'express'
 import { getCustomRepository } from 'typeorm'
+import constants from '../constants'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
-import { parseBodyDate, validateQueryDate } from '../middlewares/validateDate'
-import { validateExpense } from '../middlewares/validateInput'
+import { parseBodyDate } from '../middlewares/parseDate'
+import { validateExpense, validateGetBalance } from '../middlewares/validateInput'
 import ExpensesRepository from '../repositories/ExpensesRepository'
 import CreateExpenseService from '../services/CreateExpenseService'
 
@@ -11,9 +12,9 @@ const expensesRouter = Router()
 
 expensesRouter.use(ensureAuthenticated)
 
-expensesRouter.post('/', validateExpense, parseBodyDate, async (request, response) => {
-  const { description, date, amount, category_id, personal, split } = request.body
-  const { id: owner_id } = request.user
+expensesRouter.post('/', validateExpense, parseBodyDate, async ({ user, body }, response) => {
+  const { id: owner_id } = user
+  const { description, date, amount, category_id, personal, split } = body
   const createExpense = new CreateExpenseService()
   const expense = await createExpense.execute({
     owner_id,
@@ -27,21 +28,33 @@ expensesRouter.post('/', validateExpense, parseBodyDate, async (request, respons
   return response.json(expense)
 })
 
-expensesRouter.get('/balance', validateQueryDate, async (request, response) => {
+expensesRouter.get('/balance', validateGetBalance, async ({ user, query }, response) => {
   const expensesRepository = getCustomRepository(ExpensesRepository)
-  const { id: owner_id } = request.user
-  const { date } = request.query
+  const { id: owner_id } = user
+  const { date, offset, limit } = query
   const parsedDate = date ? parseISO(date.toString()) : new Date()
-  const currentBalance = await expensesRepository.getCurrentBalance({ owner_id, date: parsedDate })
+  const currentBalance = await expensesRepository.getCurrentBalance({
+    owner_id,
+    date: parsedDate,
+    offset: Number(offset),
+    limit: Number(limit)
+  })
+  response.setHeader(constants.headerTypes.totalCount, currentBalance.totalCount)
   return response.json(currentBalance)
 })
 
-expensesRouter.get('/personalBalance', validateQueryDate, async (request, response) => {
+expensesRouter.get('/personalBalance', validateGetBalance, async ({ user, query }, response) => {
   const expensesRepository = getCustomRepository(ExpensesRepository)
-  const { id: owner_id } = request.user
-  const { date } = request.query
+  const { id: owner_id } = user
+  const { date, offset, limit } = query
   const parsedDate = date ? parseISO(date.toString()) : new Date()
-  const personalBalance = await expensesRepository.getPersonalExpenses({ owner_id, date: parsedDate })
+  const { personalBalance, totalCount } = await expensesRepository.getPersonalExpenses({
+    owner_id,
+    date: parsedDate,
+    offset: Number(offset),
+    limit: Number(limit)
+  })
+  response.setHeader(constants.headerTypes.totalCount, totalCount)
   return response.json(personalBalance)
 })
 

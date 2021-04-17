@@ -40,6 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
+var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
 var Category_1 = __importDefault(require("../models/Category"));
 var CreateCategoryService = /** @class */ (function () {
@@ -57,7 +58,7 @@ var CreateCategoryService = /** @class */ (function () {
                     case 1:
                         categoryExists = _b.sent();
                         if (categoryExists)
-                            throw new AppError_1.default('Category already exists');
+                            throw new AppError_1.default(constants_1.default.errorMessages.existingCategory);
                         category = categoryRepository.create({ description: description });
                         return [4 /*yield*/, categoryRepository.save(category)];
                     case 2:

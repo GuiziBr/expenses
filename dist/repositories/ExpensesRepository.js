@@ -72,18 +72,27 @@ var ExpensesRepository = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ExpensesRepository.prototype.getCurrentBalance = function (_a) {
-        var owner_id = _a.owner_id, date = _a.date;
+        var owner_id = _a.owner_id, date = _a.date, offset = _a.offset, limit = _a.limit;
         return __awaiter(this, void 0, void 0, function () {
-            var startDate, endDate, expenses, typedExpenses, _b, paying, payed;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var startDate, endDate, _b, expenses, totalCount, _c, paying, payed, typedExpenses;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         startDate = date_fns_1.startOfMonth(date);
                         endDate = date_fns_1.endOfMonth(date);
-                        return [4 /*yield*/, this.find({ where: { personal: false, date: typeorm_1.Between(startDate, endDate) } })];
+                        return [4 /*yield*/, this.findAndCount({ where: { personal: false, date: typeorm_1.Between(startDate, endDate) } })];
                     case 1:
-                        expenses = _c.sent();
-                        typedExpenses = expenses.map(function (expense) { return ({
+                        _b = _d.sent(), expenses = _b[0], totalCount = _b[1];
+                        _c = expenses.reduce(function (acc, expense) {
+                            if (expense.owner_id === owner_id)
+                                acc.paying += expense.amount;
+                            else
+                                acc.payed += expense.amount;
+                            return acc;
+                        }, { paying: 0, payed: 0, total: 0 }), paying = _c.paying, payed = _c.payed;
+                        typedExpenses = expenses
+                            .splice(offset, limit)
+                            .map(function (expense) { return ({
                             id: expense.id,
                             owner_id: expense.owner_id,
                             category: { id: expense.category.id, description: expense.category.description },
@@ -92,14 +101,7 @@ var ExpensesRepository = /** @class */ (function (_super) {
                             date: expense.date,
                             type: expense.owner_id === owner_id ? Types.Income : Types.Outcome
                         }); });
-                        _b = typedExpenses.reduce(function (acc, typedExpense) {
-                            if (typedExpense.owner_id === owner_id)
-                                acc.paying += typedExpense.amount;
-                            else
-                                acc.payed += typedExpense.amount;
-                            return acc;
-                        }, { paying: 0, payed: 0, total: 0 }), paying = _b.paying, payed = _b.payed;
-                        return [2 /*return*/, { expenses: typedExpenses, paying: paying, payed: payed, total: paying - payed }];
+                        return [2 /*return*/, { expenses: typedExpenses, paying: paying, payed: payed, total: paying - payed, totalCount: totalCount }];
                 }
             });
         });
@@ -118,18 +120,26 @@ var ExpensesRepository = /** @class */ (function (_super) {
         });
     };
     ExpensesRepository.prototype.getPersonalExpenses = function (_a) {
-        var owner_id = _a.owner_id, date = _a.date;
+        var owner_id = _a.owner_id, date = _a.date, offset = _a.offset, limit = _a.limit;
         return __awaiter(this, void 0, void 0, function () {
-            var startDate, endDate, expenses, formattedExpenses, balance;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var searchDate, _b, expenses, totalCount, balance, formattedExpenses;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        startDate = date_fns_1.startOfMonth(date);
-                        endDate = date_fns_1.endOfMonth(date);
-                        return [4 /*yield*/, this.find({ where: { owner_id: owner_id, date: typeorm_1.Between(startDate, endDate) } })];
+                        searchDate = typeorm_1.Between(date_fns_1.startOfMonth(date), date_fns_1.endOfMonth(date));
+                        return [4 /*yield*/, this.findAndCount({
+                                where: [
+                                    { owner_id: owner_id, date: searchDate, personal: true },
+                                    { owner_id: owner_id, date: searchDate, split: true },
+                                    { owner_id: typeorm_1.Not(owner_id), date: searchDate, personal: false }
+                                ]
+                            })];
                     case 1:
-                        expenses = _b.sent();
-                        formattedExpenses = expenses.map(function (expense) { return ({
+                        _b = _c.sent(), expenses = _b[0], totalCount = _b[1];
+                        balance = expenses.reduce(function (acc, expense) { return acc + expense.amount; }, 0);
+                        formattedExpenses = expenses
+                            .splice(offset, limit)
+                            .map(function (expense) { return ({
                             id: expense.id,
                             owner_id: expense.owner_id,
                             category: { id: expense.category.id, description: expense.category.description },
@@ -137,8 +147,7 @@ var ExpensesRepository = /** @class */ (function (_super) {
                             amount: expense.amount,
                             date: expense.date
                         }); });
-                        balance = formattedExpenses.reduce(function (acc, typedExpense) { return acc + typedExpense.amount; }, 0);
-                        return [2 /*return*/, { expenses: formattedExpenses, balance: balance }];
+                        return [2 /*return*/, { personalBalance: { expenses: formattedExpenses, balance: balance }, totalCount: totalCount }];
                 }
             });
         });
