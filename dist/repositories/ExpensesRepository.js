@@ -66,6 +66,11 @@ var Types;
     Types["Income"] = "income";
     Types["Outcome"] = "outcome";
 })(Types || (Types = {}));
+var Order;
+(function (Order) {
+    Order["desc"] = "DESC";
+    Order["asc"] = "ASC";
+})(Order || (Order = {}));
 var ExpensesRepository = /** @class */ (function (_super) {
     __extends(ExpensesRepository, _super);
     function ExpensesRepository() {
@@ -80,7 +85,10 @@ var ExpensesRepository = /** @class */ (function (_super) {
                     case 0:
                         startDate = date_fns_1.startOfMonth(date);
                         endDate = date_fns_1.endOfMonth(date);
-                        return [4 /*yield*/, this.findAndCount({ where: { personal: false, date: typeorm_1.Between(startDate, endDate) } })];
+                        return [4 /*yield*/, this.findAndCount({
+                                where: { personal: false, date: typeorm_1.Between(startDate, endDate) },
+                                order: { date: Order.desc }
+                            })];
                     case 1:
                         _b = _d.sent(), expenses = _b[0], totalCount = _b[1];
                         _c = expenses.reduce(function (acc, expense) {
@@ -101,7 +109,7 @@ var ExpensesRepository = /** @class */ (function (_super) {
                             date: expense.date,
                             type: expense.owner_id === owner_id ? Types.Income : Types.Outcome
                         }); });
-                        return [2 /*return*/, { expenses: typedExpenses, paying: paying, payed: payed, total: paying - payed, totalCount: totalCount }];
+                        return [2 /*return*/, { currentBalance: { expenses: typedExpenses, paying: paying, payed: payed, total: paying - payed }, totalCount: totalCount }];
                 }
             });
         });
@@ -132,7 +140,8 @@ var ExpensesRepository = /** @class */ (function (_super) {
                                     { owner_id: owner_id, date: searchDate, personal: true },
                                     { owner_id: owner_id, date: searchDate, split: true },
                                     { owner_id: typeorm_1.Not(owner_id), date: searchDate, personal: false }
-                                ]
+                                ],
+                                order: { date: Order.desc }
                             })];
                     case 1:
                         _b = _c.sent(), expenses = _b[0], totalCount = _b[1];

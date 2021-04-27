@@ -79,13 +79,13 @@ expensesRouter.post('/', validateInput_1.validateExpense, parseDate_1.parseBodyD
 expensesRouter.get('/balance', validateInput_1.validateGetBalance, function (_a, response) {
     var user = _a.user, query = _a.query;
     return __awaiter(void 0, void 0, void 0, function () {
-        var expensesRepository, owner_id, date, offset, limit, parsedDate, currentBalance;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var expensesRepository, owner_id, date, _b, offset, _c, limit, parsedDate, _d, currentBalance, totalCount;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
                 case 0:
                     expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
                     owner_id = user.id;
-                    date = query.date, offset = query.offset, limit = query.limit;
+                    date = query.date, _b = query.offset, offset = _b === void 0 ? constants_1.default.defaultOffset : _b, _c = query.limit, limit = _c === void 0 ? constants_1.default.defaultLimit : _c;
                     parsedDate = date ? date_fns_1.parseISO(date.toString()) : new Date();
                     return [4 /*yield*/, expensesRepository.getCurrentBalance({
                             owner_id: owner_id,
@@ -94,8 +94,8 @@ expensesRouter.get('/balance', validateInput_1.validateGetBalance, function (_a,
                             limit: Number(limit)
                         })];
                 case 1:
-                    currentBalance = _b.sent();
-                    response.setHeader(constants_1.default.headerTypes.totalCount, currentBalance.totalCount);
+                    _d = _e.sent(), currentBalance = _d.currentBalance, totalCount = _d.totalCount;
+                    response.setHeader(constants_1.default.headerTypes.totalCount, totalCount);
                     return [2 /*return*/, response.json(currentBalance)];
             }
         });
@@ -104,13 +104,13 @@ expensesRouter.get('/balance', validateInput_1.validateGetBalance, function (_a,
 expensesRouter.get('/personalBalance', validateInput_1.validateGetBalance, function (_a, response) {
     var user = _a.user, query = _a.query;
     return __awaiter(void 0, void 0, void 0, function () {
-        var expensesRepository, owner_id, date, offset, limit, parsedDate, _b, personalBalance, totalCount;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var expensesRepository, owner_id, date, _b, offset, _c, limit, parsedDate, _d, personalBalance, totalCount;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
                 case 0:
                     expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
                     owner_id = user.id;
-                    date = query.date, offset = query.offset, limit = query.limit;
+                    date = query.date, _b = query.offset, offset = _b === void 0 ? constants_1.default.defaultOffset : _b, _c = query.limit, limit = _c === void 0 ? constants_1.default.defaultLimit : _c;
                     parsedDate = date ? date_fns_1.parseISO(date.toString()) : new Date();
                     return [4 /*yield*/, expensesRepository.getPersonalExpenses({
                             owner_id: owner_id,
@@ -119,7 +119,7 @@ expensesRouter.get('/personalBalance', validateInput_1.validateGetBalance, funct
                             limit: Number(limit)
                         })];
                 case 1:
-                    _b = _c.sent(), personalBalance = _b.personalBalance, totalCount = _b.totalCount;
+                    _d = _e.sent(), personalBalance = _d.personalBalance, totalCount = _d.totalCount;
                     response.setHeader(constants_1.default.headerTypes.totalCount, totalCount);
                     return [2 /*return*/, response.json(personalBalance)];
             }

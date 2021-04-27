@@ -23,6 +23,8 @@ var constants = {
         changeAvatarNotAllowed: 'Only authenticated users can change avatar',
         internalError: 'Internal server error'
     },
-    headerTypes: { totalCount: 'X-Total-Count' }
+    headerTypes: { totalCount: 'X-Total-Count' },
+    defaultLimit: 5,
+    defaultOffset: 0
 };
 exports.default = constants;
