@@ -1,11 +1,15 @@
 import { endOfMonth, startOfMonth } from 'date-fns'
-import { Between, EntityRepository, Repository, Not } from 'typeorm'
-import constants from '../constants'
+import { Between, EntityRepository, Not, Repository } from 'typeorm'
 import Expense from '../models/Expense'
 
 enum Types {
   Income = 'income',
   Outcome = 'outcome'
+}
+
+enum Order {
+  desc = 'DESC',
+  asc = 'ASC'
 }
 
 interface TypedExpense {
@@ -52,7 +56,10 @@ class ExpensesRepository extends Repository<Expense> {
     const startDate = startOfMonth(date)
     const endDate = endOfMonth(date)
 
-    const [expenses, totalCount] = await this.findAndCount({ where: { personal: false, date: Between(startDate, endDate) }})
+    const [expenses, totalCount] = await this.findAndCount({
+      where: { personal: false, date: Between(startDate, endDate) },
+      order: { date: Order.desc }
+    })
 
     const { paying, payed } = expenses.reduce((acc, expense) => {
       if (expense.owner_id === owner_id) acc.paying += expense.amount
@@ -87,7 +94,8 @@ class ExpensesRepository extends Repository<Expense> {
         { owner_id, date: searchDate, personal: true },
         { owner_id, date: searchDate, split: true },
         { owner_id: Not(owner_id), date: searchDate, personal: false }
-      ]
+      ],
+      order: { date: Order.desc }
     })
     const balance = expenses.reduce((acc, expense) => acc + expense.amount, 0)
     const formattedExpenses = expenses
