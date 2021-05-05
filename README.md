@@ -14,7 +14,8 @@ The goal of this application is helping in the expenses management of a couple. 
 * User creation
 * Upload user's avatar
 * Expense creation
-* Expense + balance listing
+* Personal/Shared balance
+* Expenses listing
 * Category creation
 
 ## Technologies
@@ -67,12 +68,13 @@ The goal of this application is helping in the expenses management of a couple. 
 {
 	"avatar": [jpeg/png file format]
 }
+
 ```
+* Make a get request on the route /balance?date=YYYY-MM to get both the personal and shared balance for the provided user
 
 * Make a get request on the route /expenses/balance?date=YYYY-MM to list the expenses and the balance for a either specif or current month
 
-* Make a get request on the route /expenses/personalBalance?date=YYYY-MM to list the expenses and the balance for the provided user and a either specif or current month
-
+* Make a get request on the route /expenses/personalBalance?date=YYYY-MM to list the expenses and the balance for the provided user and an either specif or current month
 
 * Make a post request with the following payload on the route /categories to create a category
 

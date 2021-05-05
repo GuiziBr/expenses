@@ -4,7 +4,7 @@ import { getCustomRepository } from 'typeorm'
 import constants from '../constants'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 import { parseBodyDate } from '../middlewares/parseDate'
-import { validateExpense, validateGetBalance } from '../middlewares/validateInput'
+import { validateCreateExpense, validateGetExpenses } from '../middlewares/validateInput'
 import ExpensesRepository from '../repositories/ExpensesRepository'
 import CreateExpenseService from '../services/CreateExpenseService'
 
@@ -12,7 +12,7 @@ const expensesRouter = Router()
 
 expensesRouter.use(ensureAuthenticated)
 
-expensesRouter.post('/', validateExpense, parseBodyDate, async ({ user, body }, response) => {
+expensesRouter.post('/', validateCreateExpense, parseBodyDate, async ({ user, body }, response) => {
   const { id: owner_id } = user
   const { description, date, amount, category_id, personal, split } = body
   const createExpense = new CreateExpenseService()
@@ -28,34 +28,34 @@ expensesRouter.post('/', validateExpense, parseBodyDate, async ({ user, body }, 
   return response.json(expense)
 })
 
-expensesRouter.get('/balance', validateGetBalance, async ({ user, query }, response) => {
+expensesRouter.get('/shared', validateGetExpenses, async ({ user, query }, response) => {
   const expensesRepository = getCustomRepository(ExpensesRepository)
   const { id: owner_id } = user
   const { date, offset = constants.defaultOffset, limit = constants.defaultLimit } = query
   const parsedDate = date ? parseISO(date.toString()) : new Date()
-  const { currentBalance, totalCount } = await expensesRepository.getCurrentBalance({
+  const { expenses, totalCount } = await expensesRepository.getSharedExpenses({
     owner_id,
     date: parsedDate,
     offset: Number(offset),
     limit: Number(limit)
   })
   response.setHeader(constants.headerTypes.totalCount, totalCount)
-  return response.json(currentBalance)
+  return response.json(expenses)
 })
 
-expensesRouter.get('/personalBalance', validateGetBalance, async ({ user, query }, response) => {
+expensesRouter.get('/personal', validateGetExpenses, async ({ user, query }, response) => {
   const expensesRepository = getCustomRepository(ExpensesRepository)
   const { id: owner_id } = user
   const { date, offset = constants.defaultOffset, limit = constants.defaultLimit } = query
   const parsedDate = date ? parseISO(date.toString()) : new Date()
-  const { personalBalance, totalCount } = await expensesRepository.getPersonalExpenses({
+  const { expenses, totalCount } = await expensesRepository.getPersonalExpenses({
     owner_id,
     date: parsedDate,
     offset: Number(offset),
     limit: Number(limit)
   })
   response.setHeader(constants.headerTypes.totalCount, totalCount)
-  return response.json(personalBalance)
+  return response.json(expenses)
 })
 
 export default expensesRouter

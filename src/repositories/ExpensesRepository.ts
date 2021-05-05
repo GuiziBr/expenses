@@ -25,16 +25,6 @@ interface TypedExpense {
   type: Types
 }
 
-interface CurrentBalanceResponse {
-  currentBalance: {
-    expenses: Array<TypedExpense>,
-    paying: number,
-    payed: number,
-    total: number
-  }
-  totalCount: number
-}
-
 interface Request {
   owner_id: string
   date: Date,
@@ -42,31 +32,34 @@ interface Request {
   limit: number
 }
 
-interface PersonalBalanceResponse {
-  personalBalance: {
-    expenses: Array<Omit<TypedExpense, 'type'>>,
-    balance: number,
-  },
+interface SharedExpensesResponse {
+  expenses: Array<TypedExpense>,
   totalCount: number
+}
+
+interface PersonalExpensesResponse {
+  expenses: Array<Omit<TypedExpense, 'type'>>,
+  totalCount: number
+}
+
+interface BalanceResponse {
+  personalBalance: number,
+  sharedBalance: {
+    paying: number,
+    payed: number,
+    total: number
+  }
 }
 
 @EntityRepository(Expense)
 class ExpensesRepository extends Repository<Expense> {
-  public async getCurrentBalance({ owner_id, date, offset, limit }: Request): Promise<CurrentBalanceResponse> {
+  public async getSharedExpenses({ owner_id, date, offset, limit }: Request): Promise<SharedExpensesResponse> {
     const startDate = startOfMonth(date)
     const endDate = endOfMonth(date)
-
     const [expenses, totalCount] = await this.findAndCount({
       where: { personal: false, date: Between(startDate, endDate) },
       order: { date: Order.desc }
     })
-
-    const { paying, payed } = expenses.reduce((acc, expense) => {
-      if (expense.owner_id === owner_id) acc.paying += expense.amount
-      else acc.payed += expense.amount
-      return acc
-    }, { paying: 0, payed: 0, total: 0 })
-
     const typedExpenses = expenses
       .splice(offset, limit)
       .map((expense) => ({
@@ -78,8 +71,7 @@ class ExpensesRepository extends Repository<Expense> {
         date: expense.date,
         type: expense.owner_id === owner_id ? Types.Income : Types.Outcome
       }))
-
-    return { currentBalance: { expenses: typedExpenses, paying, payed, total: paying - payed }, totalCount }
+    return { expenses: typedExpenses, totalCount }
   }
 
   public async findByDescriptionAndDate(description: string, date: Date): Promise<Expense | null> {
@@ -87,7 +79,7 @@ class ExpensesRepository extends Repository<Expense> {
     return isSameExpense || null
   }
 
-  public async getPersonalExpenses({ owner_id, date, offset, limit }: Request): Promise<PersonalBalanceResponse> {
+  public async getPersonalExpenses({ owner_id, date, offset, limit }: Request): Promise<PersonalExpensesResponse> {
     const searchDate = Between(startOfMonth(date), endOfMonth(date))
     const [expenses, totalCount] = await this.findAndCount({
       where: [
@@ -97,7 +89,6 @@ class ExpensesRepository extends Repository<Expense> {
       ],
       order: { date: Order.desc }
     })
-    const balance = expenses.reduce((acc, expense) => acc + expense.amount, 0)
     const formattedExpenses = expenses
       .splice(offset, limit)
       .map((expense) => ({
@@ -108,7 +99,31 @@ class ExpensesRepository extends Repository<Expense> {
         amount: expense.amount,
         date: expense.date
       }))
-    return { personalBalance: { expenses: formattedExpenses, balance }, totalCount }
+    return { expenses: formattedExpenses, totalCount }
+  }
+
+  public async getBalance({ owner_id, date }: Omit<Request, 'offset' | 'limit'>): Promise<BalanceResponse> {
+    const searchDate = Between(startOfMonth(date), endOfMonth(date))
+    const [personalExpenses, sharedExpenses] = await Promise.all([
+      this.find({
+        where: [
+          { owner_id, date: searchDate, personal: true },
+          { owner_id, date: searchDate, split: true },
+          { owner_id: Not(owner_id), date: searchDate, personal: false }
+        ]
+      }),
+      this.find({ where: { personal: false, date: searchDate }})
+    ])
+    const personalBalance = personalExpenses.reduce((acc, expense) => acc + expense.amount, 0)
+    const sharedBalance = sharedExpenses.reduce((acc, expense) => {
+      if (expense.owner_id === owner_id) acc.paying += expense.amount
+      else acc.payed += expense.amount
+      return acc
+    }, { paying: 0, payed: 0, total: 0 })
+    return {
+      personalBalance,
+      sharedBalance: { total: sharedBalance.paying - sharedBalance.payed, paying: sharedBalance.paying, payed: sharedBalance.payed }
+    }
   }
 }
 
