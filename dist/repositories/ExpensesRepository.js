@@ -106,6 +106,7 @@ var ExpensesRepository = /** @class */ (function (_super) {
                         typedExpenses = expenses
                             .splice(offset, limit)
                             .map(function (expense) { return _this.assembleExpense(expense, owner_id, true); });
+
                         return [2 /*return*/, { expenses: typedExpenses, totalCount: totalCount }];
                 }
             });
