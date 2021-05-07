@@ -12,6 +12,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -76,12 +87,13 @@ var ExpensesRepository = /** @class */ (function (_super) {
     function ExpensesRepository() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    ExpensesRepository.prototype.getCurrentBalance = function (_a) {
+    ExpensesRepository.prototype.getSharedExpenses = function (_a) {
         var owner_id = _a.owner_id, date = _a.date, offset = _a.offset, limit = _a.limit;
         return __awaiter(this, void 0, void 0, function () {
-            var startDate, endDate, _b, expenses, totalCount, _c, paying, payed, typedExpenses;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+            var startDate, endDate, _b, expenses, totalCount, typedExpenses;
+            var _this = this;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
                         startDate = date_fns_1.startOfMonth(date);
                         endDate = date_fns_1.endOfMonth(date);
@@ -90,26 +102,11 @@ var ExpensesRepository = /** @class */ (function (_super) {
                                 order: { date: Order.desc }
                             })];
                     case 1:
-                        _b = _d.sent(), expenses = _b[0], totalCount = _b[1];
-                        _c = expenses.reduce(function (acc, expense) {
-                            if (expense.owner_id === owner_id)
-                                acc.paying += expense.amount;
-                            else
-                                acc.payed += expense.amount;
-                            return acc;
-                        }, { paying: 0, payed: 0, total: 0 }), paying = _c.paying, payed = _c.payed;
+                        _b = _c.sent(), expenses = _b[0], totalCount = _b[1];
                         typedExpenses = expenses
                             .splice(offset, limit)
-                            .map(function (expense) { return ({
-                            id: expense.id,
-                            owner_id: expense.owner_id,
-                            category: { id: expense.category.id, description: expense.category.description },
-                            description: expense.description,
-                            amount: expense.amount,
-                            date: expense.date,
-                            type: expense.owner_id === owner_id ? Types.Income : Types.Outcome
-                        }); });
-                        return [2 /*return*/, { currentBalance: { expenses: typedExpenses, paying: paying, payed: payed, total: paying - payed }, totalCount: totalCount }];
+                            .map(function (expense) { return _this.assembleExpense(expense, owner_id); });
+                        return [2 /*return*/, { expenses: typedExpenses, totalCount: totalCount }];
                 }
             });
         });
@@ -130,7 +127,8 @@ var ExpensesRepository = /** @class */ (function (_super) {
     ExpensesRepository.prototype.getPersonalExpenses = function (_a) {
         var owner_id = _a.owner_id, date = _a.date, offset = _a.offset, limit = _a.limit;
         return __awaiter(this, void 0, void 0, function () {
-            var searchDate, _b, expenses, totalCount, balance, formattedExpenses;
+            var searchDate, _b, expenses, totalCount, formattedExpenses;
+            var _this = this;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -145,21 +143,55 @@ var ExpensesRepository = /** @class */ (function (_super) {
                             })];
                     case 1:
                         _b = _c.sent(), expenses = _b[0], totalCount = _b[1];
-                        balance = expenses.reduce(function (acc, expense) { return acc + expense.amount; }, 0);
                         formattedExpenses = expenses
                             .splice(offset, limit)
-                            .map(function (expense) { return ({
-                            id: expense.id,
-                            owner_id: expense.owner_id,
-                            category: { id: expense.category.id, description: expense.category.description },
-                            description: expense.description,
-                            amount: expense.amount,
-                            date: expense.date
-                        }); });
-                        return [2 /*return*/, { personalBalance: { expenses: formattedExpenses, balance: balance }, totalCount: totalCount }];
+                            .map(function (expense) { return _this.assembleExpense(expense, owner_id); });
+                        return [2 /*return*/, { expenses: formattedExpenses, totalCount: totalCount }];
                 }
             });
         });
+    };
+    ExpensesRepository.prototype.getBalance = function (_a) {
+        var owner_id = _a.owner_id, date = _a.date;
+        return __awaiter(this, void 0, void 0, function () {
+            var searchDate, _b, personalExpenses, sharedExpenses, personalBalance, sharedBalance;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        searchDate = typeorm_1.Between(date_fns_1.startOfMonth(date), date_fns_1.endOfMonth(date));
+                        return [4 /*yield*/, Promise.all([
+                                this.find({
+                                    where: [
+                                        { owner_id: owner_id, date: searchDate, personal: true },
+                                        { owner_id: owner_id, date: searchDate, split: true },
+                                        { owner_id: typeorm_1.Not(owner_id), date: searchDate, personal: false }
+                                    ]
+                                }),
+                                this.find({ where: { personal: false, date: searchDate } })
+                            ])];
+                    case 1:
+                        _b = _c.sent(), personalExpenses = _b[0], sharedExpenses = _b[1];
+                        personalBalance = personalExpenses.reduce(function (acc, expense) { return acc + expense.amount; }, 0);
+                        sharedBalance = sharedExpenses.reduce(function (acc, expense) {
+                            if (expense.owner_id === owner_id)
+                                acc.paying += expense.amount;
+                            else
+                                acc.payed += expense.amount;
+                            return acc;
+                        }, { paying: 0, payed: 0, total: 0 });
+                        return [2 /*return*/, {
+                                personalBalance: personalBalance,
+                                sharedBalance: { total: sharedBalance.paying - sharedBalance.payed, paying: sharedBalance.paying, payed: sharedBalance.payed }
+                            }];
+                }
+            });
+        });
+    };
+    ExpensesRepository.prototype.assembleExpense = function (expense, owner_id) {
+        return __assign({ id: expense.id, owner_id: expense.owner_id, description: expense.description, category: {
+                id: expense.category.id,
+                description: expense.category.description
+            }, amount: expense.amount, date: expense.date }, expense.type && { type: expense.owner_id === owner_id ? Types.Income : Types.Outcome });
     };
     ExpensesRepository = __decorate([
         typeorm_1.EntityRepository(Expense_1.default)

@@ -7,6 +7,6 @@ interface User {
   avatar: string
 }
 
-export default function session({ id, name, email, avatar, created_at, updated_at }: User, token: string): object {
+export function assembleSession({ id, name, email, avatar, created_at, updated_at }: User, token: string): object {
   return { user: { id, name, email, avatar, created_at, updated_at }, token }
 }

@@ -22,7 +22,7 @@ interface TypedExpense {
   description: string,
   amount: number,
   date: Date,
-  type: Types
+  type?: Types
 }
 
 interface Request {
@@ -62,15 +62,7 @@ class ExpensesRepository extends Repository<Expense> {
     })
     const typedExpenses = expenses
       .splice(offset, limit)
-      .map((expense) => ({
-        id: expense.id,
-        owner_id: expense.owner_id,
-        category: { id: expense.category.id, description: expense.category.description },
-        description: expense.description,
-        amount: expense.amount,
-        date: expense.date,
-        type: expense.owner_id === owner_id ? Types.Income : Types.Outcome
-      }))
+      .map((expense) => this.assembleExpense(expense, owner_id))
     return { expenses: typedExpenses, totalCount }
   }
 
@@ -91,14 +83,7 @@ class ExpensesRepository extends Repository<Expense> {
     })
     const formattedExpenses = expenses
       .splice(offset, limit)
-      .map((expense) => ({
-        id: expense.id,
-        owner_id: expense.owner_id,
-        category: { id: expense.category.id, description: expense.category.description },
-        description: expense.description,
-        amount: expense.amount,
-        date: expense.date
-      }))
+      .map((expense) => this.assembleExpense(expense, owner_id))
     return { expenses: formattedExpenses, totalCount }
   }
 
@@ -123,6 +108,21 @@ class ExpensesRepository extends Repository<Expense> {
     return {
       personalBalance,
       sharedBalance: { total: sharedBalance.paying - sharedBalance.payed, paying: sharedBalance.paying, payed: sharedBalance.payed }
+    }
+  }
+
+  private assembleExpense(expense: TypedExpense, owner_id: string): TypedExpense {
+    return {
+      id: expense.id,
+      owner_id: expense.owner_id,
+      description: expense.description,
+      category: {
+        id: expense.category.id,
+        description: expense.category.description
+      },
+      amount: expense.amount,
+      date: expense.date,
+      ...expense.type && { type: expense.owner_id === owner_id ? Types.Income : Types.Outcome }
     }
   }
 }

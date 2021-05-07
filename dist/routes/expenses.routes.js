@@ -50,7 +50,7 @@ var ExpensesRepository_1 = __importDefault(require("../repositories/ExpensesRepo
 var CreateExpenseService_1 = __importDefault(require("../services/CreateExpenseService"));
 var expensesRouter = express_1.Router();
 expensesRouter.use(ensureAuthenticated_1.default);
-expensesRouter.post('/', validateInput_1.validateExpense, parseDate_1.parseBodyDate, function (_a, response) {
+expensesRouter.post('/', validateInput_1.validateCreateExpense, parseDate_1.parseBodyDate, function (_a, response) {
     var user = _a.user, body = _a.body;
     return __awaiter(void 0, void 0, void 0, function () {
         var owner_id, description, date, amount, category_id, personal, split, createExpense, expense;
@@ -76,10 +76,10 @@ expensesRouter.post('/', validateInput_1.validateExpense, parseDate_1.parseBodyD
         });
     });
 });
-expensesRouter.get('/balance', validateInput_1.validateGetBalance, function (_a, response) {
+expensesRouter.get('/shared', validateInput_1.validateGetExpenses, function (_a, response) {
     var user = _a.user, query = _a.query;
     return __awaiter(void 0, void 0, void 0, function () {
-        var expensesRepository, owner_id, date, _b, offset, _c, limit, parsedDate, _d, currentBalance, totalCount;
+        var expensesRepository, owner_id, date, _b, offset, _c, limit, parsedDate, _d, expenses, totalCount;
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
@@ -87,24 +87,24 @@ expensesRouter.get('/balance', validateInput_1.validateGetBalance, function (_a,
                     owner_id = user.id;
                     date = query.date, _b = query.offset, offset = _b === void 0 ? constants_1.default.defaultOffset : _b, _c = query.limit, limit = _c === void 0 ? constants_1.default.defaultLimit : _c;
                     parsedDate = date ? date_fns_1.parseISO(date.toString()) : new Date();
-                    return [4 /*yield*/, expensesRepository.getCurrentBalance({
+                    return [4 /*yield*/, expensesRepository.getSharedExpenses({
                             owner_id: owner_id,
                             date: parsedDate,
                             offset: Number(offset),
                             limit: Number(limit)
                         })];
                 case 1:
-                    _d = _e.sent(), currentBalance = _d.currentBalance, totalCount = _d.totalCount;
+                    _d = _e.sent(), expenses = _d.expenses, totalCount = _d.totalCount;
                     response.setHeader(constants_1.default.headerTypes.totalCount, totalCount);
-                    return [2 /*return*/, response.json(currentBalance)];
+                    return [2 /*return*/, response.json(expenses)];
             }
         });
     });
 });
-expensesRouter.get('/personalBalance', validateInput_1.validateGetBalance, function (_a, response) {
+expensesRouter.get('/personal', validateInput_1.validateGetExpenses, function (_a, response) {
     var user = _a.user, query = _a.query;
     return __awaiter(void 0, void 0, void 0, function () {
-        var expensesRepository, owner_id, date, _b, offset, _c, limit, parsedDate, _d, personalBalance, totalCount;
+        var expensesRepository, owner_id, date, _b, offset, _c, limit, parsedDate, _d, expenses, totalCount;
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
@@ -119,9 +119,9 @@ expensesRouter.get('/personalBalance', validateInput_1.validateGetBalance, funct
                             limit: Number(limit)
                         })];
                 case 1:
-                    _d = _e.sent(), personalBalance = _d.personalBalance, totalCount = _d.totalCount;
+                    _d = _e.sent(), expenses = _d.expenses, totalCount = _d.totalCount;
                     response.setHeader(constants_1.default.headerTypes.totalCount, totalCount);
-                    return [2 /*return*/, response.json(personalBalance)];
+                    return [2 /*return*/, response.json(expenses)];
             }
         });
     });
