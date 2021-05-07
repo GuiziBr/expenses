@@ -62,7 +62,8 @@ class ExpensesRepository extends Repository<Expense> {
     })
     const typedExpenses = expenses
       .splice(offset, limit)
-      .map((expense) => this.assembleExpense(expense, owner_id))
+      .map((expense) => this.assembleExpense(expense, owner_id, true))
+    
     return { expenses: typedExpenses, totalCount }
   }
 
@@ -111,7 +112,8 @@ class ExpensesRepository extends Repository<Expense> {
     }
   }
 
-  private assembleExpense(expense: TypedExpense, owner_id: string): TypedExpense {
+  private assembleExpense(expense: TypedExpense, owner_id: string, isShared?: boolean): TypedExpense {
+
     return {
       id: expense.id,
       owner_id: expense.owner_id,
@@ -122,7 +124,7 @@ class ExpensesRepository extends Repository<Expense> {
       },
       amount: expense.amount,
       date: expense.date,
-      ...expense.type && { type: expense.owner_id === owner_id ? Types.Income : Types.Outcome }
+      ...isShared && { type: expense.owner_id === owner_id ? Types.Income : Types.Outcome }
     }
   }
 }
