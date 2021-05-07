@@ -105,7 +105,7 @@ var ExpensesRepository = /** @class */ (function (_super) {
                         _b = _c.sent(), expenses = _b[0], totalCount = _b[1];
                         typedExpenses = expenses
                             .splice(offset, limit)
-                            .map(function (expense) { return _this.assembleExpense(expense, owner_id); });
+                            .map(function (expense) { return _this.assembleExpense(expense, owner_id, true); });
                         return [2 /*return*/, { expenses: typedExpenses, totalCount: totalCount }];
                 }
             });
@@ -187,11 +187,11 @@ var ExpensesRepository = /** @class */ (function (_super) {
             });
         });
     };
-    ExpensesRepository.prototype.assembleExpense = function (expense, owner_id) {
+    ExpensesRepository.prototype.assembleExpense = function (expense, owner_id, isShared) {
         return __assign({ id: expense.id, owner_id: expense.owner_id, description: expense.description, category: {
                 id: expense.category.id,
                 description: expense.category.description
-            }, amount: expense.amount, date: expense.date }, expense.type && { type: expense.owner_id === owner_id ? Types.Income : Types.Outcome });
+            }, amount: expense.amount, date: expense.date }, isShared && { type: expense.owner_id === owner_id ? Types.Income : Types.Outcome });
     };
     ExpensesRepository = __decorate([
         typeorm_1.EntityRepository(Expense_1.default)
