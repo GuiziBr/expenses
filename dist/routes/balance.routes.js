@@ -39,41 +39,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var date_fns_1 = require("date-fns");
 var express_1 = require("express");
-var multer_1 = __importDefault(require("multer"));
-var userAssembler_1 = require("../assemblers/userAssembler");
-var upload_1 = __importDefault(require("../config/upload"));
+var typeorm_1 = require("typeorm");
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
 var validateInput_1 = require("../middlewares/validateInput");
-var CreateUserService_1 = __importDefault(require("../services/CreateUserService"));
-var UpdateUserAvatarService_1 = __importDefault(require("../services/UpdateUserAvatarService"));
-var usersRouter = express_1.Router();
-var upload = multer_1.default(upload_1.default);
-usersRouter.post('/', validateInput_1.validateUser, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, name, email, password, createUser, user;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = request.body, name = _a.name, email = _a.email, password = _a.password;
-                createUser = new CreateUserService_1.default();
-                return [4 /*yield*/, createUser.execute({ name: name, email: email, password: password })];
-            case 1:
-                user = _b.sent();
-                return [2 /*return*/, response.json({ name: user.name, email: user.email })];
-        }
+var ExpensesRepository_1 = __importDefault(require("../repositories/ExpensesRepository"));
+var balanceRouter = express_1.Router();
+balanceRouter.use(ensureAuthenticated_1.default);
+balanceRouter.get('/', validateInput_1.validateGetBalance, function (_a, response) {
+    var user = _a.user, query = _a.query;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var expensesRepository, owner_id, date, parsedDate, balance;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
+                    owner_id = user.id;
+                    date = query.date;
+                    parsedDate = date ? date_fns_1.parseISO(date.toString()) : new Date();
+                    return [4 /*yield*/, expensesRepository.getBalance({ owner_id: owner_id, date: parsedDate })];
+                case 1:
+                    balance = _b.sent();
+                    return [2 /*return*/, response.json(balance)];
+            }
+        });
     });
-}); });
-usersRouter.patch('/avatar', ensureAuthenticated_1.default, upload.single('avatar'), function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var updateUserAvatar, user;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                updateUserAvatar = new UpdateUserAvatarService_1.default();
-                return [4 /*yield*/, updateUserAvatar.execute({ user_id: request.user.id, avatarFileName: request.file.filename })];
-            case 1:
-                user = _a.sent();
-                return [2 /*return*/, response.json(userAssembler_1.assembleUser(user))];
-        }
-    });
-}); });
-exports.default = usersRouter;
+});
+exports.default = balanceRouter;

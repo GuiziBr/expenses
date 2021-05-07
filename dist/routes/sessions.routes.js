@@ -40,7 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
-var sessionAssembler_1 = __importDefault(require("../assemblers/sessionAssembler"));
+var sessionAssembler_1 = require("../assemblers/sessionAssembler");
 var validateInput_1 = require("../middlewares/validateInput");
 var AuthenticateUserService_1 = __importDefault(require("../services/AuthenticateUserService"));
 var sessionsRouter = express_1.Router();
@@ -54,7 +54,7 @@ sessionsRouter.post('/', validateInput_1.validateSession, function (request, res
                 return [4 /*yield*/, authenticateUser.execute({ email: email, password: password })];
             case 1:
                 _b = _c.sent(), user = _b.user, token = _b.token;
-                return [2 /*return*/, response.json(sessionAssembler_1.default(user, token))];
+                return [2 /*return*/, response.json(sessionAssembler_1.assembleSession(user, token))];
         }
     });
 }); });

@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateGetBalance = exports.validateExpense = exports.validateCategory = exports.validateSession = exports.validateUser = void 0;
+exports.validateGetBalance = exports.validateGetExpenses = exports.validateCreateExpense = exports.validateCategory = exports.validateSession = exports.validateUser = void 0;
 var date_fns_1 = require("date-fns");
 var Yup = __importStar(require("yup"));
 var constants_1 = __importDefault(require("../constants"));
@@ -145,7 +145,7 @@ function validateCategory(_a, _response, next) {
     });
 }
 exports.validateCategory = validateCategory;
-function validateExpense(_a, _response, next) {
+function validateCreateExpense(_a, _response, next) {
     var body = _a.body;
     return __awaiter(this, void 0, void 0, function () {
         var schema, err_4;
@@ -175,8 +175,8 @@ function validateExpense(_a, _response, next) {
         });
     });
 }
-exports.validateExpense = validateExpense;
-function validateGetBalance(_a, _response, next) {
+exports.validateCreateExpense = validateCreateExpense;
+function validateGetExpenses(_a, _response, next) {
     var query = _a.query;
     return __awaiter(this, void 0, void 0, function () {
         var schema, err_5;
@@ -198,6 +198,30 @@ function validateGetBalance(_a, _response, next) {
                     err_5 = _b.sent();
                     if (err_5 instanceof Yup.ValidationError)
                         throw new AppError_1.default(err_5.message);
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/, next()];
+            }
+        });
+    });
+}
+exports.validateGetExpenses = validateGetExpenses;
+function validateGetBalance(_a, _response, next) {
+    var query = _a.query;
+    return __awaiter(this, void 0, void 0, function () {
+        var schema, err_6;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    schema = Yup.object().shape({ date: Yup.date().transform(parseDateString).typeError(constants_1.default.schemaValidationErrors.dateFormat) });
+                    return [4 /*yield*/, schema.validate(query, { abortEarly: false })];
+                case 1:
+                    _b.sent();
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_6 = _b.sent();
+                    if (err_6 instanceof Yup.ValidationError)
+                        throw new AppError_1.default(err_6.message);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/, next()];
             }
