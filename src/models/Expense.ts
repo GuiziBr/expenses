@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 import Category from './Category'
 import User from './User'
+import PaymentType from './PaymentType'
 
 @Entity('expenses')
 class Expense {
@@ -18,8 +19,15 @@ class Expense {
   @JoinColumn({ name: 'category_id' })
   category: Category
 
+  @ManyToOne(() => PaymentType, { eager: true })
+  @JoinColumn({ name: 'payment_type_id' })
+  payment_type: PaymentType
+
   @Column()
-  category_id: string;
+  category_id: string
+
+  @Column()
+  payment_type_id: string
 
   @Column()
   description: string
