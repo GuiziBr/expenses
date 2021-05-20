@@ -9,7 +9,8 @@ const constants = {
     descriptionRequired: 'Description is required',
     dateRequired: 'Date is required and must be YYYY-MM-DD',
     amountRequired: 'Amount is required',
-    categoryRequired: 'Category is required'
+    categoryRequired: 'Category is required',
+    paymentTypeRequired: 'Payment type is required'
   },
   errorMessages: {
     incorrectLogin: 'Incorrect email/password combination',
@@ -19,7 +20,9 @@ const constants = {
     existingExpense: 'This expense is already registered',
     emailInUse: 'Email address already in use',
     changeAvatarNotAllowed: 'Only authenticated users can change avatar',
-    internalError: 'Internal server error'
+    internalError: 'Internal server error',
+    existingPaymentType: 'Payment type already exists',
+    notFoundPaymentType: 'Payment type not found'
   },
   headerTypes: { totalCount: 'X-Total-Count' },
   defaultLimit: 5,

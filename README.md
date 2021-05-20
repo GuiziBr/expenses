@@ -17,6 +17,7 @@ The goal of this application is helping in the expenses management of a couple. 
 * Personal/Shared balance
 * Expenses listing
 * Category creation
+* Payment Type creation
 
 ## Technologies
 
@@ -59,6 +60,7 @@ The goal of this application is helping in the expenses management of a couple. 
 	"amount": [number]
   "personal":[boolean]
   "split": [boolean]
+  "payment_type_id": [string]
 }
 ```
 
@@ -85,3 +87,10 @@ The goal of this application is helping in the expenses management of a couple. 
 ```
 
 * Make a get request route /categories to list all the register categories
+
+* Make a post request with the following payload on the route /paymentType to create a payment type
+
+```
+{
+	"description": [string],
+}
