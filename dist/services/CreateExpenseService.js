@@ -44,21 +44,22 @@ var typeorm_1 = require("typeorm");
 var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
 var Category_1 = __importDefault(require("../models/Category"));
+var PaymentType_1 = __importDefault(require("../models/PaymentType"));
 var ExpensesRepository_1 = __importDefault(require("../repositories/ExpensesRepository"));
 var CrateExpenseService = /** @class */ (function () {
     function CrateExpenseService() {
     }
-    CrateExpenseService.prototype.categoryExists = function (id) {
+    CrateExpenseService.prototype.checkIfParameterExists = function (id, model) {
         return __awaiter(this, void 0, void 0, function () {
-            var categoryRepository, category;
+            var repository, parameter;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        categoryRepository = typeorm_1.getRepository(Category_1.default);
-                        return [4 /*yield*/, categoryRepository.findOne({ id: id })];
+                        repository = typeorm_1.getRepository(model);
+                        return [4 /*yield*/, repository.findOne({ id: id })];
                     case 1:
-                        category = _a.sent();
-                        return [2 /*return*/, !!category];
+                        parameter = _a.sent();
+                        return [2 /*return*/, !!parameter];
                 }
             });
         });
@@ -67,20 +68,24 @@ var CrateExpenseService = /** @class */ (function () {
         return personal ? amount : (split ? Math.round(amount / 2) : amount);
     };
     CrateExpenseService.prototype.execute = function (_a) {
-        var owner_id = _a.owner_id, description = _a.description, date = _a.date, amount = _a.amount, category_id = _a.category_id, personal = _a.personal, split = _a.split;
+        var owner_id = _a.owner_id, description = _a.description, date = _a.date, amount = _a.amount, category_id = _a.category_id, personal = _a.personal, split = _a.split, payment_type_id = _a.payment_type_id;
         return __awaiter(this, void 0, void 0, function () {
-            var expensesRepository, expenseDate, isSameExpense, netAmount, expense;
+            var expensesRepository, isSameExpense, netAmount, expense;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0:
-                        if (!this.categoryExists(category_id))
+                    case 0: return [4 /*yield*/, this.checkIfParameterExists(category_id, Category_1.default)];
+                    case 1:
+                        if (!(_b.sent()))
                             throw new AppError_1.default(constants_1.default.errorMessages.notFoundCategory);
+                        return [4 /*yield*/, this.checkIfParameterExists(payment_type_id, PaymentType_1.default)];
+                    case 2:
+                        if (!(_b.sent()))
+                            throw new AppError_1.default(constants_1.default.errorMessages.notFoundPaymentType);
                         if (date_fns_1.isFuture(date))
                             throw new AppError_1.default(constants_1.default.errorMessages.futureDate);
                         expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
-                        expenseDate = date_fns_1.startOfDay(date);
-                        return [4 /*yield*/, expensesRepository.findByDescriptionAndDate(description, expenseDate)];
-                    case 1:
+                        return [4 /*yield*/, expensesRepository.findByDescriptionAndDate(description, date_fns_1.startOfDay(date))];
+                    case 3:
                         isSameExpense = _b.sent();
                         if (isSameExpense)
                             throw new AppError_1.default(constants_1.default.errorMessages.existingExpense);
@@ -92,10 +97,11 @@ var CrateExpenseService = /** @class */ (function () {
                             amount: netAmount,
                             category_id: category_id,
                             personal: personal || false,
-                            split: personal ? false : (split || false)
+                            split: personal ? false : (split || false),
+                            payment_type_id: payment_type_id
                         });
                         return [4 /*yield*/, expensesRepository.save(expense)];
-                    case 2:
+                    case 4:
                         _b.sent();
                         return [2 /*return*/, expense];
                 }

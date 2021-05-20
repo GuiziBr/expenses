@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateGetBalance = exports.validateGetExpenses = exports.validateCreateExpense = exports.validateCategory = exports.validateSession = exports.validateUser = void 0;
+exports.validatePaymentType = exports.validateGetBalance = exports.validateGetExpenses = exports.validateCreateExpense = exports.validateCategory = exports.validateSession = exports.validateUser = void 0;
 var date_fns_1 = require("date-fns");
 var Yup = __importStar(require("yup"));
 var constants_1 = __importDefault(require("../constants"));
@@ -159,7 +159,8 @@ function validateCreateExpense(_a, _response, next) {
                         amount: Yup.number().required(constants_1.default.schemaValidationErrors.amountRequired),
                         category_id: Yup.string().required(constants_1.default.schemaValidationErrors.categoryRequired),
                         personal: Yup.boolean(),
-                        split: Yup.boolean()
+                        split: Yup.boolean(),
+                        payment_type_id: Yup.string().required(constants_1.default.schemaValidationErrors.paymentTypeRequired)
                     });
                     return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
                 case 1:
@@ -229,3 +230,27 @@ function validateGetBalance(_a, _response, next) {
     });
 }
 exports.validateGetBalance = validateGetBalance;
+function validatePaymentType(_a, _response, next) {
+    var body = _a.body;
+    return __awaiter(this, void 0, void 0, function () {
+        var schema, err_7;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    schema = Yup.object().shape({ description: Yup.string().required(constants_1.default.schemaValidationErrors.descriptionRequired) });
+                    return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
+                case 1:
+                    _b.sent();
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_7 = _b.sent();
+                    if (err_7 instanceof Yup.ValidationError)
+                        throw new AppError_1.default(err_7.message);
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/, next()];
+            }
+        });
+    });
+}
+exports.validatePaymentType = validatePaymentType;

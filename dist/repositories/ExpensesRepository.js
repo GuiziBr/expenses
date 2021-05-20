@@ -106,7 +106,6 @@ var ExpensesRepository = /** @class */ (function (_super) {
                         typedExpenses = expenses
                             .splice(offset, limit)
                             .map(function (expense) { return _this.assembleExpense(expense, owner_id, true); });
-
                         return [2 /*return*/, { expenses: typedExpenses, totalCount: totalCount }];
                 }
             });
@@ -189,10 +188,13 @@ var ExpensesRepository = /** @class */ (function (_super) {
         });
     };
     ExpensesRepository.prototype.assembleExpense = function (expense, owner_id, isShared) {
-        return __assign({ id: expense.id, owner_id: expense.owner_id, description: expense.description, category: {
+        return __assign(__assign({ id: expense.id, owner_id: expense.owner_id, description: expense.description, category: {
                 id: expense.category.id,
                 description: expense.category.description
-            }, amount: expense.amount, date: expense.date }, isShared && { type: expense.owner_id === owner_id ? Types.Income : Types.Outcome });
+            }, amount: expense.amount, date: expense.date }, isShared && { type: expense.owner_id === owner_id ? Types.Income : Types.Outcome }), { payment_type: {
+                id: expense.payment_type.id,
+                description: expense.payment_type.description
+            } });
     };
     ExpensesRepository = __decorate([
         typeorm_1.EntityRepository(Expense_1.default)
