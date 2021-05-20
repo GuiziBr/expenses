@@ -51,22 +51,24 @@ var ChangePaymentTypeField1621475466451 = /** @class */ (function () {
             var paymentTypeRepository, paymentTypes, createPaymentType;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
+                    case 0: return [4 /*yield*/, queryRunner.startTransaction()];
+                    case 1:
+                        _a.sent();
                         paymentTypeRepository = typeorm_1.getRepository(PaymentType_1.default);
                         return [4 /*yield*/, paymentTypeRepository.findOne({ where: { description: 'Vale Refeição' } })];
-                    case 1:
-                        paymentTypes = _a.sent();
-                        if (!!paymentTypes) return [3 /*break*/, 3];
-                        createPaymentType = new CreatePaymentTypeService_1.default();
-                        return [4 /*yield*/, createPaymentType.execute({ description: 'Vale Refeição' })];
                     case 2:
                         paymentTypes = _a.sent();
-                        _a.label = 3;
-                    case 3: return [4 /*yield*/, queryRunner.query("UPDATE public.expenses SET payment_type_id = '" + paymentTypes.id + "'")];
-                    case 4:
+                        if (!!paymentTypes) return [3 /*break*/, 4];
+                        createPaymentType = new CreatePaymentTypeService_1.default();
+                        return [4 /*yield*/, createPaymentType.execute({ description: 'Vale Refeição' })];
+                    case 3:
+                        paymentTypes = _a.sent();
+                        _a.label = 4;
+                    case 4: return [4 /*yield*/, queryRunner.query("UPDATE public.expenses SET payment_type_id = '" + paymentTypes.id + "'")];
+                    case 5:
                         _a.sent();
                         return [4 /*yield*/, queryRunner.query('ALTER TABLE public.expenses ALTER COLUMN payment_type_id SET NOT NULL;')];
-                    case 5:
+                    case 6:
                         _a.sent();
                         return [2 /*return*/];
                 }

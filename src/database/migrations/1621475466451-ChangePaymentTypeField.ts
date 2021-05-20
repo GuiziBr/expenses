@@ -4,6 +4,7 @@ import CreatePaymentTypeService from '../../services/CreatePaymentTypeService'
 
 export class ChangePaymentTypeField1621475466451 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.startTransaction()
     const paymentTypeRepository = getRepository(PaymentType)
     let paymentTypes = await paymentTypeRepository.findOne({ where: { description: 'Vale Refeição' }})
     if (!paymentTypes) {

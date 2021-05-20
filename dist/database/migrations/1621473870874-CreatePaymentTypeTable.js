@@ -90,6 +90,9 @@ var CreatePaymentTypeTable1621473870874 = /** @class */ (function () {
                             }))];
                     case 3:
                         _a.sent();
+                        return [4 /*yield*/, queryRunner.commitTransaction()];
+                    case 4:
+                        _a.sent();
                         return [2 /*return*/];
                 }
             });
@@ -99,10 +102,10 @@ var CreatePaymentTypeTable1621473870874 = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.dropTable('payment_type')];
+                    case 0: return [4 /*yield*/, queryRunner.dropColumn('expenses', 'payment_type_id')];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.dropColumn('expenses', 'payment_type_id')];
+                        return [4 /*yield*/, queryRunner.dropTable('payment_type')];
                     case 2:
                         _a.sent();
                         return [2 /*return*/];

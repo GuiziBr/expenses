@@ -43,10 +43,11 @@ export class CreatePaymentTypeTable1621473870874 implements MigrationInterface {
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE'
     }))
+    await queryRunner.commitTransaction()
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('payment_type')
     await queryRunner.dropColumn('expenses', 'payment_type_id')
+    await queryRunner.dropTable('payment_type')
   }
 }
