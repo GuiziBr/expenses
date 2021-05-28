@@ -11,7 +11,7 @@ interface IEmailData {
 }
 
 class EmailService {
-  private oAuth2Client
+  private oAuth2Client: any
 
   constructor() {
     this.oAuth2Client = this.createOAuth2Client()

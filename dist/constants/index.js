@@ -28,6 +28,11 @@ var constants = {
     },
     headerTypes: { totalCount: 'X-Total-Count' },
     defaultLimit: 5,
-    defaultOffset: 0
+    defaultOffset: 0,
+    smtpService: 'gmail',
+    reportSubject: 'Expenses Portal - Monthly Report',
+    corsOrigins: ['https://expenses-portal.herokuapp.com', 'http://localhost:3000'],
+    cronJobTime: '0 0 9 28-31 * *',
+    cronJobTimeZone: 'America/Sao_Paulo'
 };
 exports.default = constants;

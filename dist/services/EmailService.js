@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -39,52 +50,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var cors_1 = __importDefault(require("cors"));
-var cron_1 = require("cron");
-var date_fns_1 = require("date-fns");
-var dotenv_1 = __importDefault(require("dotenv"));
-var express_1 = __importDefault(require("express"));
-require("express-async-errors");
-require("reflect-metadata");
-var upload_1 = __importDefault(require("./config/upload"));
-var constants_1 = __importDefault(require("./constants"));
-require("./database");
-var AppError_1 = __importDefault(require("./errors/AppError"));
-var routes_1 = __importDefault(require("./routes"));
-var ReportService_1 = __importDefault(require("./services/ReportService"));
-dotenv_1.default.config();
-var app = express_1.default();
-app.use(cors_1.default({
-    origin: constants_1.default.corsOrigins,
-    exposedHeaders: constants_1.default.headerTypes.totalCount
-}));
-app.use(express_1.default.json());
-app.use('/files', express_1.default.static(upload_1.default.directory));
-app.use(routes_1.default);
-app.use(function (err, _request, response, _) {
-    if (err instanceof AppError_1.default)
-        return response.status(err.statusCode).json({ status: 'error', message: err.message });
-    console.error(err);
-    return response.status(500).json({ status: 'error', message: constants_1.default.errorMessages.internalError });
-});
-var sendEmailJob = new cron_1.CronJob(constants_1.default.cronJobTime, function () { return __awaiter(void 0, void 0, void 0, function () {
-    var reportService;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                if (!date_fns_1.isLastDayOfMonth(new Date())) return [3 /*break*/, 2];
-                reportService = new ReportService_1.default();
-                return [4 /*yield*/, reportService.execute()];
-            case 1:
-                _a.sent();
-                console.log("CronJob executed at " + new Date());
-                return [2 /*return*/, true];
-            case 2: return [2 /*return*/, false];
-        }
-    });
-}); }, null, false, constants_1.default.cronJobTimeZone);
-var port = process.env.PORT;
-app.listen(port, function () {
-    console.log("Server started on port " + port);
-    sendEmailJob.start();
-});
+var googleapis_1 = require("googleapis");
+var nodemailer_1 = __importDefault(require("nodemailer"));
+var smtp_1 = __importDefault(require("../config/smtp"));
+var EmailService = /** @class */ (function () {
+    function EmailService() {
+        this.oAuth2Client = this.createOAuth2Client();
+    }
+    EmailService.prototype.createOAuth2Client = function () {
+        var oAuth2Client = new googleapis_1.google.auth.OAuth2(smtp_1.default.auth.clientId, smtp_1.default.auth.clientSecret, smtp_1.default.redirectUrl);
+        oAuth2Client.setCredentials({ refresh_token: smtp_1.default.auth.refreshToken });
+        return oAuth2Client;
+    };
+    EmailService.prototype.createTransporter = function (accessToken) {
+        return nodemailer_1.default.createTransport({
+            service: smtp_1.default.service,
+            auth: __assign(__assign({}, smtp_1.default.auth), { type: 'OAUTH2', accessToken: accessToken })
+        });
+    };
+    EmailService.prototype.execute = function (_a) {
+        var text = _a.text, subject = _a.subject, to = _a.to, html = _a.html;
+        return __awaiter(this, void 0, void 0, function () {
+            var accessToken, transporter;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, this.oAuth2Client.getAccessToken()];
+                    case 1:
+                        accessToken = _b.sent();
+                        transporter = this.createTransporter(accessToken);
+                        return [4 /*yield*/, transporter.sendMail({ text: text, subject: subject, to: to, html: html })];
+                    case 2:
+                        _b.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    return EmailService;
+}());
+exports.default = EmailService;

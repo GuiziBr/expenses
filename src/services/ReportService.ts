@@ -27,7 +27,7 @@ class ReportService {
 
   private expensesRepository: ExpensesRepository
 
-  private emailService
+  private emailService: EmailService
 
   private reportDate: Date
 
