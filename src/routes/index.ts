@@ -1,10 +1,10 @@
 import { Router } from 'express'
+import balanceRouter from './balance.routes'
 import categoriesRouter from './categories.routes'
 import expensesRouter from './expenses.routes'
+import paymentTypeRouter from './paymentType.routes'
 import sessionsRouter from './sessions.routes'
 import usersRouter from './users.routes'
-import balanceRouter from './balance.routes'
-import paymentTypeRouter from './paymentType.routes'
 
 const routes = Router()
 
