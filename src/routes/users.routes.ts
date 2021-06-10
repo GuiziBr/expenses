@@ -8,6 +8,8 @@ import CreateUserService from '../services/CreateUserService'
 import UpdateUserAvatarService from '../services/UpdateUserAvatarService'
 
 const usersRouter = Router()
+usersRouter.use(ensureAuthenticated)
+
 const upload = multer(uploadConfig)
 
 usersRouter.post('/', validateUser, async (request, response) => {
@@ -17,7 +19,7 @@ usersRouter.post('/', validateUser, async (request, response) => {
   return response.status(201).json({ name: user.name, email: user.email })
 })
 
-usersRouter.patch('/avatar', ensureAuthenticated, upload.single('avatar'), async (request, response) => {
+usersRouter.patch('/avatar', upload.single('avatar'), async (request, response) => {
   const updateUserAvatar = new UpdateUserAvatarService()
   const user = await updateUserAvatar.execute({ user_id: request.user.id, avatarFileName: request.file.filename })
   return response.json(assembleUser(user))
