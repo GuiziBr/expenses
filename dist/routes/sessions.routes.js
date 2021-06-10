@@ -54,7 +54,7 @@ sessionsRouter.post('/', validateInput_1.validateSession, function (request, res
                 return [4 /*yield*/, authenticateUser.execute({ email: email, password: password })];
             case 1:
                 _b = _c.sent(), user = _b.user, token = _b.token;
-                return [2 /*return*/, response.json(sessionAssembler_1.assembleSession(user, token))];
+                return [2 /*return*/, response.status(201).json(sessionAssembler_1.assembleSession(user, token))];
         }
     });
 }); });
