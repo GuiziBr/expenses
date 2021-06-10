@@ -19,7 +19,7 @@ categoriesRouter.post('/', validateCategory, async (request, response) => {
   const { description } = request.body
   const createCategory = new CreateCategoryService()
   const category = await createCategory.execute({ description })
-  return response.json(category)
+  return response.status(201).json(category)
 })
 
 export default categoriesRouter
