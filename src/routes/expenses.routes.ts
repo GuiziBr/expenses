@@ -26,7 +26,7 @@ expensesRouter.post('/', validateCreateExpense, parseBodyDate, async ({ user, bo
     split,
     payment_type_id
   })
-  return response.json(expense)
+  return response.status(201).json(expense)
 })
 
 expensesRouter.get('/shared', validateGetExpenses, async ({ user, query }, response) => {

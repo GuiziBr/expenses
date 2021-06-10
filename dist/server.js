@@ -46,6 +46,9 @@ var dotenv_1 = __importDefault(require("dotenv"));
 var express_1 = __importDefault(require("express"));
 require("express-async-errors");
 require("reflect-metadata");
+var swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
+var express_openapi_validator_1 = require("express-openapi-validator");
+var api_schema_json_1 = __importDefault(require("./api.schema.json"));
 var upload_1 = __importDefault(require("./config/upload"));
 var constants_1 = __importDefault(require("./constants"));
 require("./database");
@@ -67,6 +70,24 @@ app.use(function (err, _request, response, _) {
     console.error(err);
     return response.status(500).json({ status: 'error', message: constants_1.default.errorMessages.internalError });
 });
+function docSetup() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    app.use('/doc', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(api_schema_json_1.default));
+                    return [4 /*yield*/, new express_openapi_validator_1.OpenApiValidator({
+                            apiSpec: api_schema_json_1.default,
+                            validateRequests: true,
+                            validateResponses: true
+                        }).install(app)];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
 var sendEmailJob = new cron_1.CronJob(constants_1.default.cronJobTime, function () { return __awaiter(void 0, void 0, void 0, function () {
     var reportService;
     return __generator(this, function (_a) {
@@ -87,4 +108,5 @@ var port = process.env.PORT;
 app.listen(port, function () {
     console.log("Server started on port " + port);
     sendEmailJob.start();
+    docSetup();
 });

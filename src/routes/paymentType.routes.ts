@@ -19,7 +19,7 @@ paymentTypeRouter.post('/', validatePaymentType, async (request, response) => {
   const { description } = request.body
   const cratePaymentType = new CreatePaymentTypeService()
   const paymentType = await cratePaymentType.execute({ description })
-  return response.json(paymentType)
+  return response.status(201).json(paymentType)
 })
 
 export default paymentTypeRouter

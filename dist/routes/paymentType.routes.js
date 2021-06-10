@@ -70,7 +70,7 @@ paymentTypeRouter.post('/', validateInput_1.validatePaymentType, function (reque
                 return [4 /*yield*/, cratePaymentType.execute({ description: description })];
             case 1:
                 paymentType = _a.sent();
-                return [2 /*return*/, response.json(paymentType)];
+                return [2 /*return*/, response.status(201).json(paymentType)];
         }
     });
 }); });

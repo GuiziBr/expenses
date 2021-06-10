@@ -72,7 +72,7 @@ expensesRouter.post('/', validateInput_1.validateCreateExpense, parseDate_1.pars
                         })];
                 case 1:
                     expense = _b.sent();
-                    return [2 /*return*/, response.json(expense)];
+                    return [2 /*return*/, response.status(201).json(expense)];
             }
         });
     });

@@ -12,10 +12,10 @@ The goal of this application is helping in the expenses management of a couple. 
 
 * User authentication
 * User creation
-* Upload user's avatar
+* Upload user's avatar (in development)
 * Expense creation
-* Personal/Shared balance
-* Expenses listing
+* Personal expenses listing
+* Shared expenses listing
 * Category creation
 * Payment Type creation
 
@@ -64,6 +64,10 @@ The goal of this application is helping in the expenses management of a couple. 
 }
 ```
 
+* Make a get request on the route /expenses/personal?date=YYYY-MM to list the personal expenses and an either specif or current month
+
+* Make a get request on the route /expenses/shared?date=YYYY-MM to list the shared expenses and an either specif or current month
+
 * Make a patch request of type multipart with the following payload on the route /users/avatar to upload the user's avatar
 
 ```
@@ -73,10 +77,6 @@ The goal of this application is helping in the expenses management of a couple. 
 
 ```
 * Make a get request on the route /balance?date=YYYY-MM to get both the personal and shared balance for the provided user
-
-* Make a get request on the route /expenses/balance?date=YYYY-MM to list the expenses and the balance for a either specif or current month
-
-* Make a get request on the route /expenses/personalBalance?date=YYYY-MM to list the expenses and the balance for the provided user and an either specif or current month
 
 * Make a post request with the following payload on the route /categories to create a category
 
@@ -94,3 +94,5 @@ The goal of this application is helping in the expenses management of a couple. 
 {
 	"description": [string],
 }
+
+* Make a get request route /paymentType to list all the register payment types

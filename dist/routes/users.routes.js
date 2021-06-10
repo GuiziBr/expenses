@@ -59,7 +59,7 @@ usersRouter.post('/', validateInput_1.validateUser, function (request, response)
                 return [4 /*yield*/, createUser.execute({ name: name, email: email, password: password })];
             case 1:
                 user = _b.sent();
-                return [2 /*return*/, response.json({ name: user.name, email: user.email })];
+                return [2 /*return*/, response.status(201).json({ name: user.name, email: user.email })];
         }
     });
 }); });

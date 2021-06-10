@@ -5,6 +5,10 @@ import dotenv from 'dotenv'
 import express, { NextFunction, Request, Response } from 'express'
 import 'express-async-errors'
 import 'reflect-metadata'
+import swaggerUi from 'swagger-ui-express'
+import { OpenApiValidator } from 'express-openapi-validator'
+import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types'
+import apiSchema from './api.schema.json'
 import uploadConfig from './config/upload'
 import constants from './constants'
 import './database'
@@ -28,6 +32,15 @@ app.use((err: Error, _request: Request, response: Response, _: NextFunction) => 
   return response.status(500).json({ status: 'error', message: constants.errorMessages.internalError })
 })
 
+async function docSetup(): Promise<void> {
+  app.use('/doc', swaggerUi.serve, swaggerUi.setup(apiSchema))
+  await new OpenApiValidator({
+    apiSpec: apiSchema as OpenAPIV3.Document,
+    validateRequests: true,
+    validateResponses: true
+  }).install(app)
+}
+
 const sendEmailJob = new CronJob(constants.cronJobTime, async () => {
   if (isLastDayOfMonth(new Date())) {
     const reportService = new ReportService()
@@ -43,4 +56,5 @@ const port = process.env.PORT
 app.listen(port, () => {
   console.log(`Server started on port ${port}`)
   sendEmailJob.start()
+  docSetup()
 })

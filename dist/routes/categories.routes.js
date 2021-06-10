@@ -70,7 +70,7 @@ categoriesRouter.post('/', validateInput_1.validateCategory, function (request, 
                 return [4 /*yield*/, createCategory.execute({ description: description })];
             case 1:
                 category = _a.sent();
-                return [2 /*return*/, response.json(category)];
+                return [2 /*return*/, response.status(201).json(category)];
         }
     });
 }); });

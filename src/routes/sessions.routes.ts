@@ -9,7 +9,7 @@ sessionsRouter.post('/', validateSession, async (request, response) => {
   const { email, password } = request.body
   const authenticateUser = new AuthenticateUserService()
   const { user, token } = await authenticateUser.execute({ email, password })
-  return response.json(assembleSession(user, token))
+  return response.status(201).json(assembleSession(user, token))
 })
 
 export default sessionsRouter
