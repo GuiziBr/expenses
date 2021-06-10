@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "title": "Expenses",
     "description": "Expenses API",
     "license": {
@@ -24,7 +24,16 @@
       "post": {
         "description": "Create a new User",
         "operationId": "createUser",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -58,6 +67,22 @@
                   "message": "Invalid parameters",
                   "code": "400",
                   "error": "Bad Request"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
                 }
               }
             }

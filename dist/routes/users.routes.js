@@ -48,6 +48,7 @@ var validateInput_1 = require("../middlewares/validateInput");
 var CreateUserService_1 = __importDefault(require("../services/CreateUserService"));
 var UpdateUserAvatarService_1 = __importDefault(require("../services/UpdateUserAvatarService"));
 var usersRouter = express_1.Router();
+usersRouter.use(ensureAuthenticated_1.default);
 var upload = multer_1.default(upload_1.default);
 usersRouter.post('/', validateInput_1.validateUser, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, name, email, password, createUser, user;
@@ -63,7 +64,7 @@ usersRouter.post('/', validateInput_1.validateUser, function (request, response)
         }
     });
 }); });
-usersRouter.patch('/avatar', ensureAuthenticated_1.default, upload.single('avatar'), function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+usersRouter.patch('/avatar', upload.single('avatar'), function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
     var updateUserAvatar, user;
     return __generator(this, function (_a) {
         switch (_a.label) {
