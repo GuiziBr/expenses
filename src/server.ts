@@ -1,60 +1,18 @@
-import cors from 'cors'
-import { CronJob } from 'cron'
-import { isLastDayOfMonth } from 'date-fns'
-import dotenv from 'dotenv'
-import express, { NextFunction, Request, Response } from 'express'
-import 'express-async-errors'
-import 'reflect-metadata'
-import swaggerUi from 'swagger-ui-express'
-import { OpenApiValidator } from 'express-openapi-validator'
-import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types'
-import apiSchema from './api.schema.json'
-import uploadConfig from './config/upload'
-import constants from './constants'
-import './database'
-import AppError from './errors/AppError'
-import routes from './routes'
-import ReportService from './services/ReportService'
+import app from './app'
+import docSetup from './doc/docSetup'
+import JobService from './services/JobService'
 
-dotenv.config()
-const app = express()
+const { PORT } = process.env
 
-app.use(cors({
-  origin: constants.corsOrigins,
-  exposedHeaders: constants.headerTypes.totalCount
-}))
-app.use(express.json())
-app.use('/files', express.static(uploadConfig.directory))
-app.use(routes)
-app.use((err: Error, _request: Request, response: Response, _: NextFunction) => {
-  if (err instanceof AppError) return response.status(err.statusCode).json({ status: 'error', message: err.message })
-  console.error(err)
-  return response.status(500).json({ status: 'error', message: constants.errorMessages.internalError })
-})
+docSetup(app)
 
-async function docSetup(): Promise<void> {
-  app.use('/doc', swaggerUi.serve, swaggerUi.setup(apiSchema))
-  await new OpenApiValidator({
-    apiSpec: apiSchema as OpenAPIV3.Document,
-    validateRequests: true,
-    validateResponses: true
-  }).install(app)
+const sendMonthlyReportJob = async () => {
+  const jobService = new JobService()
+  const sendMonthlyReport = await jobService.sendMonthlyReportJob()
+  return sendMonthlyReport.start()
 }
 
-const sendEmailJob = new CronJob(constants.cronJobTime, async () => {
-  if (isLastDayOfMonth(new Date())) {
-    const reportService = new ReportService()
-    await reportService.execute()
-    console.log(`CronJob executed at ${new Date()}`)
-    return true
-  }
-  return false
-}, null, false, constants.cronJobTimeZone)
-
-const port = process.env.PORT
-
-app.listen(port, () => {
-  console.log(`Server started on port ${port}`)
-  sendEmailJob.start()
-  docSetup()
+app.listen(PORT, async () => {
+  console.log(`Server started on port ${PORT}`)
+  await sendMonthlyReportJob()
 })

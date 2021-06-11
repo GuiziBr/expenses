@@ -31,7 +31,8 @@ const constants = {
   reportSubject: 'Expenses Portal - Monthly Report',
   corsOrigins: ['https://expenses-portal.herokuapp.com', 'http://localhost:3000'],
   cronJobTime: '0 0 9 28-31 * *',
-  cronJobTimeZone: 'America/Sao_Paulo'
+  cronJobTimeZone: 'America/Sao_Paulo',
+  reportDateFormat: 'yyyy/MM'
 }
 
 export default constants
