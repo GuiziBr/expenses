@@ -55,11 +55,11 @@ The goal of this application is helping in the expenses management of a couple. 
 ```
 {
 	"description": [string],
-  "category_id": [string]
+  "category_id": [string],
 	"date": "[2021-01-01]",
-	"amount": [number]
-  "personal":[boolean]
-  "split": [boolean]
+	"amount": [number],
+  "personal":[boolean],
+  "split": [boolean],
   "payment_type_id": [string]
 }
 ```
