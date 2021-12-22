@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getRepository } from 'typeorm'
+import { getRepository, IsNull } from 'typeorm'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 import { validatePaymentType } from '../middlewares/validateInput'
 import PaymentType from '../models/PaymentType'
@@ -11,7 +11,7 @@ paymentTypeRouter.use(ensureAuthenticated)
 
 paymentTypeRouter.get('/', async (_request, response) => {
   const paymentTypeRepository = getRepository(PaymentType)
-  const paymentTypes = await paymentTypeRepository.find()
+  const paymentTypes = await paymentTypeRepository.find({ where: { deleted_at: IsNull() }})
   return response.json(paymentTypes)
 })
 

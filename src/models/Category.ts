@@ -13,6 +13,9 @@ class Category {
 
   @UpdateDateColumn()
   updated_at: Date
+
+  @Column()
+  deleted_at: Date
 }
 
 export default Category
