@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getRepository } from 'typeorm'
+import { getRepository, IsNull } from 'typeorm'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 import { validateCategory } from '../middlewares/validateInput'
 import Category from '../models/Category'
@@ -11,7 +11,7 @@ categoriesRouter.use(ensureAuthenticated)
 
 categoriesRouter.get('/', async (_request, response) => {
   const categoriesRepository = getRepository(Category)
-  const categories = await categoriesRepository.find()
+  const categories = await categoriesRepository.find({ where: { deleted_at: IsNull() }})
   return response.json(categories)
 })
 

@@ -1,5 +1,5 @@
 import { isFuture, startOfDay } from 'date-fns'
-import { EntityTarget, getCustomRepository, getRepository, Entity } from 'typeorm'
+import { EntityTarget, getCustomRepository, getRepository, Entity, IsNull } from 'typeorm'
 import constants from '../constants'
 import AppError from '../errors/AppError'
 import Category from '../models/Category'
@@ -21,7 +21,7 @@ interface Request {
 class CrateExpenseService {
   private async checkIfParameterExists(id: string, model: EntityTarget<typeof Entity>): Promise<boolean> {
     const repository = getRepository(model)
-    const parameter = await repository.findOne({ id })
+    const parameter = await repository.findOne({ where: { id, deleted_at: IsNull() }})
     return !!parameter
   }
 

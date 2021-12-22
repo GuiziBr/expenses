@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 import Category from './Category'
-import User from './User'
 import PaymentType from './PaymentType'
+import User from './User'
 
 @Entity('expenses')
 class Expense {

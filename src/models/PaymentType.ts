@@ -13,6 +13,9 @@ class PaymentType {
 
   @UpdateDateColumn()
   updated_at: Date
+
+  @Column()
+  deleted_at: Date
 }
 
 export default PaymentType
