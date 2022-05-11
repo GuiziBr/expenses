@@ -5,10 +5,11 @@
 
 ### App's objective
 
-The goal of this application is helping in the expenses management of a couple. It keeps the expenses register that each one fills during the month and presents a dashboard of the registered expenses, it's amounts and the total difference between each person.
+The following application's description takes into consideration both the [Back-end](https://github.com/GuiziBr/expenses) plus the [Front-end](https://github.com/GuiziBr/expenses_portal)
 
+This application aims to help manage household expenses. Each person should register their own expenses throughout the month so the application can keep track and calculate the difference between each person's spending. It presents dashboards for both personal and shared expenses together with the total amount for incomes, outcomes and balance.
 
- The backend is built with nodejs + typescript containing the following features:
+The backend is built with nodejs + typescript containing the following features:
 
 * User authentication
 * User creation
@@ -29,70 +30,17 @@ The goal of this application is helping in the expenses management of a couple. 
 * Postgresql
 * Docker
 
-## How to use
+## Requirements
 
-* Make a post request with the following payload on the route /sessions to create a session:
-```
-{
-  "email": "user@email.com",
-  "password": "password"
-}
-```
+* NodeJs 12 or latest
+* Docker Compose
 
-###### The header of the following routes must contain the Bearer token provided by the session route
+## How to install
 
-* Make a post request with the following payload on the route /users to create a new user:
-```
-{
-  "name": "username",
-  "email": "user@email.com",
-  "password": "password"
-}
-```
+1 - Clone this repository
+2 - Install dependencies with `npm install`
+3 - Run `make` command to install database container, execute migrations and start server
 
-* Make a post request with the following payload on the route /expenses to create an expense
+## How to use the back-end api's
 
-```
-{
-	"description": [string],
-  "category_id": [string],
-	"date": "[2021-01-01]",
-	"amount": [number],
-  "personal":[boolean],
-  "split": [boolean],
-  "payment_type_id": [string]
-}
-```
-
-* Make a get request on the route /expenses/personal?date=YYYY-MM to list the personal expenses and an either specif or current month
-
-* Make a get request on the route /expenses/shared?date=YYYY-MM to list the shared expenses and an either specif or current month
-
-* Make a patch request of type multipart with the following payload on the route /users/avatar to upload the user's avatar
-
-```
-{
-	"avatar": [jpeg/png file format]
-}
-
-```
-* Make a get request on the route /balance?date=YYYY-MM to get both the personal and shared balance for the provided user
-
-* Make a post request with the following payload on the route /categories to create a category
-
-```
-{
-	"description": [string],
-}
-```
-
-* Make a get request route /categories to list all the register categories
-
-* Make a post request with the following payload on the route /paymentType to create a payment type
-
-```
-{
-	"description": [string],
-}
-
-* Make a get request route /paymentType to list all the register payment types
+For API documentation refer to [Swagger](https://food-expenses.herokuapp.com/doc/)

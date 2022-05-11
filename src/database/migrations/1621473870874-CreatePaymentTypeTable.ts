@@ -26,6 +26,12 @@ export class CreatePaymentTypeTable1621473870874 implements MigrationInterface {
             name: 'updated_at',
             type: 'timestamp',
             default: 'now()'
+          },
+          {
+            name: 'deleted_at',
+            type: 'timestamp',
+            default: 'now()',
+            isNullable: true
           }
         ]
       })
@@ -43,7 +49,7 @@ export class CreatePaymentTypeTable1621473870874 implements MigrationInterface {
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE'
     }))
-    await queryRunner.commitTransaction()
+    // await queryRunner.commitTransaction()
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
