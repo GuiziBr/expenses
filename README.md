@@ -5,7 +5,7 @@
 
 ### App's objective
 
-The following application's description takes into consideration both the [Back-end](https://github.com/GuiziBr/expenses) plus the [Front-end](https://github.com/GuiziBr/expenses_portal)
+The following application's description takes into consideration both the [Back-end](https://github.com/GuiziBr/expenses) and the [Front-end](https://github.com/GuiziBr/expenses_portal)
 
 This application aims to help manage household expenses. Each person should register their own expenses throughout the month so the application can keep track and calculate the difference between each person's spending. It presents dashboards for both personal and shared expenses together with the total amount for incomes, outcomes and balance.
 
