@@ -5,7 +5,11 @@
 
 ### App's objective
 
+<<<<<<< HEAD
 The following application's description takes into consideration both the [Back-end](https://github.com/GuiziBr/expenses) plus the [Front-end](https://github.com/GuiziBr/expenses_portal)
+=======
+The following application's description takes into consideration both the [Back-end](https://github.com/GuiziBr/expenses) and the [Front-end](https://github.com/GuiziBr/expenses_portal)
+>>>>>>> master
 
 This application aims to help manage household expenses. Each person should register their own expenses throughout the month so the application can keep track and calculate the difference between each person's spending. It presents dashboards for both personal and shared expenses together with the total amount for incomes, outcomes and balance.
 
@@ -37,9 +41,10 @@ The backend is built with nodejs + typescript containing the following features:
 
 ## How to install
 
-1 - Clone this repository
-2 - Install dependencies with `npm install`
-3 - Run `make` command to install database container, execute migrations and start server
+ 1. Clone this repository
+ 2. Create an `.env` file following the `.env.template`
+ 3. Install dependencies with `npm install`
+ 4. Run `make` command to install database container, migrations and start the server
 
 ## How to use the back-end api's
 
