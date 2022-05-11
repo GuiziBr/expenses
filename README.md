@@ -38,8 +38,9 @@ The backend is built with nodejs + typescript containing the following features:
 ## How to install
 
  1. Clone this repository
- 2. Install dependencies with `npm install`
- 3. Run `make` command to install database container, migrations and start the server
+ 2. Create an `.env` file following the `.env.template`
+ 3. Install dependencies with `npm install`
+ 4. Run `make` command to install database container, migrations and start the server
 
 ## How to use the back-end api's
 
