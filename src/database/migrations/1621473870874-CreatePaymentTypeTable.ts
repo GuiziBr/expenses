@@ -24,13 +24,11 @@ export class CreatePaymentTypeTable1621473870874 implements MigrationInterface {
           },
           {
             name: 'updated_at',
-            type: 'timestamp',
-            default: 'now()'
+            type: 'timestamp'
           },
           {
             name: 'deleted_at',
             type: 'timestamp',
-            default: 'now()',
             isNullable: true
           }
         ]

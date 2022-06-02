@@ -502,9 +502,18 @@
         }
       },
       "get": {
-        "description": "List payment types",
-        "operationId": "listPaymentTypes",
-        "parameters": [],
+        "description": "Get payment type by or List payment types",
+        "operationId": "getPaymentType",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": false
+          }
+        ],
         "responses": {
           "200": {
             "description": "List of payment types",

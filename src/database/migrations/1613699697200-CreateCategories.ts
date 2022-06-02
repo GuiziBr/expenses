@@ -25,12 +25,11 @@ export class CreateCategories1613699697200 implements MigrationInterface {
           {
             name: 'updated_at',
             type: 'timestamp',
-            default: 'now()'
+            isNullable: true
           },
           {
             name: 'deleted_at',
             type: 'timestamp',
-            default: 'now()',
             isNullable: true
           }
         ]
