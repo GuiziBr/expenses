@@ -22,7 +22,8 @@ const constants = {
     changeAvatarNotAllowed: 'Only authenticated users can change avatar',
     internalError: 'Internal server error',
     existingPaymentType: 'Payment type already exists',
-    notFoundPaymentType: 'Payment type not found'
+    notFoundPaymentType: 'Payment type not found',
+    duplicatedPaymentTypeDescription: 'There is already a payment type with same description'
   },
   headerTypes: { totalCount: 'X-Total-Count' },
   defaultLimit: 5,

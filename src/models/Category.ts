@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 
 @Entity('categories')
 class Category {
@@ -14,7 +14,7 @@ class Category {
   @UpdateDateColumn()
   updated_at: Date
 
-  @Column()
+  @DeleteDateColumn({ select: false })
   deleted_at: Date
 }
 

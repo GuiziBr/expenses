@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 
 @Entity('payment_type')
 class PaymentType {
@@ -14,7 +14,7 @@ class PaymentType {
   @UpdateDateColumn()
   updated_at: Date
 
-  @Column()
+  @DeleteDateColumn({ select: false })
   deleted_at: Date
 }
 

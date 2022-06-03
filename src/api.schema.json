@@ -22,7 +22,7 @@
   "paths": {
     "/users": {
       "post": {
-        "description": "Create a new User",
+        "description": "Creates a new User",
         "operationId": "createUser",
         "parameters": [
           {
@@ -92,7 +92,7 @@
     },
     "/sessions": {
       "post": {
-        "description": "Create a session",
+        "description": "Creates a session",
         "operationId": "createSession",
         "requestBody": {
           "content": {
@@ -106,7 +106,7 @@
         },
         "responses": {
           "200": {
-            "description": "The user information",
+            "description": "User information",
             "content": {
               "application/json": {
                 "schema": {
@@ -136,7 +136,7 @@
     },
     "/expenses": {
       "post": {
-        "description": "Create a new expense",
+        "description": "Creates a new expense",
         "operationId": "createExpense",
         "parameters": [
           {
@@ -205,7 +205,7 @@
     },
     "/expenses/shared": {
       "get": {
-        "description": "Get shared expenses",
+        "description": "Gets shared expenses",
         "operationId": "getSharedExpenses",
         "parameters": [
           {
@@ -277,7 +277,7 @@
     },
     "/expenses/personal": {
       "get": {
-        "description": "Get personal expenses",
+        "description": "Gets personal expenses",
         "operationId": "getPersonalExpenses",
         "parameters": [
           {
@@ -349,7 +349,7 @@
     },
     "/category": {
       "post": {
-        "description": "Create a new category",
+        "description": "Creates a new category",
         "operationId": "createCategory",
         "parameters": [
           {
@@ -502,8 +502,8 @@
         }
       },
       "get": {
-        "description": "Get payment type by or List payment types",
-        "operationId": "getPaymentType",
+        "description": "List payment types or gets by Id",
+        "operationId": "listPaymentTypes",
         "parameters": [
           {
             "name": "id",
@@ -511,12 +511,20 @@
             "schema": {
               "$ref": "#/components/schemas/id"
             },
-            "required": false
+            "required": true
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
           }
         ],
         "responses": {
           "200": {
-            "description": "List of payment types",
+            "description": "Payment Type updated",
             "content": {
               "application/json": {
                 "schema": {
@@ -526,11 +534,129 @@
             }
           }
         }
+      },
+      "patch": {
+        "description": "Updates a payment type",
+        "operationId": "updatePaymentType",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentType"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "The payment type has been updated!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentTypeUpdatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Invalid parameters",
+                  "code": "400",
+                  "error": "Bad Request"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Deletes a payment type",
+        "operationId": "deletePaymentType",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The payment type has been deleted!"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/balance": {
       "get": {
-        "description": "Get balance",
+        "description": "Gets balance",
         "operationId": "getBalance",
         "parameters": [
           {
@@ -944,6 +1070,20 @@
         }
       },
       "PaymentTypeCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/description"
+          },
+          "id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "created_at": {
+            "$ref": "#/components/schemas/dateTime"
+          }
+        }
+      },
+      "PaymentTypeUpdatedResponse": {
         "type": "object",
         "properties": {
           "description": {

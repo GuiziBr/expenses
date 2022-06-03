@@ -15,7 +15,8 @@ export class CreatePaymentTypeTable1621473870874 implements MigrationInterface {
           },
           {
             name: 'description',
-            type: 'varchar'
+            type: 'varchar',
+            isUnique: true
           },
           {
             name: 'created_at',

@@ -7,8 +7,6 @@ interface IPaymentType {
   id: string
   description: string
   created_at: Date
-  updated_at: Date
-  deleted_at: Date
 }
 
 interface IRequest {
@@ -22,7 +20,11 @@ class CreatePaymentTypeService {
     if (paymentTypeExists) throw new AppError(constants.errorMessages.existingPaymentType)
     const paymentType = paymentTypeRepository.create({ description })
     await paymentTypeRepository.save(paymentType)
-    return paymentType
+    return {
+      id: paymentType.id,
+      description: paymentType.description,
+      created_at: paymentType.created_at
+    }
   }
 }
 
