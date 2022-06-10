@@ -23,6 +23,7 @@
   "author": "Ricardo Guizi",
   "license": "ISC",
   "dependencies": {
+    "@types/uuid": "^8.3.4",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "cron": "^1.8.2",

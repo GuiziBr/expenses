@@ -14,7 +14,7 @@ class Category {
   @UpdateDateColumn()
   updated_at: Date
 
-  @DeleteDateColumn({ select: false })
+  @DeleteDateColumn()
   deleted_at: Date
 }
 

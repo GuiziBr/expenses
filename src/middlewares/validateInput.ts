@@ -1,6 +1,7 @@
 import { isValid, parseISO } from 'date-fns'
 import { NextFunction, Request, Response } from 'express'
 import * as Yup from 'yup'
+import { validate } from 'uuid'
 import constants from '../constants'
 import AppError from '../errors/AppError'
 
@@ -95,5 +96,11 @@ export async function validatePaymentType({ body }: Request, _response: Response
   } catch (err) {
     if (err instanceof Yup.ValidationError) throw new AppError(err.message)
   }
+  return next()
+}
+
+export async function validateId({ params }: Request, _response: Response, next: NextFunction): Promise<void> {
+  const { id } = params
+  if (!validate(id)) throw new AppError(constants.errorMessages.invalidRequestParam)
   return next()
 }

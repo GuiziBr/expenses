@@ -431,6 +431,102 @@
             }
           }
         }
+      },
+      "patch": {
+        "description": "Updates a category",
+        "operationId": "updateCategory",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Category"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The category has been updated!"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Deletes a category",
+        "operationId": "deleteCategory",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The category has been deleted!"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/paymentType": {
@@ -567,30 +663,8 @@
           "required": true
         },
         "responses": {
-          "201": {
-            "description": "The payment type has been updated!",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaymentTypeUpdatedResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "example": {
-                  "message": "Invalid parameters",
-                  "code": "400",
-                  "error": "Bad Request"
-                }
-              }
-            }
+          "204": {
+            "description": "The payment type has been updated!"
           },
           "401": {
             "description": "Unauthorized",
@@ -1079,23 +1153,6 @@
             "$ref": "#/components/schemas/id"
           },
           "created_at": {
-            "$ref": "#/components/schemas/dateTime"
-          }
-        }
-      },
-      "PaymentTypeUpdatedResponse": {
-        "type": "object",
-        "properties": {
-          "description": {
-            "$ref": "#/components/schemas/description"
-          },
-          "id": {
-            "$ref": "#/components/schemas/id"
-          },
-          "created_at": {
-            "$ref": "#/components/schemas/dateTime"
-          },
-          "updated_at": {
             "$ref": "#/components/schemas/dateTime"
           }
         }

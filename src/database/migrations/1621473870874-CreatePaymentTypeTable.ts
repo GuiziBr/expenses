@@ -25,7 +25,8 @@ export class CreatePaymentTypeTable1621473870874 implements MigrationInterface {
           },
           {
             name: 'updated_at',
-            type: 'timestamp'
+            type: 'timestamp',
+            isNullable: true
           },
           {
             name: 'deleted_at',

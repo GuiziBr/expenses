@@ -23,7 +23,9 @@ const constants = {
     internalError: 'Internal server error',
     existingPaymentType: 'Payment type already exists',
     notFoundPaymentType: 'Payment type not found',
-    duplicatedPaymentTypeDescription: 'There is already a payment type with same description'
+    duplicatedPaymentTypeDescription: 'There is already a payment type with same description',
+    invalidRequestParam: 'Invalid request parameter',
+    duplicatedCategoryDescription: 'There is already a category type with same description'
   },
   headerTypes: { totalCount: 'X-Total-Count' },
   defaultLimit: 5,

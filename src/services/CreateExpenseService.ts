@@ -1,22 +1,12 @@
 import { isFuture, startOfDay } from 'date-fns'
-import { EntityTarget, getCustomRepository, getRepository, Entity, IsNull } from 'typeorm'
+import { Entity, EntityTarget, getCustomRepository, getRepository, IsNull } from 'typeorm'
 import constants from '../constants'
+import { ICreateExpenseRequest } from '../domains/request'
 import AppError from '../errors/AppError'
 import Category from '../models/Category'
-import PaymentType from '../models/PaymentType'
 import Expense from '../models/Expense'
+import PaymentType from '../models/PaymentType'
 import ExpensesRepository from '../repositories/ExpensesRepository'
-
-interface Request {
-  owner_id: string,
-  description: string,
-  date: Date,
-  amount: number,
-  category_id: string
-  personal: boolean
-  split: boolean
-  payment_type_id: string
-}
 
 class CrateExpenseService {
   private async checkIfParameterExists(id: string, model: EntityTarget<typeof Entity>): Promise<boolean> {
@@ -29,7 +19,16 @@ class CrateExpenseService {
     return personal ? amount : (split ? Math.round(amount / 2) : amount)
   }
 
-  public async execute({ owner_id, description, date, amount, category_id, personal, split, payment_type_id }: Request): Promise<Expense> {
+  public async execute({
+    owner_id,
+    description,
+    date,
+    amount,
+    category_id,
+    personal,
+    split,
+    payment_type_id
+  }: ICreateExpenseRequest): Promise<Expense> {
     if (!await this.checkIfParameterExists(category_id, Category)) throw new AppError(constants.errorMessages.notFoundCategory)
     if (!await this.checkIfParameterExists(payment_type_id, PaymentType)) throw new AppError(constants.errorMessages.notFoundPaymentType)
     if (isFuture(date)) throw new AppError(constants.errorMessages.futureDate)
