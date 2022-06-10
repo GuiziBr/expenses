@@ -6,7 +6,7 @@ import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 import { parseBodyDate } from '../middlewares/parseDate'
 import { validateCreateExpense, validateGetExpenses } from '../middlewares/validateInput'
 import ExpensesRepository from '../repositories/ExpensesRepository'
-import CreateExpenseService from '../services/CreateExpenseService'
+import CreateExpenseService from '../services/expense/CreateExpenseService'
 
 const expensesRouter = Router()
 

@@ -1,8 +1,8 @@
 import { getRepository } from 'typeorm'
-import constants from '../constants'
-import { IRequest } from '../domains/paymentType'
-import AppError from '../errors/AppError'
-import PaymentType from '../models/PaymentType'
+import constants from '../../constants'
+import { IRequest } from '../../domains/paymentType'
+import AppError from '../../errors/AppError'
+import PaymentType from '../../models/PaymentType'
 
 class UpdatePaymentTypeService {
   private async reactivate(paymentTypeIdToDelete: string, paymentTypeIdToRestore: string): Promise<PaymentType | null> {

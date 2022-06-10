@@ -5,8 +5,8 @@ import AppError from '../errors/AppError'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 import { validateCategory, validateId } from '../middlewares/validateInput'
 import Category from '../models/Category'
-import CreateCategoryService from '../services/CreateCategoryService'
-import UpdateCategoryService from '../services/UpdateCategoryService'
+import CreateCategoryService from '../services/category/CreateCategoryService'
+import UpdateCategoryService from '../services/category/UpdateCategoryService'
 
 const categoriesRouter = Router()
 

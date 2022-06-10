@@ -104,3 +104,13 @@ export async function validateId({ params }: Request, _response: Response, next:
   if (!validate(id)) throw new AppError(constants.errorMessages.invalidRequestParam)
   return next()
 }
+
+export async function validateBank({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
+  try {
+    const schema = Yup.object().shape({ name: Yup.string().required(constants.schemaValidationErrors.nameRequired) })
+    await schema.validate(body, { abortEarly: false })
+  } catch (err) {
+    if (err instanceof Yup.ValidationError) throw new AppError(err.message)
+  }
+  return next()
+}

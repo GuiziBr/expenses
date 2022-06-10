@@ -1,8 +1,8 @@
 import { getRepository } from 'typeorm'
-import constants from '../constants'
-import AppError from '../errors/AppError'
-import PaymentType from '../models/PaymentType'
-import { IPaymentType } from '../domains/paymentType'
+import constants from '../../constants'
+import AppError from '../../errors/AppError'
+import PaymentType from '../../models/PaymentType'
+import { IPaymentType } from '../../domains/paymentType'
 
 class CreatePaymentTypeService {
   public async execute(description: string): Promise<Omit<IPaymentType, 'updated_at'>> {

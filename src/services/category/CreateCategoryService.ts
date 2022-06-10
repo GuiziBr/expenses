@@ -1,8 +1,8 @@
 import { getRepository } from 'typeorm'
-import constants from '../constants'
-import { ICategory } from '../domains/category'
-import AppError from '../errors/AppError'
-import Category from '../models/Category'
+import constants from '../../constants'
+import { ICategory } from '../../domains/category'
+import AppError from '../../errors/AppError'
+import Category from '../../models/Category'
 
 class CreateCategoryService {
   public async execute(description: string): Promise<Omit<ICategory, 'updated_at'>> {

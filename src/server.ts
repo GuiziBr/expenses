@@ -14,7 +14,7 @@ import constants from './constants'
 import './database'
 import AppError from './errors/AppError'
 import routes from './routes'
-import ReportService from './services/ReportService'
+import ReportService from './services/report/ReportService'
 
 dotenv.config()
 const app = express()

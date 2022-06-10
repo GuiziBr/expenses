@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner, Table, TableColumn, TableForeignKey } from 'typeorm'
 
-export class CreatePaymentTypeTable1621473870874 implements MigrationInterface {
+export class CreateBanks1654841044396 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'payment_type',
+        name: 'banks',
         columns: [
           {
             name: 'id',
@@ -14,7 +14,7 @@ export class CreatePaymentTypeTable1621473870874 implements MigrationInterface {
             default: 'uuid_generate_v4()'
           },
           {
-            name: 'description',
+            name: 'name',
             type: 'varchar',
             isUnique: true
           },
@@ -37,22 +37,22 @@ export class CreatePaymentTypeTable1621473870874 implements MigrationInterface {
       })
     )
     await queryRunner.addColumn('expenses', new TableColumn({
-      name: 'payment_type_id',
+      name: 'bank_id',
       type: 'uuid',
       isNullable: true
     }))
     await queryRunner.createForeignKey('expenses', new TableForeignKey({
-      name: 'ExpensePaymentType',
-      columnNames: ['payment_type_id'],
+      name: 'ExpenseBank',
+      columnNames: ['bank_id'],
       referencedColumnNames: ['id'],
-      referencedTableName: 'payment_type',
+      referencedTableName: 'banks',
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE'
     }))
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropColumn('expenses', 'payment_type_id')
-    await queryRunner.dropTable('payment_type')
+    await queryRunner.dropColumn('expenses', 'bank_id')
+    await queryRunner.dropTable('banks')
   }
 }

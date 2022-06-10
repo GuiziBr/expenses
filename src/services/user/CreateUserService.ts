@@ -1,9 +1,9 @@
 import { hash } from 'bcryptjs'
 import { getRepository } from 'typeorm'
-import constants from '../constants'
-import { ICreateUserRequest } from '../domains/request'
-import AppError from '../errors/AppError'
-import User from '../models/User'
+import constants from '../../constants'
+import { ICreateUserRequest } from '../../domains/request'
+import AppError from '../../errors/AppError'
+import User from '../../models/User'
 
 class CreateUserService {
   public async execute({ name, email, password }: ICreateUserRequest): Promise<User> {

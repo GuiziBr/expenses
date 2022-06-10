@@ -5,8 +5,8 @@ import AppError from '../errors/AppError'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 import { validateId, validatePaymentType } from '../middlewares/validateInput'
 import PaymentType from '../models/PaymentType'
-import CreatePaymentTypeService from '../services/CreatePaymentTypeService'
-import UpdatePaymentTypeService from '../services/UpdatePaymentTypeService'
+import CreatePaymentTypeService from '../services/paymentType/CreatePaymentTypeService'
+import UpdatePaymentTypeService from '../services/paymentType/UpdatePaymentTypeService'
 
 const paymentTypeRouter = Router()
 
@@ -29,7 +29,7 @@ paymentTypeRouter.get('/:id', validateId, async (request, response) => {
 paymentTypeRouter.post('/', validatePaymentType, async (request, response) => {
   const { description } = request.body
   const createPaymentType = new CreatePaymentTypeService()
-  const paymentType = await createPaymentType.execute({ description })
+  const paymentType = await createPaymentType.execute(description)
   return response.status(201).json(paymentType)
 })
 

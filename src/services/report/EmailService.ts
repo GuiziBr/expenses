@@ -1,7 +1,7 @@
 import { google } from 'googleapis'
 import nodemailer from 'nodemailer'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
-import smtpConfig from '../config/smtp'
+import smtpConfig from '../../config/smtp'
 
 interface IEmailData {
   text: string

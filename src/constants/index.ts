@@ -1,16 +1,16 @@
 const constants = {
   schemaValidationErrors: {
-    nameRequired: 'Name is required',
-    emailRequired: 'Email is required',
-    passwordRequired: 'Password is required',
+    nameRequired: 'name is required',
+    emailRequired: 'email is required',
+    passwordRequired: 'password is required',
     dateFormat: 'Date format must be YYYY-MM',
     offsetType: 'Offset must be a number',
     limitType: 'Limit must be a number',
-    descriptionRequired: 'Description is required',
-    dateRequired: 'Date is required and must be YYYY-MM-DD',
-    amountRequired: 'Amount is required',
-    categoryRequired: 'Category is required',
-    paymentTypeRequired: 'Payment type is required'
+    descriptionRequired: 'description is required',
+    dateRequired: 'date is required and must be YYYY-MM-DD',
+    amountRequired: 'amount is required',
+    categoryRequired: 'category_id is required',
+    paymentTypeRequired: 'payment_type_id is required'
   },
   errorMessages: {
     incorrectLogin: 'Incorrect email/password combination',
@@ -25,7 +25,10 @@ const constants = {
     notFoundPaymentType: 'Payment type not found',
     duplicatedPaymentTypeDescription: 'There is already a payment type with same description',
     invalidRequestParam: 'Invalid request parameter',
-    duplicatedCategoryDescription: 'There is already a category type with same description'
+    duplicatedCategoryDescription: 'There is already a category type with same description',
+    notFoundBank: 'Bank not found',
+    existingBank: 'Bank already exists'
+
   },
   headerTypes: { totalCount: 'X-Total-Count' },
   defaultLimit: 5,

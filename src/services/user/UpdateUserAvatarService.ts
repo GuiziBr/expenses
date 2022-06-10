@@ -1,11 +1,11 @@
 import fs from 'fs'
 import path from 'path'
 import { getRepository } from 'typeorm'
-import uploadConfig from '../config/upload'
-import constants from '../constants'
-import AppError from '../errors/AppError'
-import User from '../models/User'
-import { IUpdateAvatarRequest } from '../domains/request'
+import uploadConfig from '../../config/upload'
+import constants from '../../constants'
+import AppError from '../../errors/AppError'
+import User from '../../models/User'
+import { IUpdateAvatarRequest } from '../../domains/request'
 
 class UpdateUserAvatarService {
   public async execute({ user_id, avatarFileName }: IUpdateAvatarRequest): Promise<User> {

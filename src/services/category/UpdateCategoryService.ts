@@ -1,8 +1,8 @@
 import { getRepository } from 'typeorm'
-import constants from '../constants'
-import { IRequest } from '../domains/category'
-import AppError from '../errors/AppError'
-import Category from '../models/Category'
+import constants from '../../constants'
+import { IRequest } from '../../domains/category'
+import AppError from '../../errors/AppError'
+import Category from '../../models/Category'
 
 class UpdateCategoryService {
   private async reactivate(categoryIdToDelete: string, categoryIdToRestore: string): Promise<Category | null> {
