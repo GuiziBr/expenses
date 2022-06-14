@@ -3,7 +3,7 @@ import { getRepository, IsNull } from 'typeorm'
 import constants from '../constants'
 import AppError from '../errors/AppError'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
-import { validateId, validatePaymentType } from '../middlewares/validateInput'
+import { validateId, validateDescription } from '../middlewares/validateInput'
 import PaymentType from '../models/PaymentType'
 import CreatePaymentTypeService from '../services/paymentType/CreatePaymentTypeService'
 import UpdatePaymentTypeService from '../services/paymentType/UpdatePaymentTypeService'
@@ -26,14 +26,14 @@ paymentTypeRouter.get('/:id', validateId, async (request, response) => {
   return response.json(paymentType)
 })
 
-paymentTypeRouter.post('/', validatePaymentType, async (request, response) => {
+paymentTypeRouter.post('/', validateDescription, async (request, response) => {
   const { description } = request.body
   const createPaymentType = new CreatePaymentTypeService()
   const paymentType = await createPaymentType.execute(description)
   return response.status(201).json(paymentType)
 })
 
-paymentTypeRouter.patch('/:id', validateId, validatePaymentType, async (request, response) => {
+paymentTypeRouter.patch('/:id', validateId, validateDescription, async (request, response) => {
   const { id } = request.params
   const { description } = request.body
   const updatePaymentType = new UpdatePaymentTypeService()

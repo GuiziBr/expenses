@@ -33,13 +33,14 @@ class UpdatePaymentTypeService {
       })
     }
 
-    if (!sameDescriptionPaymentType?.deleted_at) {
-      throw new AppError(constants.errorMessages.duplicatedPaymentTypeDescription, 400)
+    if (sameDescriptionPaymentType) {
+      if (sameDescriptionPaymentType?.deleted_at) {
+        throw new AppError(constants.errorMessages.duplicatedPaymentTypeDescription, 400)
+      }
+      const reactivatedPaymentType = await this.reactivate(id, sameDescriptionPaymentType.id)
+
+      if (!reactivatedPaymentType) throw new AppError(constants.errorMessages.internalError, 500)
     }
-
-    const reactivatedPaymentType = await this.reactivate(id, sameDescriptionPaymentType.id)
-
-    if (!reactivatedPaymentType) throw new AppError(constants.errorMessages.internalError, 500)
   }
 }
 

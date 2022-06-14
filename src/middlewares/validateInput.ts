@@ -36,7 +36,7 @@ export async function validateSession({ body }: Request, _response: Response, ne
   return next()
 }
 
-export async function validateCategory({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
+export async function validateDescription({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
     const schema = Yup.object().shape({ description: Yup.string().required(constants.schemaValidationErrors.descriptionRequired) })
     await schema.validate(body, { abortEarly: false })
@@ -83,16 +83,6 @@ export async function validateGetBalance({ query }: Request, _response: Response
   try {
     const schema = Yup.object().shape({ date: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat) })
     await schema.validate(query, { abortEarly: false })
-  } catch (err) {
-    if (err instanceof Yup.ValidationError) throw new AppError(err.message)
-  }
-  return next()
-}
-
-export async function validatePaymentType({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
-  try {
-    const schema = Yup.object().shape({ description: Yup.string().required(constants.schemaValidationErrors.descriptionRequired) })
-    await schema.validate(body, { abortEarly: false })
   } catch (err) {
     if (err instanceof Yup.ValidationError) throw new AppError(err.message)
   }

@@ -33,13 +33,14 @@ class UpdateCategoryService {
       })
     }
 
-    if (!sameDescriptionCategory?.deleted_at) {
-      throw new AppError(constants.errorMessages.duplicatedCategoryDescription, 400)
+    if (sameDescriptionCategory) {
+      if (sameDescriptionCategory?.deleted_at) {
+        throw new AppError(constants.errorMessages.duplicatedCategoryDescription, 400)
+      }
+      const reactivatedCategory = await this.reactivate(id, sameDescriptionCategory.id)
+
+      if (!reactivatedCategory) throw new AppError(constants.errorMessages.internalError, 500)
     }
-
-    const reactivatedCategory = await this.reactivate(id, sameDescriptionCategory.id)
-
-    if (!reactivatedCategory) throw new AppError(constants.errorMessages.internalError, 500)
   }
 }
 

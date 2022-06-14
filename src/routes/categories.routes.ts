@@ -3,7 +3,7 @@ import { getRepository, IsNull } from 'typeorm'
 import constants from '../constants'
 import AppError from '../errors/AppError'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
-import { validateCategory, validateId } from '../middlewares/validateInput'
+import { validateDescription, validateId } from '../middlewares/validateInput'
 import Category from '../models/Category'
 import CreateCategoryService from '../services/category/CreateCategoryService'
 import UpdateCategoryService from '../services/category/UpdateCategoryService'
@@ -26,7 +26,7 @@ categoriesRouter.get('/:id', validateId, async (request, response) => {
   return response.json(category)
 })
 
-categoriesRouter.patch('/:id', validateId, validateCategory, async (request, response) => {
+categoriesRouter.patch('/:id', validateId, validateDescription, async (request, response) => {
   const { id } = request.params
   const { description } = request.body
   const updateCategory = new UpdateCategoryService()
@@ -34,7 +34,7 @@ categoriesRouter.patch('/:id', validateId, validateCategory, async (request, res
   return response.status(204).json()
 })
 
-categoriesRouter.post('/', validateCategory, async (request, response) => {
+categoriesRouter.post('/', validateDescription, async (request, response) => {
   const { description } = request.body
   const createCategory = new CreateCategoryService()
   const category = await createCategory.execute(description)

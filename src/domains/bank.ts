@@ -7,5 +7,5 @@ export interface IBank {
 
 export interface IRequest {
   id: string,
-  description: string
+  name: string
 }

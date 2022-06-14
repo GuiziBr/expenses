@@ -27,8 +27,8 @@ const constants = {
     invalidRequestParam: 'Invalid request parameter',
     duplicatedCategoryDescription: 'There is already a category type with same description',
     notFoundBank: 'Bank not found',
-    existingBank: 'Bank already exists'
-
+    existingBank: 'Bank already exists',
+    duplicatedBankName: 'There is already a bank type with same name'
   },
   headerTypes: { totalCount: 'X-Total-Count' },
   defaultLimit: 5,

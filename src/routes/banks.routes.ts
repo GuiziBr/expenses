@@ -6,6 +6,7 @@ import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 import { validateId, validateBank } from '../middlewares/validateInput'
 import Bank from '../models/Bank'
 import CreateBankService from '../services/bank/CreateBankService'
+import UpdateBankService from '../services/bank/UpdateBankService'
 
 const banksRouter = Router()
 
@@ -25,11 +26,26 @@ banksRouter.get('/:id', validateId, async (request, response) => {
   return response.json(bank)
 })
 
+banksRouter.patch('/:id', validateId, validateBank, async (request, response) => {
+  const { id } = request.params
+  const { name } = request.body
+  const updateBank = new UpdateBankService()
+  await updateBank.execute({ id, name })
+  return response.status(204).json()
+})
+
 banksRouter.post('/', validateBank, async (request, response) => {
   const { name } = request.body
   const createBank = new CreateBankService()
   const bank = await createBank.execute(name)
   return response.status(201).json(bank)
+})
+
+banksRouter.delete('/:id', validateId, async (request, response) => {
+  const { id } = request.params
+  const bankTypeRepository = getRepository(Bank)
+  await bankTypeRepository.softDelete(id)
+  return response.status(204).json()
 })
 
 export default banksRouter
