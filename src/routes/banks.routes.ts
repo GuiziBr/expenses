@@ -3,7 +3,7 @@ import { getRepository, IsNull } from 'typeorm'
 import constants from '../constants'
 import AppError from '../errors/AppError'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
-import { validateId, validateBank } from '../middlewares/validateInput'
+import { validateId, validateName } from '../middlewares/validateInput'
 import Bank from '../models/Bank'
 import CreateBankService from '../services/bank/CreateBankService'
 import UpdateBankService from '../services/bank/UpdateBankService'
@@ -26,7 +26,7 @@ banksRouter.get('/:id', validateId, async (request, response) => {
   return response.json(bank)
 })
 
-banksRouter.patch('/:id', validateId, validateBank, async (request, response) => {
+banksRouter.patch('/:id', validateId, validateName, async (request, response) => {
   const { id } = request.params
   const { name } = request.body
   const updateBank = new UpdateBankService()
@@ -34,7 +34,7 @@ banksRouter.patch('/:id', validateId, validateBank, async (request, response) =>
   return response.status(204).json()
 })
 
-banksRouter.post('/', validateBank, async (request, response) => {
+banksRouter.post('/', validateName, async (request, response) => {
   const { name } = request.body
   const createBank = new CreateBankService()
   const bank = await createBank.execute(name)

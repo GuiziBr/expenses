@@ -6,6 +6,7 @@ import paymentTypeRouter from './paymentTypes.routes'
 import sessionsRouter from './sessions.routes'
 import usersRouter from './users.routes'
 import banksRouter from './banks.routes'
+import storesRouter from './stores.routes'
 
 const routes = Router()
 
@@ -16,5 +17,6 @@ routes.use('/categories', categoriesRouter)
 routes.use('/balance', balanceRouter)
 routes.use('/paymentType', paymentTypeRouter)
 routes.use('/banks', banksRouter)
+routes.use('/stores', storesRouter)
 
 export default routes

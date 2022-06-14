@@ -25,10 +25,13 @@ const constants = {
     notFoundPaymentType: 'Payment type not found',
     duplicatedPaymentTypeDescription: 'There is already a payment type with same description',
     invalidRequestParam: 'Invalid request parameter',
-    duplicatedCategoryDescription: 'There is already a category type with same description',
+    duplicatedCategoryDescription: 'There is already a category with same description',
     notFoundBank: 'Bank not found',
     existingBank: 'Bank already exists',
-    duplicatedBankName: 'There is already a bank type with same name'
+    duplicatedBankName: 'There is already a bank with same name',
+    notFoundStore: 'Store not found',
+    existingStore: 'Store already exists',
+    duplicatedStoreName: 'There is already a store with same name'
   },
   headerTypes: { totalCount: 'X-Total-Count' },
   defaultLimit: 5,
