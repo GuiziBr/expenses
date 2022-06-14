@@ -36,17 +36,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateCategories1613699697200 = void 0;
+exports.CreateStores1655184207415 = void 0;
 var typeorm_1 = require("typeorm");
-var CreateCategories1613699697200 = /** @class */ (function () {
-    function CreateCategories1613699697200() {
+var CreateStores1655184207415 = /** @class */ (function () {
+    function CreateStores1655184207415() {
     }
-    CreateCategories1613699697200.prototype.up = function (queryRunner) {
+    CreateStores1655184207415.prototype.up = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, queryRunner.createTable(new typeorm_1.Table({
-                            name: 'categories',
+                            name: 'stores',
                             columns: [
                                 {
                                     name: 'id',
@@ -56,7 +56,7 @@ var CreateCategories1613699697200 = /** @class */ (function () {
                                     default: 'uuid_generate_v4()'
                                 },
                                 {
-                                    name: 'description',
+                                    name: 'name',
                                     type: 'varchar',
                                     isUnique: true
                                 },
@@ -79,23 +79,43 @@ var CreateCategories1613699697200 = /** @class */ (function () {
                         }))];
                     case 1:
                         _a.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    CreateCategories1613699697200.prototype.down = function (queryRunner) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.dropTable('categories')];
-                    case 1:
+                        return [4 /*yield*/, queryRunner.addColumn('expenses', new typeorm_1.TableColumn({
+                                name: 'store_id',
+                                type: 'uuid',
+                                isNullable: true
+                            }))];
+                    case 2:
+                        _a.sent();
+                        return [4 /*yield*/, queryRunner.createForeignKey('expenses', new typeorm_1.TableForeignKey({
+                                name: 'ExpenseStore',
+                                columnNames: ['store_id'],
+                                referencedColumnNames: ['id'],
+                                referencedTableName: 'stores',
+                                onDelete: 'SET NULL',
+                                onUpdate: 'CASCADE'
+                            }))];
+                    case 3:
                         _a.sent();
                         return [2 /*return*/];
                 }
             });
         });
     };
-    return CreateCategories1613699697200;
+    CreateStores1655184207415.prototype.down = function (queryRunner) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, queryRunner.dropColumn('expenses', 'store_id')];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, queryRunner.dropTable('stores')];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    return CreateStores1655184207415;
 }());
-exports.CreateCategories1613699697200 = CreateCategories1613699697200;
+exports.CreateStores1655184207415 = CreateStores1655184207415;

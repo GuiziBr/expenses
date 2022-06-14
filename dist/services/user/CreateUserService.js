@@ -39,23 +39,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var sessionAssembler_1 = require("../assemblers/sessionAssembler");
-var validateInput_1 = require("../middlewares/validateInput");
-var AuthenticateUserService_1 = __importDefault(require("../services/user/AuthenticateUserService"));
-var sessionsRouter = express_1.Router();
-sessionsRouter.post('/', validateInput_1.validateSession, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, authenticateUser, _b, user, token;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                _a = request.body, email = _a.email, password = _a.password;
-                authenticateUser = new AuthenticateUserService_1.default();
-                return [4 /*yield*/, authenticateUser.execute({ email: email, password: password })];
-            case 1:
-                _b = _c.sent(), user = _b.user, token = _b.token;
-                return [2 /*return*/, response.status(201).json(sessionAssembler_1.assembleSession(user, token))];
-        }
-    });
-}); });
-exports.default = sessionsRouter;
+var bcryptjs_1 = require("bcryptjs");
+var typeorm_1 = require("typeorm");
+var constants_1 = __importDefault(require("../../constants"));
+var AppError_1 = __importDefault(require("../../errors/AppError"));
+var User_1 = __importDefault(require("../../models/User"));
+var CreateUserService = /** @class */ (function () {
+    function CreateUserService() {
+    }
+    CreateUserService.prototype.execute = function (_a) {
+        var name = _a.name, email = _a.email, password = _a.password;
+        return __awaiter(this, void 0, void 0, function () {
+            var usersRepository, userExists, hashedPassword, user;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        usersRepository = typeorm_1.getRepository(User_1.default);
+                        return [4 /*yield*/, usersRepository.findOne({ where: { email: email } })];
+                    case 1:
+                        userExists = _b.sent();
+                        if (userExists)
+                            throw new AppError_1.default(constants_1.default.errorMessages.emailInUse);
+                        return [4 /*yield*/, bcryptjs_1.hash(password, 8)];
+                    case 2:
+                        hashedPassword = _b.sent();
+                        user = usersRepository.create({ name: name, email: email, password: hashedPassword });
+                        return [4 /*yield*/, usersRepository.save(user)];
+                    case 3:
+                        _b.sent();
+                        return [2 /*return*/, user];
+                }
+            });
+        });
+    };
+    return CreateUserService;
+}());
+exports.default = CreateUserService;

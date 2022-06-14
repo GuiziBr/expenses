@@ -35,27 +35,50 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var sessionAssembler_1 = require("../assemblers/sessionAssembler");
-var validateInput_1 = require("../middlewares/validateInput");
-var AuthenticateUserService_1 = __importDefault(require("../services/user/AuthenticateUserService"));
-var sessionsRouter = express_1.Router();
-sessionsRouter.post('/', validateInput_1.validateSession, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, authenticateUser, _b, user, token;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                _a = request.body, email = _a.email, password = _a.password;
-                authenticateUser = new AuthenticateUserService_1.default();
-                return [4 /*yield*/, authenticateUser.execute({ email: email, password: password })];
-            case 1:
-                _b = _c.sent(), user = _b.user, token = _b.token;
-                return [2 /*return*/, response.status(201).json(sessionAssembler_1.assembleSession(user, token))];
-        }
-    });
-}); });
-exports.default = sessionsRouter;
+exports.AddPaymentTypeToExpenses1654150699440 = void 0;
+var typeorm_1 = require("typeorm");
+var AddPaymentTypeToExpenses1654150699440 = /** @class */ (function () {
+    function AddPaymentTypeToExpenses1654150699440() {
+    }
+    AddPaymentTypeToExpenses1654150699440.prototype.up = function (queryRunner) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, queryRunner.addColumn('expenses', new typeorm_1.TableColumn({
+                            name: 'payment_type_id',
+                            type: 'uuid',
+                            isNullable: true
+                        }))];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, queryRunner.createForeignKey('expenses', new typeorm_1.TableForeignKey({
+                                name: 'ExpensePaymentType',
+                                columnNames: ['payment_type_id'],
+                                referencedColumnNames: ['id'],
+                                referencedTableName: 'payment_type',
+                                onDelete: 'SET NULL',
+                                onUpdate: 'CASCADE'
+                            }))];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    AddPaymentTypeToExpenses1654150699440.prototype.down = function (queryRunner) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, queryRunner.dropColumn('expenses', 'payment_type_id')];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    return AddPaymentTypeToExpenses1654150699440;
+}());
+exports.AddPaymentTypeToExpenses1654150699440 = AddPaymentTypeToExpenses1654150699440;

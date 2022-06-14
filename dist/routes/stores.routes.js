@@ -45,81 +45,81 @@ var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
 var validateInput_1 = require("../middlewares/validateInput");
-var Category_1 = __importDefault(require("../models/Category"));
-var CreateCategoryService_1 = __importDefault(require("../services/category/CreateCategoryService"));
-var UpdateCategoryService_1 = __importDefault(require("../services/category/UpdateCategoryService"));
-var categoriesRouter = express_1.Router();
-categoriesRouter.use(ensureAuthenticated_1.default);
-categoriesRouter.get('/', function (_request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var categoriesRepository, categories;
+var Store_1 = __importDefault(require("../models/Store"));
+var CreateStoreService_1 = __importDefault(require("../services/store/CreateStoreService"));
+var UpdateStoreService_1 = __importDefault(require("../services/store/UpdateStoreService"));
+var storesRouter = express_1.Router();
+storesRouter.use(ensureAuthenticated_1.default);
+storesRouter.get('/', function (_request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var storesRepository, stores;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                categoriesRepository = typeorm_1.getRepository(Category_1.default);
-                return [4 /*yield*/, categoriesRepository.find({ where: { deleted_at: typeorm_1.IsNull() } })];
+                storesRepository = typeorm_1.getRepository(Store_1.default);
+                return [4 /*yield*/, storesRepository.find()];
             case 1:
-                categories = _a.sent();
-                return [2 /*return*/, response.json(categories)];
+                stores = _a.sent();
+                return [2 /*return*/, response.json(stores)];
         }
     });
 }); });
-categoriesRouter.get('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, categoriesRepository, category;
+storesRouter.get('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, storesRepository, store;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
-                categoriesRepository = typeorm_1.getRepository(Category_1.default);
-                return [4 /*yield*/, categoriesRepository.findOne({ where: { id: id, deleted_at: typeorm_1.IsNull() } })];
+                storesRepository = typeorm_1.getRepository(Store_1.default);
+                return [4 /*yield*/, storesRepository.findOne({ where: { id: id, deleted_at: typeorm_1.IsNull() } })];
             case 1:
-                category = _a.sent();
-                if (!category)
-                    throw new AppError_1.default(constants_1.default.errorMessages.notFoundCategory);
-                return [2 /*return*/, response.json(category)];
+                store = _a.sent();
+                if (!store)
+                    throw new AppError_1.default(constants_1.default.errorMessages.notFoundStore);
+                return [2 /*return*/, response.json(store)];
         }
     });
 }); });
-categoriesRouter.patch('/:id', validateInput_1.validateId, validateInput_1.validateDescription, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, description, updateCategory;
+storesRouter.patch('/:id', validateInput_1.validateId, validateInput_1.validateName, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, name, updateStore;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
-                description = request.body.description;
-                updateCategory = new UpdateCategoryService_1.default();
-                return [4 /*yield*/, updateCategory.execute({ id: id, description: description })];
+                name = request.body.name;
+                updateStore = new UpdateStoreService_1.default();
+                return [4 /*yield*/, updateStore.execute({ id: id, name: name })];
             case 1:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
         }
     });
 }); });
-categoriesRouter.post('/', validateInput_1.validateDescription, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var description, createCategory, category;
+storesRouter.post('/', validateInput_1.validateName, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var name, createStore, bank;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                description = request.body.description;
-                createCategory = new CreateCategoryService_1.default();
-                return [4 /*yield*/, createCategory.execute(description)];
+                name = request.body.name;
+                createStore = new CreateStoreService_1.default();
+                return [4 /*yield*/, createStore.execute(name)];
             case 1:
-                category = _a.sent();
-                return [2 /*return*/, response.status(201).json(category)];
+                bank = _a.sent();
+                return [2 /*return*/, response.status(201).json(bank)];
         }
     });
 }); });
-categoriesRouter.delete('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, categoryTypeRepository;
+storesRouter.delete('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, storeTypeRepository;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
-                categoryTypeRepository = typeorm_1.getRepository(Category_1.default);
-                return [4 /*yield*/, categoryTypeRepository.softDelete(id)];
+                storeTypeRepository = typeorm_1.getRepository(Store_1.default);
+                return [4 /*yield*/, storeTypeRepository.softDelete(id)];
             case 1:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
         }
     });
 }); });
-exports.default = categoriesRouter;
+exports.default = storesRouter;

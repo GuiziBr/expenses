@@ -10,32 +10,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
-var Category = /** @class */ (function () {
-    function Category() {
+var Bank = /** @class */ (function () {
+    function Bank() {
     }
     __decorate([
         typeorm_1.PrimaryGeneratedColumn('uuid'),
         __metadata("design:type", String)
-    ], Category.prototype, "id", void 0);
+    ], Bank.prototype, "id", void 0);
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)
-    ], Category.prototype, "description", void 0);
+    ], Bank.prototype, "name", void 0);
     __decorate([
         typeorm_1.CreateDateColumn(),
         __metadata("design:type", Date)
-    ], Category.prototype, "created_at", void 0);
+    ], Bank.prototype, "created_at", void 0);
     __decorate([
         typeorm_1.UpdateDateColumn(),
         __metadata("design:type", Date)
-    ], Category.prototype, "updated_at", void 0);
+    ], Bank.prototype, "updated_at", void 0);
     __decorate([
         typeorm_1.DeleteDateColumn(),
         __metadata("design:type", Date)
-    ], Category.prototype, "deleted_at", void 0);
-    Category = __decorate([
-        typeorm_1.Entity('categories')
-    ], Category);
-    return Category;
+    ], Bank.prototype, "deleted_at", void 0);
+    Bank = __decorate([
+        typeorm_1.Entity('banks')
+    ], Bank);
+    return Bank;
 }());
-exports.default = Category;
+exports.default = Bank;

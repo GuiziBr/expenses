@@ -45,81 +45,81 @@ var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
 var validateInput_1 = require("../middlewares/validateInput");
-var Category_1 = __importDefault(require("../models/Category"));
-var CreateCategoryService_1 = __importDefault(require("../services/category/CreateCategoryService"));
-var UpdateCategoryService_1 = __importDefault(require("../services/category/UpdateCategoryService"));
-var categoriesRouter = express_1.Router();
-categoriesRouter.use(ensureAuthenticated_1.default);
-categoriesRouter.get('/', function (_request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var categoriesRepository, categories;
+var Bank_1 = __importDefault(require("../models/Bank"));
+var CreateBankService_1 = __importDefault(require("../services/bank/CreateBankService"));
+var UpdateBankService_1 = __importDefault(require("../services/bank/UpdateBankService"));
+var banksRouter = express_1.Router();
+banksRouter.use(ensureAuthenticated_1.default);
+banksRouter.get('/', function (_request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var banksRepository, banks;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                categoriesRepository = typeorm_1.getRepository(Category_1.default);
-                return [4 /*yield*/, categoriesRepository.find({ where: { deleted_at: typeorm_1.IsNull() } })];
+                banksRepository = typeorm_1.getRepository(Bank_1.default);
+                return [4 /*yield*/, banksRepository.find()];
             case 1:
-                categories = _a.sent();
-                return [2 /*return*/, response.json(categories)];
+                banks = _a.sent();
+                return [2 /*return*/, response.json(banks)];
         }
     });
 }); });
-categoriesRouter.get('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, categoriesRepository, category;
+banksRouter.get('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, banksRepository, bank;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
-                categoriesRepository = typeorm_1.getRepository(Category_1.default);
-                return [4 /*yield*/, categoriesRepository.findOne({ where: { id: id, deleted_at: typeorm_1.IsNull() } })];
+                banksRepository = typeorm_1.getRepository(Bank_1.default);
+                return [4 /*yield*/, banksRepository.findOne({ where: { id: id, deleted_at: typeorm_1.IsNull() } })];
             case 1:
-                category = _a.sent();
-                if (!category)
-                    throw new AppError_1.default(constants_1.default.errorMessages.notFoundCategory);
-                return [2 /*return*/, response.json(category)];
+                bank = _a.sent();
+                if (!bank)
+                    throw new AppError_1.default(constants_1.default.errorMessages.notFoundBank, 404);
+                return [2 /*return*/, response.json(bank)];
         }
     });
 }); });
-categoriesRouter.patch('/:id', validateInput_1.validateId, validateInput_1.validateDescription, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, description, updateCategory;
+banksRouter.patch('/:id', validateInput_1.validateId, validateInput_1.validateName, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, name, updateBank;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
-                description = request.body.description;
-                updateCategory = new UpdateCategoryService_1.default();
-                return [4 /*yield*/, updateCategory.execute({ id: id, description: description })];
+                name = request.body.name;
+                updateBank = new UpdateBankService_1.default();
+                return [4 /*yield*/, updateBank.execute({ id: id, name: name })];
             case 1:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
         }
     });
 }); });
-categoriesRouter.post('/', validateInput_1.validateDescription, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var description, createCategory, category;
+banksRouter.post('/', validateInput_1.validateName, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var name, createBank, bank;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                description = request.body.description;
-                createCategory = new CreateCategoryService_1.default();
-                return [4 /*yield*/, createCategory.execute(description)];
+                name = request.body.name;
+                createBank = new CreateBankService_1.default();
+                return [4 /*yield*/, createBank.execute(name)];
             case 1:
-                category = _a.sent();
-                return [2 /*return*/, response.status(201).json(category)];
+                bank = _a.sent();
+                return [2 /*return*/, response.status(201).json(bank)];
         }
     });
 }); });
-categoriesRouter.delete('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, categoryTypeRepository;
+banksRouter.delete('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, bankTypeRepository;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
-                categoryTypeRepository = typeorm_1.getRepository(Category_1.default);
-                return [4 /*yield*/, categoryTypeRepository.softDelete(id)];
+                bankTypeRepository = typeorm_1.getRepository(Bank_1.default);
+                return [4 /*yield*/, bankTypeRepository.softDelete(id)];
             case 1:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
         }
     });
 }); });
-exports.default = categoriesRouter;
+exports.default = banksRouter;

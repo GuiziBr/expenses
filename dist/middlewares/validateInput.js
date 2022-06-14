@@ -58,9 +58,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validatePaymentType = exports.validateGetBalance = exports.validateGetExpenses = exports.validateCreateExpense = exports.validateCategory = exports.validateSession = exports.validateUser = void 0;
+exports.validateName = exports.validateId = exports.validateGetBalance = exports.validateGetExpenses = exports.validateCreateExpense = exports.validateDescription = exports.validateSession = exports.validateUser = void 0;
 var date_fns_1 = require("date-fns");
 var Yup = __importStar(require("yup"));
+var uuid_1 = require("uuid");
 var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
 function parseDateString(dateValue, date) {
@@ -121,7 +122,7 @@ function validateSession(_a, _response, next) {
     });
 }
 exports.validateSession = validateSession;
-function validateCategory(_a, _response, next) {
+function validateDescription(_a, _response, next) {
     var body = _a.body;
     return __awaiter(this, void 0, void 0, function () {
         var schema, err_3;
@@ -144,7 +145,7 @@ function validateCategory(_a, _response, next) {
         });
     });
 }
-exports.validateCategory = validateCategory;
+exports.validateDescription = validateDescription;
 function validateCreateExpense(_a, _response, next) {
     var body = _a.body;
     return __awaiter(this, void 0, void 0, function () {
@@ -230,7 +231,20 @@ function validateGetBalance(_a, _response, next) {
     });
 }
 exports.validateGetBalance = validateGetBalance;
-function validatePaymentType(_a, _response, next) {
+function validateId(_a, _response, next) {
+    var params = _a.params;
+    return __awaiter(this, void 0, void 0, function () {
+        var id;
+        return __generator(this, function (_b) {
+            id = params.id;
+            if (!uuid_1.validate(id))
+                throw new AppError_1.default(constants_1.default.errorMessages.invalidRequestParam);
+            return [2 /*return*/, next()];
+        });
+    });
+}
+exports.validateId = validateId;
+function validateName(_a, _response, next) {
     var body = _a.body;
     return __awaiter(this, void 0, void 0, function () {
         var schema, err_7;
@@ -238,7 +252,7 @@ function validatePaymentType(_a, _response, next) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
-                    schema = Yup.object().shape({ description: Yup.string().required(constants_1.default.schemaValidationErrors.descriptionRequired) });
+                    schema = Yup.object().shape({ name: Yup.string().required(constants_1.default.schemaValidationErrors.nameRequired) });
                     return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
                 case 1:
                     _b.sent();
@@ -253,4 +267,4 @@ function validatePaymentType(_a, _response, next) {
         });
     });
 }
-exports.validatePaymentType = validatePaymentType;
+exports.validateName = validateName;

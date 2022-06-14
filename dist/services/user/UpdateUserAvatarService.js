@@ -39,23 +39,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var sessionAssembler_1 = require("../assemblers/sessionAssembler");
-var validateInput_1 = require("../middlewares/validateInput");
-var AuthenticateUserService_1 = __importDefault(require("../services/user/AuthenticateUserService"));
-var sessionsRouter = express_1.Router();
-sessionsRouter.post('/', validateInput_1.validateSession, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, authenticateUser, _b, user, token;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                _a = request.body, email = _a.email, password = _a.password;
-                authenticateUser = new AuthenticateUserService_1.default();
-                return [4 /*yield*/, authenticateUser.execute({ email: email, password: password })];
-            case 1:
-                _b = _c.sent(), user = _b.user, token = _b.token;
-                return [2 /*return*/, response.status(201).json(sessionAssembler_1.assembleSession(user, token))];
-        }
-    });
-}); });
-exports.default = sessionsRouter;
+var fs_1 = __importDefault(require("fs"));
+var path_1 = __importDefault(require("path"));
+var typeorm_1 = require("typeorm");
+var upload_1 = __importDefault(require("../../config/upload"));
+var constants_1 = __importDefault(require("../../constants"));
+var AppError_1 = __importDefault(require("../../errors/AppError"));
+var User_1 = __importDefault(require("../../models/User"));
+var UpdateUserAvatarService = /** @class */ (function () {
+    function UpdateUserAvatarService() {
+    }
+    UpdateUserAvatarService.prototype.execute = function (_a) {
+        var user_id = _a.user_id, avatarFileName = _a.avatarFileName;
+        return __awaiter(this, void 0, void 0, function () {
+            var usersRepository, user, userAvatarFilePath, userAvatarFileExists;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        usersRepository = typeorm_1.getRepository(User_1.default);
+                        return [4 /*yield*/, usersRepository.findOne(user_id)];
+                    case 1:
+                        user = _b.sent();
+                        if (!user)
+                            throw new AppError_1.default(constants_1.default.errorMessages.changeAvatarNotAllowed, 401);
+                        if (!user.avatar) return [3 /*break*/, 4];
+                        userAvatarFilePath = path_1.default.join(upload_1.default.directory, user.avatar);
+                        return [4 /*yield*/, fs_1.default.promises.stat(userAvatarFilePath)];
+                    case 2:
+                        userAvatarFileExists = _b.sent();
+                        if (!userAvatarFileExists) return [3 /*break*/, 4];
+                        return [4 /*yield*/, fs_1.default.promises.unlink(userAvatarFilePath)];
+                    case 3:
+                        _b.sent();
+                        _b.label = 4;
+                    case 4:
+                        user.avatar = avatarFileName;
+                        return [4 /*yield*/, usersRepository.save(user)];
+                    case 5:
+                        _b.sent();
+                        return [2 /*return*/, user];
+                }
+            });
+        });
+    };
+    return UpdateUserAvatarService;
+}());
+exports.default = UpdateUserAvatarService;

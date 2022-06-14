@@ -45,81 +45,81 @@ var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
 var validateInput_1 = require("../middlewares/validateInput");
-var Category_1 = __importDefault(require("../models/Category"));
-var CreateCategoryService_1 = __importDefault(require("../services/category/CreateCategoryService"));
-var UpdateCategoryService_1 = __importDefault(require("../services/category/UpdateCategoryService"));
-var categoriesRouter = express_1.Router();
-categoriesRouter.use(ensureAuthenticated_1.default);
-categoriesRouter.get('/', function (_request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var categoriesRepository, categories;
+var PaymentType_1 = __importDefault(require("../models/PaymentType"));
+var CreatePaymentTypeService_1 = __importDefault(require("../services/paymentType/CreatePaymentTypeService"));
+var UpdatePaymentTypeService_1 = __importDefault(require("../services/paymentType/UpdatePaymentTypeService"));
+var paymentTypeRouter = express_1.Router();
+paymentTypeRouter.use(ensureAuthenticated_1.default);
+paymentTypeRouter.get('/', function (_request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var paymentTypeRepository, paymentTypes;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                categoriesRepository = typeorm_1.getRepository(Category_1.default);
-                return [4 /*yield*/, categoriesRepository.find({ where: { deleted_at: typeorm_1.IsNull() } })];
+                paymentTypeRepository = typeorm_1.getRepository(PaymentType_1.default);
+                return [4 /*yield*/, paymentTypeRepository.find()];
             case 1:
-                categories = _a.sent();
-                return [2 /*return*/, response.json(categories)];
+                paymentTypes = _a.sent();
+                return [2 /*return*/, response.json(paymentTypes)];
         }
     });
 }); });
-categoriesRouter.get('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, categoriesRepository, category;
+paymentTypeRouter.get('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, paymentTypeRepository, paymentType;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
-                categoriesRepository = typeorm_1.getRepository(Category_1.default);
-                return [4 /*yield*/, categoriesRepository.findOne({ where: { id: id, deleted_at: typeorm_1.IsNull() } })];
+                paymentTypeRepository = typeorm_1.getRepository(PaymentType_1.default);
+                return [4 /*yield*/, paymentTypeRepository.findOne({ where: { id: id, deleted_at: typeorm_1.IsNull() } })];
             case 1:
-                category = _a.sent();
-                if (!category)
-                    throw new AppError_1.default(constants_1.default.errorMessages.notFoundCategory);
-                return [2 /*return*/, response.json(category)];
+                paymentType = _a.sent();
+                if (!paymentType)
+                    throw new AppError_1.default(constants_1.default.errorMessages.notFoundPaymentType, 404);
+                return [2 /*return*/, response.json(paymentType)];
         }
     });
 }); });
-categoriesRouter.patch('/:id', validateInput_1.validateId, validateInput_1.validateDescription, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, description, updateCategory;
+paymentTypeRouter.post('/', validateInput_1.validateDescription, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var description, createPaymentType, paymentType;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                description = request.body.description;
+                createPaymentType = new CreatePaymentTypeService_1.default();
+                return [4 /*yield*/, createPaymentType.execute(description)];
+            case 1:
+                paymentType = _a.sent();
+                return [2 /*return*/, response.status(201).json(paymentType)];
+        }
+    });
+}); });
+paymentTypeRouter.patch('/:id', validateInput_1.validateId, validateInput_1.validateDescription, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, description, updatePaymentType;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
                 description = request.body.description;
-                updateCategory = new UpdateCategoryService_1.default();
-                return [4 /*yield*/, updateCategory.execute({ id: id, description: description })];
+                updatePaymentType = new UpdatePaymentTypeService_1.default();
+                return [4 /*yield*/, updatePaymentType.execute({ id: id, description: description })];
             case 1:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
         }
     });
 }); });
-categoriesRouter.post('/', validateInput_1.validateDescription, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var description, createCategory, category;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                description = request.body.description;
-                createCategory = new CreateCategoryService_1.default();
-                return [4 /*yield*/, createCategory.execute(description)];
-            case 1:
-                category = _a.sent();
-                return [2 /*return*/, response.status(201).json(category)];
-        }
-    });
-}); });
-categoriesRouter.delete('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, categoryTypeRepository;
+paymentTypeRouter.delete('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, paymentTypeRepository;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
-                categoryTypeRepository = typeorm_1.getRepository(Category_1.default);
-                return [4 /*yield*/, categoryTypeRepository.softDelete(id)];
+                paymentTypeRepository = typeorm_1.getRepository(PaymentType_1.default);
+                return [4 /*yield*/, paymentTypeRepository.softDelete(id)];
             case 1:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
         }
     });
 }); });
-exports.default = categoriesRouter;
+exports.default = paymentTypeRouter;

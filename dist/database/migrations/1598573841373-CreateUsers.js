@@ -74,7 +74,7 @@ var CreateUsers1598573841373 = /** @class */ (function () {
                                 },
                                 {
                                     name: 'updated_at',
-                                    type: 'timestamp',
+                                    type: 'timestamp'
                                 }
                             ]
                         }))];

@@ -35,67 +35,49 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateCategories1613699697200 = void 0;
+var date_fns_1 = require("date-fns");
 var typeorm_1 = require("typeorm");
-var CreateCategories1613699697200 = /** @class */ (function () {
-    function CreateCategories1613699697200() {
+var constants_1 = __importDefault(require("../../constants"));
+var User_1 = __importDefault(require("../../models/User"));
+var ExpensesRepository_1 = __importDefault(require("../../repositories/ExpensesRepository"));
+var formatAmount_1 = require("../../utils/formatAmount");
+var EmailService_1 = __importDefault(require("./EmailService"));
+var ReportService = /** @class */ (function () {
+    function ReportService() {
+        this.usersRepository = typeorm_1.getRepository(User_1.default);
+        this.expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
+        this.reportDate = new Date();
+        this.emailService = new EmailService_1.default();
     }
-    CreateCategories1613699697200.prototype.up = function (queryRunner) {
+    ReportService.prototype.buildReport = function (balance, to, name) {
+        var text = "\n      Dear " + name + ",\n\n      Monthly Report - " + date_fns_1.format(this.reportDate, 'yyyy/MM') + "\n\n      Shared Balance:\n      Your Incomes are " + formatAmount_1.formatAmount(balance.sharedBalance.paying) + "\n      Your Outcomes are " + formatAmount_1.formatAmount(balance.sharedBalance.payed) + "\n      Your Current Balance is " + formatAmount_1.formatAmount(balance.sharedBalance.total) + "\n\n      Your Current Personal Balance is " + formatAmount_1.formatAmount(balance.personalBalance) + "\n\n      Please bear in mind that your deadline for registering new expenses is up to today at 23h59, consider taking a moment to check your expenses\n\n      To see more details visit https://expenses-portal.herokuapp.com/\n\n      Regards,\n\n      Admin\n    ";
+        return { to: to, subject: constants_1.default.reportSubject, text: text };
+    };
+    ReportService.prototype.execute = function () {
         return __awaiter(this, void 0, void 0, function () {
+            var users, balances, reports;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.createTable(new typeorm_1.Table({
-                            name: 'categories',
-                            columns: [
-                                {
-                                    name: 'id',
-                                    type: 'uuid',
-                                    isPrimary: true,
-                                    generationStrategy: 'uuid',
-                                    default: 'uuid_generate_v4()'
-                                },
-                                {
-                                    name: 'description',
-                                    type: 'varchar',
-                                    isUnique: true
-                                },
-                                {
-                                    name: 'created_at',
-                                    type: 'timestamp',
-                                    default: 'now()'
-                                },
-                                {
-                                    name: 'updated_at',
-                                    type: 'timestamp',
-                                    isNullable: true
-                                },
-                                {
-                                    name: 'deleted_at',
-                                    type: 'timestamp',
-                                    isNullable: true
-                                }
-                            ]
-                        }))];
+                    case 0: return [4 /*yield*/, this.usersRepository.find()];
                     case 1:
-                        _a.sent();
-                        return [2 /*return*/];
+                        users = _a.sent();
+                        return [4 /*yield*/, Promise.all([
+                                this.expensesRepository.getBalance({ owner_id: users[0].id, date: this.reportDate }),
+                                this.expensesRepository.getBalance({ owner_id: users[1].id, date: this.reportDate })
+                            ])];
+                    case 2:
+                        balances = _a.sent();
+                        reports = balances.map(function (balance, index) { return _this.buildReport(balance, users[index].email, users[index].name); });
+                        return [2 /*return*/, Promise.all(reports.map(function (report) { return _this.emailService.execute(report); }))];
                 }
             });
         });
     };
-    CreateCategories1613699697200.prototype.down = function (queryRunner) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.dropTable('categories')];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    return CreateCategories1613699697200;
+    return ReportService;
 }());
-exports.CreateCategories1613699697200 = CreateCategories1613699697200;
+exports.default = ReportService;

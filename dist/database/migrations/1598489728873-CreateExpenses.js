@@ -77,8 +77,7 @@ var CreateExpenses1598489728873 = /** @class */ (function () {
                                 },
                                 {
                                     name: 'updated_at',
-                                    type: 'timestamp',
-                                    default: 'now()'
+                                    type: 'timestamp'
                                 }
                             ]
                         }))];

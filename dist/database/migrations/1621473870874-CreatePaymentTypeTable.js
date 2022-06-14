@@ -57,7 +57,8 @@ var CreatePaymentTypeTable1621473870874 = /** @class */ (function () {
                                 },
                                 {
                                     name: 'description',
-                                    type: 'varchar'
+                                    type: 'varchar',
+                                    isUnique: true
                                 },
                                 {
                                     name: 'created_at',
@@ -67,7 +68,12 @@ var CreatePaymentTypeTable1621473870874 = /** @class */ (function () {
                                 {
                                     name: 'updated_at',
                                     type: 'timestamp',
-                                    default: 'now()'
+                                    isNullable: true
+                                },
+                                {
+                                    name: 'deleted_at',
+                                    type: 'timestamp',
+                                    isNullable: true
                                 }
                             ]
                         }))];
@@ -89,9 +95,6 @@ var CreatePaymentTypeTable1621473870874 = /** @class */ (function () {
                                 onUpdate: 'CASCADE'
                             }))];
                     case 3:
-                        _a.sent();
-                        return [4 /*yield*/, queryRunner.commitTransaction()];
-                    case 4:
                         _a.sent();
                         return [2 /*return*/];
                 }

@@ -39,23 +39,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var sessionAssembler_1 = require("../assemblers/sessionAssembler");
-var validateInput_1 = require("../middlewares/validateInput");
-var AuthenticateUserService_1 = __importDefault(require("../services/user/AuthenticateUserService"));
-var sessionsRouter = express_1.Router();
-sessionsRouter.post('/', validateInput_1.validateSession, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, authenticateUser, _b, user, token;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                _a = request.body, email = _a.email, password = _a.password;
-                authenticateUser = new AuthenticateUserService_1.default();
-                return [4 /*yield*/, authenticateUser.execute({ email: email, password: password })];
-            case 1:
-                _b = _c.sent(), user = _b.user, token = _b.token;
-                return [2 /*return*/, response.status(201).json(sessionAssembler_1.assembleSession(user, token))];
-        }
-    });
-}); });
-exports.default = sessionsRouter;
+var typeorm_1 = require("typeorm");
+var constants_1 = __importDefault(require("../../constants"));
+var AppError_1 = __importDefault(require("../../errors/AppError"));
+var Bank_1 = __importDefault(require("../../models/Bank"));
+var CreateBankService = /** @class */ (function () {
+    function CreateBankService() {
+    }
+    CreateBankService.prototype.execute = function (name) {
+        return __awaiter(this, void 0, void 0, function () {
+            var bankRepository, bankExists, bank;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        bankRepository = typeorm_1.getRepository(Bank_1.default);
+                        return [4 /*yield*/, bankRepository.findOne({ where: { name: name } })];
+                    case 1:
+                        bankExists = _a.sent();
+                        if (bankExists)
+                            throw new AppError_1.default(constants_1.default.errorMessages.existingBank);
+                        bank = bankRepository.create({ name: name });
+                        return [4 /*yield*/, bankRepository.save(bank)];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/, {
+                                id: bank.id,
+                                name: bank.name,
+                                created_at: bank.created_at
+                            }];
+                }
+            });
+        });
+    };
+    return CreateBankService;
+}());
+exports.default = CreateBankService;
