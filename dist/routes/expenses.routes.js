@@ -47,7 +47,7 @@ var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthen
 var parseDate_1 = require("../middlewares/parseDate");
 var validateInput_1 = require("../middlewares/validateInput");
 var ExpensesRepository_1 = __importDefault(require("../repositories/ExpensesRepository"));
-var CreateExpenseService_1 = __importDefault(require("../services/CreateExpenseService"));
+var CreateExpenseService_1 = __importDefault(require("../services/expense/CreateExpenseService"));
 var expensesRouter = express_1.Router();
 expensesRouter.use(ensureAuthenticated_1.default);
 expensesRouter.post('/', validateInput_1.validateCreateExpense, parseDate_1.parseBodyDate, function (_a, response) {

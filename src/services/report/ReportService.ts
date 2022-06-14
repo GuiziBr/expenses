@@ -1,9 +1,9 @@
 import { format } from 'date-fns'
 import { getCustomRepository, getRepository, Repository } from 'typeorm'
-import constants from '../constants'
-import User from '../models/User'
-import ExpensesRepository from '../repositories/ExpensesRepository'
-import { formatAmount } from '../utils/formatAmount'
+import constants from '../../constants'
+import User from '../../models/User'
+import ExpensesRepository from '../../repositories/ExpensesRepository'
+import { formatAmount } from '../../utils/formatAmount'
 import EmailService from './EmailService'
 
 interface IBalance {

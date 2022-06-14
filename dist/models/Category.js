@@ -29,6 +29,10 @@ var Category = /** @class */ (function () {
         typeorm_1.UpdateDateColumn(),
         __metadata("design:type", Date)
     ], Category.prototype, "updated_at", void 0);
+    __decorate([
+        typeorm_1.DeleteDateColumn(),
+        __metadata("design:type", Date)
+    ], Category.prototype, "deleted_at", void 0);
     Category = __decorate([
         typeorm_1.Entity('categories')
     ], Category);

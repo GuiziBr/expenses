@@ -1,6 +1,7 @@
 import { isValid, parseISO } from 'date-fns'
 import { NextFunction, Request, Response } from 'express'
 import * as Yup from 'yup'
+import { validate } from 'uuid'
 import constants from '../constants'
 import AppError from '../errors/AppError'
 
@@ -35,7 +36,7 @@ export async function validateSession({ body }: Request, _response: Response, ne
   return next()
 }
 
-export async function validateCategory({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
+export async function validateDescription({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
     const schema = Yup.object().shape({ description: Yup.string().required(constants.schemaValidationErrors.descriptionRequired) })
     await schema.validate(body, { abortEarly: false })
@@ -88,9 +89,15 @@ export async function validateGetBalance({ query }: Request, _response: Response
   return next()
 }
 
-export async function validatePaymentType({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
+export async function validateId({ params }: Request, _response: Response, next: NextFunction): Promise<void> {
+  const { id } = params
+  if (!validate(id)) throw new AppError(constants.errorMessages.invalidRequestParam)
+  return next()
+}
+
+export async function validateName({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
-    const schema = Yup.object().shape({ description: Yup.string().required(constants.schemaValidationErrors.descriptionRequired) })
+    const schema = Yup.object().shape({ name: Yup.string().required(constants.schemaValidationErrors.nameRequired) })
     await schema.validate(body, { abortEarly: false })
   } catch (err) {
     if (err instanceof Yup.ValidationError) throw new AppError(err.message)

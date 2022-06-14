@@ -2,17 +2,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var constants = {
     schemaValidationErrors: {
-        nameRequired: 'Name is required',
-        emailRequired: 'Email is required',
-        passwordRequired: 'Password is required',
+        nameRequired: 'name is required',
+        emailRequired: 'email is required',
+        passwordRequired: 'password is required',
         dateFormat: 'Date format must be YYYY-MM',
         offsetType: 'Offset must be a number',
         limitType: 'Limit must be a number',
-        descriptionRequired: 'Description is required',
-        dateRequired: 'Date is required and must be YYYY-MM-DD',
-        amountRequired: 'Amount is required',
-        categoryRequired: 'Category is required',
-        paymentTypeRequired: 'Payment type is required'
+        descriptionRequired: 'description is required',
+        dateRequired: 'date is required and must be YYYY-MM-DD',
+        amountRequired: 'amount is required',
+        categoryRequired: 'category_id is required',
+        paymentTypeRequired: 'payment_type_id is required'
     },
     errorMessages: {
         incorrectLogin: 'Incorrect email/password combination',
@@ -24,7 +24,16 @@ var constants = {
         changeAvatarNotAllowed: 'Only authenticated users can change avatar',
         internalError: 'Internal server error',
         existingPaymentType: 'Payment type already exists',
-        notFoundPaymentType: 'Payment type not found'
+        notFoundPaymentType: 'Payment type not found',
+        duplicatedPaymentTypeDescription: 'There is already a payment type with same description',
+        invalidRequestParam: 'Invalid request parameter',
+        duplicatedCategoryDescription: 'There is already a category with same description',
+        notFoundBank: 'Bank not found',
+        existingBank: 'Bank already exists',
+        duplicatedBankName: 'There is already a bank with same name',
+        notFoundStore: 'Store not found',
+        existingStore: 'Store already exists',
+        duplicatedStoreName: 'There is already a store with same name'
     },
     headerTypes: { totalCount: 'X-Total-Count' },
     defaultLimit: 5,

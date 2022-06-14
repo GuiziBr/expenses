@@ -22,7 +22,7 @@
   "paths": {
     "/users": {
       "post": {
-        "description": "Create a new User",
+        "description": "Creates a new User",
         "operationId": "createUser",
         "parameters": [
           {
@@ -92,7 +92,7 @@
     },
     "/sessions": {
       "post": {
-        "description": "Create a session",
+        "description": "Creates a session",
         "operationId": "createSession",
         "requestBody": {
           "content": {
@@ -106,7 +106,7 @@
         },
         "responses": {
           "200": {
-            "description": "The user information",
+            "description": "User information",
             "content": {
               "application/json": {
                 "schema": {
@@ -136,7 +136,7 @@
     },
     "/expenses": {
       "post": {
-        "description": "Create a new expense",
+        "description": "Creates a new expense",
         "operationId": "createExpense",
         "parameters": [
           {
@@ -205,7 +205,7 @@
     },
     "/expenses/shared": {
       "get": {
-        "description": "Get shared expenses",
+        "description": "Gets shared expenses",
         "operationId": "getSharedExpenses",
         "parameters": [
           {
@@ -277,7 +277,7 @@
     },
     "/expenses/personal": {
       "get": {
-        "description": "Get personal expenses",
+        "description": "Gets personal expenses",
         "operationId": "getPersonalExpenses",
         "parameters": [
           {
@@ -347,9 +347,9 @@
         }
       }
     },
-    "/category": {
+    "/categories": {
       "post": {
-        "description": "Create a new category",
+        "description": "Creates a new category",
         "operationId": "createCategory",
         "parameters": [
           {
@@ -431,6 +431,102 @@
             }
           }
         }
+      },
+      "patch": {
+        "description": "Updates a category",
+        "operationId": "updateCategory",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Category"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The category has been updated!"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Deletes a category",
+        "operationId": "deleteCategory",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The category has been deleted!"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/paymentType": {
@@ -502,12 +598,29 @@
         }
       },
       "get": {
-        "description": "List payment types",
+        "description": "List payment types or gets by Id",
         "operationId": "listPaymentTypes",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": true
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
-            "description": "List of payment types",
+            "description": "Payment Type updated",
             "content": {
               "application/json": {
                 "schema": {
@@ -517,11 +630,107 @@
             }
           }
         }
+      },
+      "patch": {
+        "description": "Updates a payment type",
+        "operationId": "updatePaymentType",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentType"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The payment type has been updated!"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Deletes a payment type",
+        "operationId": "deletePaymentType",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The payment type has been deleted!"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/balance": {
       "get": {
-        "description": "Get balance",
+        "description": "Gets balance",
         "operationId": "getBalance",
         "parameters": [
           {
@@ -563,6 +772,370 @@
                   "message": "Invalid parameters",
                   "code": "400",
                   "error": "Bad Request"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/banks": {
+      "post": {
+        "description": "Creates a new bank",
+        "operationId": "createBank",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Bank"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "The bank has been created!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankCreatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Invalid parameters",
+                  "code": "400",
+                  "error": "Bad Request"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "List banks",
+        "operationId": "listBanks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of banks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListBanksResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Updates a bank",
+        "operationId": "updateBank",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Bank"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The bank has been updated!"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Deletes a bank",
+        "operationId": "deleteBank",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The bank has been deleted!"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stores": {
+      "post": {
+        "description": "Creates a new store",
+        "operationId": "createStore",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Store"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "The store has been created!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreCreatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Invalid parameters",
+                  "code": "400",
+                  "error": "Bad Request"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "List stores",
+        "operationId": "listStores",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of stores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListStoresResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Updates a store",
+        "operationId": "updateStore",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Store"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The store has been updated!"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Deletes a store",
+        "operationId": "deleteStore",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The store has been deleted!"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "error": "Unauthorized"
                 }
               }
             }
@@ -742,6 +1315,22 @@
         "properties": {
           "description": {
             "$ref": "#/components/schemas/description"
+          }
+        }
+      },
+      "Bank": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/name"
+          }
+        }
+      },
+      "Store": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/name"
           }
         }
       },
@@ -945,9 +1534,6 @@
           },
           "created_at": {
             "$ref": "#/components/schemas/dateTime"
-          },
-          "updated_at": {
-            "$ref": "#/components/schemas/dateTime"
           }
         }
       },
@@ -958,6 +1544,80 @@
           "properties": {
             "description": {
               "$ref": "#/components/schemas/description"
+            },
+            "id": {
+              "$ref": "#/components/schemas/id"
+            },
+            "created_at": {
+              "$ref": "#/components/schemas/dateTime"
+            },
+            "updated_at": {
+              "$ref": "#/components/schemas/dateTime"
+            }
+          }
+        }
+      },
+      "BankCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/name"
+          },
+          "id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "created_at": {
+            "$ref": "#/components/schemas/dateTime"
+          },
+          "updated_at": {
+            "$ref": "#/components/schemas/dateTime"
+          }
+        }
+      },
+      "ListBanksResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "$ref": "#/components/schemas/name"
+            },
+            "id": {
+              "$ref": "#/components/schemas/id"
+            },
+            "created_at": {
+              "$ref": "#/components/schemas/dateTime"
+            },
+            "updated_at": {
+              "$ref": "#/components/schemas/dateTime"
+            }
+          }
+        }
+      },
+      "StoreCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/name"
+          },
+          "id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "created_at": {
+            "$ref": "#/components/schemas/dateTime"
+          },
+          "updated_at": {
+            "$ref": "#/components/schemas/dateTime"
+          }
+        }
+      },
+      "ListStoresResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "$ref": "#/components/schemas/name"
             },
             "id": {
               "$ref": "#/components/schemas/id"

@@ -54,7 +54,7 @@ var constants_1 = __importDefault(require("./constants"));
 require("./database");
 var AppError_1 = __importDefault(require("./errors/AppError"));
 var routes_1 = __importDefault(require("./routes"));
-var ReportService_1 = __importDefault(require("./services/ReportService"));
+var ReportService_1 = __importDefault(require("./services/report/ReportService"));
 dotenv_1.default.config();
 var app = express_1.default();
 app.use(cors_1.default({

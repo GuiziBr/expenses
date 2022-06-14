@@ -57,7 +57,8 @@ var CreateCategories1613699697200 = /** @class */ (function () {
                                 },
                                 {
                                     name: 'description',
-                                    type: 'varchar'
+                                    type: 'varchar',
+                                    isUnique: true
                                 },
                                 {
                                     name: 'created_at',
@@ -67,7 +68,12 @@ var CreateCategories1613699697200 = /** @class */ (function () {
                                 {
                                     name: 'updated_at',
                                     type: 'timestamp',
-                                    default: 'now()'
+                                    isNullable: true
+                                },
+                                {
+                                    name: 'deleted_at',
+                                    type: 'timestamp',
+                                    isNullable: true
                                 }
                             ]
                         }))];

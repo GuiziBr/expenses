@@ -4,8 +4,8 @@ import { assembleUser } from '../assemblers/userAssembler'
 import uploadConfig from '../config/upload'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 import { validateUser } from '../middlewares/validateInput'
-import CreateUserService from '../services/CreateUserService'
-import UpdateUserAvatarService from '../services/UpdateUserAvatarService'
+import CreateUserService from '../services/user/CreateUserService'
+import UpdateUserAvatarService from '../services/user/UpdateUserAvatarService'
 
 const usersRouter = Router()
 usersRouter.use(ensureAuthenticated)

@@ -41,10 +41,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var typeorm_1 = require("typeorm");
+var constants_1 = __importDefault(require("../constants"));
+var AppError_1 = __importDefault(require("../errors/AppError"));
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
 var validateInput_1 = require("../middlewares/validateInput");
 var Category_1 = __importDefault(require("../models/Category"));
-var CreateCategoryService_1 = __importDefault(require("../services/CreateCategoryService"));
+var CreateCategoryService_1 = __importDefault(require("../services/category/CreateCategoryService"));
+var UpdateCategoryService_1 = __importDefault(require("../services/category/UpdateCategoryService"));
 var categoriesRouter = express_1.Router();
 categoriesRouter.use(ensureAuthenticated_1.default);
 categoriesRouter.get('/', function (_request, response) { return __awaiter(void 0, void 0, void 0, function () {
@@ -53,24 +56,69 @@ categoriesRouter.get('/', function (_request, response) { return __awaiter(void 
         switch (_a.label) {
             case 0:
                 categoriesRepository = typeorm_1.getRepository(Category_1.default);
-                return [4 /*yield*/, categoriesRepository.find()];
+                return [4 /*yield*/, categoriesRepository.find({ where: { deleted_at: typeorm_1.IsNull() } })];
             case 1:
                 categories = _a.sent();
                 return [2 /*return*/, response.json(categories)];
         }
     });
 }); });
-categoriesRouter.post('/', validateInput_1.validateCategory, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+categoriesRouter.get('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, categoriesRepository, category;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = request.params.id;
+                categoriesRepository = typeorm_1.getRepository(Category_1.default);
+                return [4 /*yield*/, categoriesRepository.findOne({ where: { id: id, deleted_at: typeorm_1.IsNull() } })];
+            case 1:
+                category = _a.sent();
+                if (!category)
+                    throw new AppError_1.default(constants_1.default.errorMessages.notFoundCategory);
+                return [2 /*return*/, response.json(category)];
+        }
+    });
+}); });
+categoriesRouter.patch('/:id', validateInput_1.validateId, validateInput_1.validateDescription, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, description, updateCategory;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = request.params.id;
+                description = request.body.description;
+                updateCategory = new UpdateCategoryService_1.default();
+                return [4 /*yield*/, updateCategory.execute({ id: id, description: description })];
+            case 1:
+                _a.sent();
+                return [2 /*return*/, response.status(204).json()];
+        }
+    });
+}); });
+categoriesRouter.post('/', validateInput_1.validateDescription, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
     var description, createCategory, category;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 description = request.body.description;
                 createCategory = new CreateCategoryService_1.default();
-                return [4 /*yield*/, createCategory.execute({ description: description })];
+                return [4 /*yield*/, createCategory.execute(description)];
             case 1:
                 category = _a.sent();
                 return [2 /*return*/, response.status(201).json(category)];
+        }
+    });
+}); });
+categoriesRouter.delete('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, categoryTypeRepository;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = request.params.id;
+                categoryTypeRepository = typeorm_1.getRepository(Category_1.default);
+                return [4 /*yield*/, categoryTypeRepository.softDelete(id)];
+            case 1:
+                _a.sent();
+                return [2 /*return*/, response.status(204).json()];
         }
     });
 }); });

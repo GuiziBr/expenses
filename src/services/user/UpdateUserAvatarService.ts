@@ -1,18 +1,14 @@
 import fs from 'fs'
 import path from 'path'
 import { getRepository } from 'typeorm'
-import uploadConfig from '../config/upload'
-import constants from '../constants'
-import AppError from '../errors/AppError'
-import User from '../models/User'
-
-interface Request {
-  user_id: string
-  avatarFileName: string
-}
+import uploadConfig from '../../config/upload'
+import constants from '../../constants'
+import AppError from '../../errors/AppError'
+import User from '../../models/User'
+import { IUpdateAvatarRequest } from '../../domains/request'
 
 class UpdateUserAvatarService {
-  public async execute({ user_id, avatarFileName }: Request): Promise<User> {
+  public async execute({ user_id, avatarFileName }: IUpdateAvatarRequest): Promise<User> {
     const usersRepository = getRepository(User)
     const user = await usersRepository.findOne(user_id)
     if (!user) throw new AppError(constants.errorMessages.changeAvatarNotAllowed, 401)

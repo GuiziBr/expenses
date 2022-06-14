@@ -14,8 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
 var Category_1 = __importDefault(require("./Category"));
-var User_1 = __importDefault(require("./User"));
 var PaymentType_1 = __importDefault(require("./PaymentType"));
+var User_1 = __importDefault(require("./User"));
 var Expense = /** @class */ (function () {
     function Expense() {
     }

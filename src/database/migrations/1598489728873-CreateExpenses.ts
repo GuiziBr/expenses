@@ -36,8 +36,7 @@ export default class CreateExpenses1598489728873 implements MigrationInterface {
           },
           {
             name: 'updated_at',
-            type: 'timestamp',
-            default: 'now()'
+            type: 'timestamp'
           }
         ]
       })
