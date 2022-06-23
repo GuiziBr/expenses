@@ -7,7 +7,8 @@ export interface ICreateExpenseRequest {
   personal: boolean
   split: boolean
   payment_type_id: string
-
+  store_id?: string
+  bank_id?: string
 }
 export interface ICreateUserRequest {
   name: string,

@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 
 @Entity('stores')
 class Store {
@@ -14,8 +14,8 @@ class Store {
   @UpdateDateColumn()
   updated_at: Date
 
-  @DeleteDateColumn()
-  deleted_at: Date
+  @Column({ type: Date, nullable: true })
+  deleted_at?: Date | null
 }
 
 export default Store

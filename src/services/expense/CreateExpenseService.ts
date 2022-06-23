@@ -3,9 +3,11 @@ import { Entity, EntityTarget, getCustomRepository, getRepository, IsNull } from
 import constants from '../../constants'
 import { ICreateExpenseRequest } from '../../domains/request'
 import AppError from '../../errors/AppError'
+import Bank from '../../models/Bank'
 import Category from '../../models/Category'
 import Expense from '../../models/Expense'
 import PaymentType from '../../models/PaymentType'
+import Store from '../../models/Store'
 import ExpensesRepository from '../../repositories/ExpensesRepository'
 
 class CrateExpenseService {
@@ -27,10 +29,14 @@ class CrateExpenseService {
     category_id,
     personal,
     split,
-    payment_type_id
+    payment_type_id,
+    bank_id,
+    store_id
   }: ICreateExpenseRequest): Promise<Expense> {
     if (!await this.checkIfParameterExists(category_id, Category)) throw new AppError(constants.errorMessages.notFoundCategory)
     if (!await this.checkIfParameterExists(payment_type_id, PaymentType)) throw new AppError(constants.errorMessages.notFoundPaymentType)
+    if (bank_id && !await this.checkIfParameterExists(bank_id, Bank)) throw new AppError(constants.errorMessages.notFoundBank)
+    if (store_id && !await this.checkIfParameterExists(store_id, Store)) throw new AppError(constants.errorMessages.notFoundStore)
     if (isFuture(date)) throw new AppError(constants.errorMessages.futureDate)
     const expensesRepository = getCustomRepository(ExpensesRepository)
     const isSameExpense = await expensesRepository.findByDescriptionAndDate(description, startOfDay(date))
@@ -44,7 +50,9 @@ class CrateExpenseService {
       category_id,
       personal: personal || false,
       split: personal ? false : (split || false),
-      payment_type_id
+      payment_type_id,
+      bank_id,
+      store_id
     })
     await expensesRepository.save(expense)
     return expense

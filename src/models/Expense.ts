@@ -2,6 +2,8 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGenerat
 import Category from './Category'
 import PaymentType from './PaymentType'
 import User from './User'
+import Bank from './Bank'
+import Store from './Store'
 
 @Entity('expenses')
 class Expense {
@@ -23,11 +25,25 @@ class Expense {
   @JoinColumn({ name: 'payment_type_id' })
   payment_type: PaymentType
 
+  @ManyToOne(() => Bank, { eager: true })
+  @JoinColumn({ name: 'bank_id' })
+  bank: Bank
+
+  @ManyToOne(() => Store, { eager: true })
+  @JoinColumn({ name: 'store_id' })
+  store: Store
+
   @Column()
   category_id: string
 
   @Column()
   payment_type_id: string
+
+  @Column()
+  bank_id: string
+
+  @Column()
+  store_id: string
 
   @Column()
   description: string

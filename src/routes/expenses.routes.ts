@@ -14,7 +14,7 @@ expensesRouter.use(ensureAuthenticated)
 
 expensesRouter.post('/', validateCreateExpense, parseBodyDate, async ({ user, body }, response) => {
   const { id: owner_id } = user
-  const { description, date, amount, category_id, personal, split, payment_type_id } = body
+  const { description, date, amount, category_id, personal, split, payment_type_id, bank_id, store_id } = body
   const createExpense = new CreateExpenseService()
   const expense = await createExpense.execute({
     owner_id,
@@ -24,7 +24,9 @@ expensesRouter.post('/', validateCreateExpense, parseBodyDate, async ({ user, bo
     amount: Math.round(amount * 100),
     personal,
     split,
-    payment_type_id
+    payment_type_id,
+    bank_id,
+    store_id
   })
   return response.status(201).json(expense)
 })

@@ -55,7 +55,9 @@ export async function validateCreateExpense({ body }: Request, _response: Respon
       category_id: Yup.string().required(constants.schemaValidationErrors.categoryRequired),
       personal: Yup.boolean(),
       split: Yup.boolean(),
-      payment_type_id: Yup.string().required(constants.schemaValidationErrors.paymentTypeRequired)
+      payment_type_id: Yup.string().required(constants.schemaValidationErrors.paymentTypeRequired),
+      bank_id: Yup.string(),
+      store_id: Yup.string()
     })
     await schema.validate(body, { abortEarly: false })
   } catch (err) {
