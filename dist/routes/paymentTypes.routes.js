@@ -48,34 +48,35 @@ var validateInput_1 = require("../middlewares/validateInput");
 var PaymentType_1 = __importDefault(require("../models/PaymentType"));
 var CreatePaymentTypeService_1 = __importDefault(require("../services/paymentType/CreatePaymentTypeService"));
 var UpdatePaymentTypeService_1 = __importDefault(require("../services/paymentType/UpdatePaymentTypeService"));
+var paymentTypeAssembler_1 = require("../assemblers/paymentTypeAssembler");
 var paymentTypeRouter = express_1.Router();
 paymentTypeRouter.use(ensureAuthenticated_1.default);
 paymentTypeRouter.get('/', function (_request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var paymentTypeRepository, paymentTypes;
+    var paymentTypesRepository, paymentTypes;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                paymentTypeRepository = typeorm_1.getRepository(PaymentType_1.default);
-                return [4 /*yield*/, paymentTypeRepository.find()];
+                paymentTypesRepository = typeorm_1.getRepository(PaymentType_1.default);
+                return [4 /*yield*/, paymentTypesRepository.find()];
             case 1:
                 paymentTypes = _a.sent();
-                return [2 /*return*/, response.json(paymentTypes)];
+                return [2 /*return*/, response.json(paymentTypes.map(paymentTypeAssembler_1.paymentTypeAssembleUser))];
         }
     });
 }); });
 paymentTypeRouter.get('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, paymentTypeRepository, paymentType;
+    var id, paymentTypesRepository, paymentType;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
-                paymentTypeRepository = typeorm_1.getRepository(PaymentType_1.default);
-                return [4 /*yield*/, paymentTypeRepository.findOne({ where: { id: id, deleted_at: typeorm_1.IsNull() } })];
+                paymentTypesRepository = typeorm_1.getRepository(PaymentType_1.default);
+                return [4 /*yield*/, paymentTypesRepository.findOne({ where: { id: id, deleted_at: typeorm_1.IsNull() } })];
             case 1:
                 paymentType = _a.sent();
                 if (!paymentType)
                     throw new AppError_1.default(constants_1.default.errorMessages.notFoundPaymentType, 404);
-                return [2 /*return*/, response.json(paymentType)];
+                return [2 /*return*/, response.json(paymentTypeAssembler_1.paymentTypeAssembleUser(paymentType))];
         }
     });
 }); });
@@ -101,7 +102,7 @@ paymentTypeRouter.patch('/:id', validateInput_1.validateId, validateInput_1.vali
                 id = request.params.id;
                 description = request.body.description;
                 updatePaymentType = new UpdatePaymentTypeService_1.default();
-                return [4 /*yield*/, updatePaymentType.execute({ id: id, description: description })];
+                return [4 /*yield*/, updatePaymentType.execute(id, description)];
             case 1:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
@@ -109,14 +110,19 @@ paymentTypeRouter.patch('/:id', validateInput_1.validateId, validateInput_1.vali
     });
 }); });
 paymentTypeRouter.delete('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, paymentTypeRepository;
+    var id, paymentTypesRepository, existingPaymentType;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
-                paymentTypeRepository = typeorm_1.getRepository(PaymentType_1.default);
-                return [4 /*yield*/, paymentTypeRepository.softDelete(id)];
+                paymentTypesRepository = typeorm_1.getRepository(PaymentType_1.default);
+                return [4 /*yield*/, paymentTypesRepository.findOne(id)];
             case 1:
+                existingPaymentType = _a.sent();
+                if (!existingPaymentType || existingPaymentType.deleted_at)
+                    return [2 /*return*/, response.status(204).json()];
+                return [4 /*yield*/, paymentTypesRepository.update(id, { deleted_at: new Date() })];
+            case 2:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
         }

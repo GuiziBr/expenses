@@ -30,8 +30,8 @@ var Store = /** @class */ (function () {
         __metadata("design:type", Date)
     ], Store.prototype, "updated_at", void 0);
     __decorate([
-        typeorm_1.DeleteDateColumn(),
-        __metadata("design:type", Date)
+        typeorm_1.Column({ type: Date, nullable: true }),
+        __metadata("design:type", Object)
     ], Store.prototype, "deleted_at", void 0);
     Store = __decorate([
         typeorm_1.Entity('stores')

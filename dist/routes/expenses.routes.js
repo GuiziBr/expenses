@@ -53,12 +53,12 @@ expensesRouter.use(ensureAuthenticated_1.default);
 expensesRouter.post('/', validateInput_1.validateCreateExpense, parseDate_1.parseBodyDate, function (_a, response) {
     var user = _a.user, body = _a.body;
     return __awaiter(void 0, void 0, void 0, function () {
-        var owner_id, description, date, amount, category_id, personal, split, payment_type_id, createExpense, expense;
+        var owner_id, description, date, amount, category_id, personal, split, payment_type_id, bank_id, store_id, createExpense, expense;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     owner_id = user.id;
-                    description = body.description, date = body.date, amount = body.amount, category_id = body.category_id, personal = body.personal, split = body.split, payment_type_id = body.payment_type_id;
+                    description = body.description, date = body.date, amount = body.amount, category_id = body.category_id, personal = body.personal, split = body.split, payment_type_id = body.payment_type_id, bank_id = body.bank_id, store_id = body.store_id;
                     createExpense = new CreateExpenseService_1.default();
                     return [4 /*yield*/, createExpense.execute({
                             owner_id: owner_id,
@@ -68,7 +68,9 @@ expensesRouter.post('/', validateInput_1.validateCreateExpense, parseDate_1.pars
                             amount: Math.round(amount * 100),
                             personal: personal,
                             split: split,
-                            payment_type_id: payment_type_id
+                            payment_type_id: payment_type_id,
+                            bank_id: bank_id,
+                            store_id: store_id
                         })];
                 case 1:
                     expense = _b.sent();

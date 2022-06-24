@@ -59,18 +59,18 @@ var UpdatePaymentTypeService = /** @class */ (function () {
     }
     UpdatePaymentTypeService.prototype.reactivate = function (paymentTypeIdToDelete, paymentTypeIdToRestore) {
         return __awaiter(this, void 0, void 0, function () {
-            var paymentTypeRepository, paymentType;
+            var paymentTypesRepository, paymentType;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        paymentTypeRepository = typeorm_1.getRepository(PaymentType_1.default);
+                        paymentTypesRepository = typeorm_1.getRepository(PaymentType_1.default);
                         return [4 /*yield*/, Promise.all([
-                                paymentTypeRepository.softDelete(paymentTypeIdToDelete),
-                                paymentTypeRepository.restore(paymentTypeIdToRestore)
+                                paymentTypesRepository.save({ id: paymentTypeIdToDelete, deleted_at: new Date() }),
+                                paymentTypesRepository.save({ id: paymentTypeIdToRestore, deleted_at: null })
                             ])];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, paymentTypeRepository.findOne(paymentTypeIdToRestore)];
+                        return [4 /*yield*/, paymentTypesRepository.findOne(paymentTypeIdToRestore)];
                     case 2:
                         paymentType = _a.sent();
                         return [2 /*return*/, paymentType || null];
@@ -78,12 +78,11 @@ var UpdatePaymentTypeService = /** @class */ (function () {
             });
         });
     };
-    UpdatePaymentTypeService.prototype.execute = function (_a) {
-        var id = _a.id, description = _a.description;
+    UpdatePaymentTypeService.prototype.execute = function (id, description) {
         return __awaiter(this, void 0, void 0, function () {
-            var paymentTypeRepository, _b, paymentType, sameDescriptionPaymentType, reactivatedPaymentType;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var paymentTypeRepository, _a, paymentType, sameDescriptionPaymentType, reactivatedPaymentType;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         paymentTypeRepository = typeorm_1.getRepository(PaymentType_1.default);
                         return [4 /*yield*/, Promise.all([
@@ -91,25 +90,25 @@ var UpdatePaymentTypeService = /** @class */ (function () {
                                 paymentTypeRepository.findOne({ where: { description: description }, withDeleted: true })
                             ])];
                     case 1:
-                        _b = _c.sent(), paymentType = _b[0], sameDescriptionPaymentType = _b[1];
+                        _a = _b.sent(), paymentType = _a[0], sameDescriptionPaymentType = _a[1];
                         if (!paymentType)
                             throw new AppError_1.default(constants_1.default.errorMessages.notFoundCategory, 404);
                         if (!((paymentType && !sameDescriptionPaymentType) || ((sameDescriptionPaymentType === null || sameDescriptionPaymentType === void 0 ? void 0 : sameDescriptionPaymentType.id) === id))) return [3 /*break*/, 3];
                         return [4 /*yield*/, paymentTypeRepository.save(__assign(__assign({}, paymentType), { description: description, updated_at: new Date() }))];
                     case 2:
-                        _c.sent();
-                        _c.label = 3;
+                        _b.sent();
+                        return [2 /*return*/];
                     case 3:
                         if (!sameDescriptionPaymentType) return [3 /*break*/, 5];
-                        if (sameDescriptionPaymentType === null || sameDescriptionPaymentType === void 0 ? void 0 : sameDescriptionPaymentType.deleted_at) {
+                        if (!(sameDescriptionPaymentType === null || sameDescriptionPaymentType === void 0 ? void 0 : sameDescriptionPaymentType.deleted_at)) {
                             throw new AppError_1.default(constants_1.default.errorMessages.duplicatedPaymentTypeDescription, 400);
                         }
                         return [4 /*yield*/, this.reactivate(id, sameDescriptionPaymentType.id)];
                     case 4:
-                        reactivatedPaymentType = _c.sent();
+                        reactivatedPaymentType = _b.sent();
                         if (!reactivatedPaymentType)
                             throw new AppError_1.default(constants_1.default.errorMessages.internalError, 500);
-                        _c.label = 5;
+                        _b.label = 5;
                     case 5: return [2 /*return*/];
                 }
             });

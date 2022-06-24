@@ -59,18 +59,18 @@ var UpdateBankService = /** @class */ (function () {
     }
     UpdateBankService.prototype.reactivate = function (storeIdToDelete, storeIdToRestore) {
         return __awaiter(this, void 0, void 0, function () {
-            var storeRepository, store;
+            var storesRepository, store;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        storeRepository = typeorm_1.getRepository(Store_1.default);
+                        storesRepository = typeorm_1.getRepository(Store_1.default);
                         return [4 /*yield*/, Promise.all([
-                                storeRepository.softDelete(storeIdToDelete),
-                                storeRepository.restore(storeIdToRestore)
+                                storesRepository.save({ id: storeIdToDelete, deleted_at: new Date() }),
+                                storesRepository.save({ id: storeIdToRestore, deleted_at: null })
                             ])];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, storeRepository.findOne(storeIdToDelete)];
+                        return [4 /*yield*/, storesRepository.findOne(storeIdToRestore)];
                     case 2:
                         store = _a.sent();
                         return [2 /*return*/, store || null];
@@ -78,38 +78,37 @@ var UpdateBankService = /** @class */ (function () {
             });
         });
     };
-    UpdateBankService.prototype.execute = function (_a) {
-        var id = _a.id, name = _a.name;
+    UpdateBankService.prototype.execute = function (id, name) {
         return __awaiter(this, void 0, void 0, function () {
-            var storeRepository, _b, store, sameNameStore, reactivatedBank;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var storesRepository, _a, store, sameNameStore, reactivatedStore;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        storeRepository = typeorm_1.getRepository(Store_1.default);
+                        storesRepository = typeorm_1.getRepository(Store_1.default);
                         return [4 /*yield*/, Promise.all([
-                                storeRepository.findOne(id),
-                                storeRepository.findOne({ where: { name: name }, withDeleted: true })
+                                storesRepository.findOne(id),
+                                storesRepository.findOne({ where: { name: name }, withDeleted: true })
                             ])];
                     case 1:
-                        _b = _c.sent(), store = _b[0], sameNameStore = _b[1];
+                        _a = _b.sent(), store = _a[0], sameNameStore = _a[1];
                         if (!store)
                             throw new AppError_1.default(constants_1.default.errorMessages.notFoundStore, 404);
                         if (!((store && !sameNameStore) || ((sameNameStore === null || sameNameStore === void 0 ? void 0 : sameNameStore.id) === id))) return [3 /*break*/, 3];
-                        return [4 /*yield*/, storeRepository.save(__assign(__assign({}, store), { name: name, updated_at: new Date() }))];
+                        return [4 /*yield*/, storesRepository.save(__assign(__assign({}, store), { name: name, updated_at: new Date() }))];
                     case 2:
-                        _c.sent();
-                        _c.label = 3;
+                        _b.sent();
+                        return [2 /*return*/];
                     case 3:
                         if (!sameNameStore) return [3 /*break*/, 5];
-                        if (sameNameStore === null || sameNameStore === void 0 ? void 0 : sameNameStore.deleted_at) {
+                        if (!(sameNameStore === null || sameNameStore === void 0 ? void 0 : sameNameStore.deleted_at)) {
                             throw new AppError_1.default(constants_1.default.errorMessages.duplicatedStoreName, 400);
                         }
                         return [4 /*yield*/, this.reactivate(id, sameNameStore.id)];
                     case 4:
-                        reactivatedBank = _c.sent();
-                        if (!reactivatedBank)
+                        reactivatedStore = _b.sent();
+                        if (!reactivatedStore)
                             throw new AppError_1.default(constants_1.default.errorMessages.internalError, 500);
-                        _c.label = 5;
+                        _b.label = 5;
                     case 5: return [2 /*return*/];
                 }
             });

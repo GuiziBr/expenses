@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var typeorm_1 = require("typeorm");
+var storeAssembler_1 = require("../assemblers/storeAssembler");
 var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
@@ -59,7 +60,7 @@ storesRouter.get('/', function (_request, response) { return __awaiter(void 0, v
                 return [4 /*yield*/, storesRepository.find()];
             case 1:
                 stores = _a.sent();
-                return [2 /*return*/, response.json(stores)];
+                return [2 /*return*/, response.json(stores.map(storeAssembler_1.storeAssembleUser))];
         }
     });
 }); });
@@ -75,7 +76,7 @@ storesRouter.get('/:id', validateInput_1.validateId, function (request, response
                 store = _a.sent();
                 if (!store)
                     throw new AppError_1.default(constants_1.default.errorMessages.notFoundStore);
-                return [2 /*return*/, response.json(store)];
+                return [2 /*return*/, response.json(storeAssembler_1.storeAssembleUser(store))];
         }
     });
 }); });
@@ -87,7 +88,7 @@ storesRouter.patch('/:id', validateInput_1.validateId, validateInput_1.validateN
                 id = request.params.id;
                 name = request.body.name;
                 updateStore = new UpdateStoreService_1.default();
-                return [4 /*yield*/, updateStore.execute({ id: id, name: name })];
+                return [4 /*yield*/, updateStore.execute(id, name)];
             case 1:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
@@ -109,14 +110,19 @@ storesRouter.post('/', validateInput_1.validateName, function (request, response
     });
 }); });
 storesRouter.delete('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, storeTypeRepository;
+    var id, storesRepository, existingStore;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
-                storeTypeRepository = typeorm_1.getRepository(Store_1.default);
-                return [4 /*yield*/, storeTypeRepository.softDelete(id)];
+                storesRepository = typeorm_1.getRepository(Store_1.default);
+                return [4 /*yield*/, storesRepository.findOne(id)];
             case 1:
+                existingStore = _a.sent();
+                if (!existingStore || existingStore.deleted_at)
+                    return [2 /*return*/, response.status(204).json()];
+                return [4 /*yield*/, storesRepository.update(id, { deleted_at: new Date() })];
+            case 2:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
         }

@@ -1,45 +1,43 @@
 import { getRepository } from 'typeorm'
 import constants from '../../constants'
-import { IRequest } from '../../domains/store'
 import AppError from '../../errors/AppError'
 import Store from '../../models/Store'
 
 class UpdateBankService {
   private async reactivate(storeIdToDelete: string, storeIdToRestore: string): Promise<Store | null> {
-    const storeRepository = getRepository(Store)
+    const storesRepository = getRepository(Store)
     await Promise.all([
-      storeRepository.softDelete(storeIdToDelete),
-      storeRepository.restore(storeIdToRestore)
+      storesRepository.save({ id: storeIdToDelete, deleted_at: new Date() }),
+      storesRepository.save({ id: storeIdToRestore, deleted_at: null })
     ])
-    const store = await storeRepository.findOne(storeIdToDelete)
+    const store = await storesRepository.findOne(storeIdToRestore)
     return store || null
   }
 
-  public async execute({ id, name }: IRequest): Promise<void> {
-    const storeRepository = getRepository(Store)
+  public async execute(id: string, name: string): Promise<void> {
+    const storesRepository = getRepository(Store)
 
     const [store, sameNameStore] = await Promise.all([
-      storeRepository.findOne(id),
-      storeRepository.findOne({ where: { name }, withDeleted: true })
+      storesRepository.findOne(id),
+      storesRepository.findOne({ where: { name }, withDeleted: true })
     ])
 
     if (!store) throw new AppError(constants.errorMessages.notFoundStore, 404)
 
     if ((store && !sameNameStore) || (sameNameStore?.id === id)) {
-      await storeRepository.save({
+      await storesRepository.save({
         ...store,
         name,
         updated_at: new Date()
       })
+      return
     }
-
     if (sameNameStore) {
-      if (sameNameStore?.deleted_at) {
+      if (!sameNameStore?.deleted_at) {
         throw new AppError(constants.errorMessages.duplicatedStoreName, 400)
       }
-      const reactivatedBank = await this.reactivate(id, sameNameStore.id)
-
-      if (!reactivatedBank) throw new AppError(constants.errorMessages.internalError, 500)
+      const reactivatedStore = await this.reactivate(id, sameNameStore.id)
+      if (!reactivatedStore) throw new AppError(constants.errorMessages.internalError, 500)
     }
   }
 }

@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { getRepository, IsNull } from 'typeorm'
+import { storeAssembleUser } from '../assemblers/storeAssembler'
 import constants from '../constants'
 import AppError from '../errors/AppError'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
@@ -14,8 +15,8 @@ storesRouter.use(ensureAuthenticated)
 
 storesRouter.get('/', async (_request, response) => {
   const storesRepository = getRepository(Store)
-  const stores = await storesRepository.find()
-  return response.json(stores)
+  const stores = await storesRepository.find({ where: { deleted_at: IsNull() }})
+  return response.json(stores.map(storeAssembleUser))
 })
 
 storesRouter.get('/:id', validateId, async (request, response) => {
@@ -23,14 +24,14 @@ storesRouter.get('/:id', validateId, async (request, response) => {
   const storesRepository = getRepository(Store)
   const store = await storesRepository.findOne({ where: { id, deleted_at: IsNull() }})
   if (!store) throw new AppError(constants.errorMessages.notFoundStore)
-  return response.json(store)
+  return response.json(storeAssembleUser(store))
 })
 
 storesRouter.patch('/:id', validateId, validateName, async (request, response) => {
   const { id } = request.params
   const { name } = request.body
   const updateStore = new UpdateStoreService()
-  await updateStore.execute({ id, name })
+  await updateStore.execute(id, name)
   return response.status(204).json()
 })
 
@@ -43,8 +44,10 @@ storesRouter.post('/', validateName, async (request, response) => {
 
 storesRouter.delete('/:id', validateId, async (request, response) => {
   const { id } = request.params
-  const storeTypeRepository = getRepository(Store)
-  await storeTypeRepository.softDelete(id)
+  const storesRepository = getRepository(Store)
+  const existingStore = await storesRepository.findOne(id)
+  if (!existingStore || existingStore.deleted_at) return response.status(204).json()
+  await storesRepository.update(id, { deleted_at: new Date() })
   return response.status(204).json()
 })
 

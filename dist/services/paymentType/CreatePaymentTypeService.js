@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -40,33 +51,52 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
+var paymentTypeAssembler_1 = require("../../assemblers/paymentTypeAssembler");
 var constants_1 = __importDefault(require("../../constants"));
 var AppError_1 = __importDefault(require("../../errors/AppError"));
 var PaymentType_1 = __importDefault(require("../../models/PaymentType"));
 var CreatePaymentTypeService = /** @class */ (function () {
     function CreatePaymentTypeService() {
     }
+    CreatePaymentTypeService.prototype.reactivatePaymentType = function (paymentTypeToRestore) {
+        return __awaiter(this, void 0, void 0, function () {
+            var paymentTypesRepository;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        paymentTypesRepository = typeorm_1.getRepository(PaymentType_1.default);
+                        return [4 /*yield*/, paymentTypesRepository.save(__assign(__assign({}, paymentTypeToRestore), { deleted_at: null }))];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     CreatePaymentTypeService.prototype.execute = function (description) {
         return __awaiter(this, void 0, void 0, function () {
-            var paymentTypeRepository, paymentTypeExists, paymentType;
+            var paymentTypeRepository, existingPaymentType, paymentType;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         paymentTypeRepository = typeorm_1.getRepository(PaymentType_1.default);
-                        return [4 /*yield*/, paymentTypeRepository.findOne({ where: { description: description } })];
+                        return [4 /*yield*/, paymentTypeRepository.findOne({ where: { description: description }, withDeleted: true })];
                     case 1:
-                        paymentTypeExists = _a.sent();
-                        if (paymentTypeExists)
-                            throw new AppError_1.default(constants_1.default.errorMessages.existingPaymentType);
+                        existingPaymentType = _a.sent();
+                        if (!existingPaymentType) return [3 /*break*/, 5];
+                        if (!!existingPaymentType.deleted_at) return [3 /*break*/, 2];
+                        throw new AppError_1.default(constants_1.default.errorMessages.existingPaymentType);
+                    case 2: return [4 /*yield*/, this.reactivatePaymentType(existingPaymentType)];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4: return [2 /*return*/, paymentTypeAssembler_1.paymentTypeAssembleUser(existingPaymentType)];
+                    case 5:
                         paymentType = paymentTypeRepository.create({ description: description });
                         return [4 /*yield*/, paymentTypeRepository.save(paymentType)];
-                    case 2:
+                    case 6:
                         _a.sent();
-                        return [2 /*return*/, {
-                                id: paymentType.id,
-                                description: paymentType.description,
-                                created_at: paymentType.created_at
-                            }];
+                        return [2 /*return*/, paymentTypeAssembler_1.paymentTypeAssembleUser(paymentType)];
                 }
             });
         });

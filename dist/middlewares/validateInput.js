@@ -161,7 +161,9 @@ function validateCreateExpense(_a, _response, next) {
                         category_id: Yup.string().required(constants_1.default.schemaValidationErrors.categoryRequired),
                         personal: Yup.boolean(),
                         split: Yup.boolean(),
-                        payment_type_id: Yup.string().required(constants_1.default.schemaValidationErrors.paymentTypeRequired)
+                        payment_type_id: Yup.string().required(constants_1.default.schemaValidationErrors.paymentTypeRequired),
+                        bank_id: Yup.string(),
+                        store_id: Yup.string()
                     });
                     return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
                 case 1:

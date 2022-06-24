@@ -188,13 +188,25 @@ var ExpensesRepository = /** @class */ (function (_super) {
         });
     };
     ExpensesRepository.prototype.assembleExpense = function (expense, owner_id, isShared) {
-        return __assign(__assign({ id: expense.id, owner_id: expense.owner_id, description: expense.description, category: {
+        return __assign(__assign(__assign(__assign({ id: expense.id, owner_id: expense.owner_id, description: expense.description, category: {
                 id: expense.category.id,
                 description: expense.category.description
-            }, amount: expense.amount, date: expense.date }, isShared && { type: expense.owner_id === owner_id ? Types.Income : Types.Outcome }), { payment_type: {
+            }, amount: expense.amount, date: expense.date }, isShared && { type: expense.owner_id === owner_id ? Types.Income : Types.Outcome }), expense.payment_type && {
+            payment_type: {
                 id: expense.payment_type.id,
                 description: expense.payment_type.description
-            } });
+            }
+        }), expense.bank && {
+            bank: {
+                id: expense.bank.id,
+                name: expense.bank.name
+            }
+        }), expense.store && {
+            store: {
+                id: expense.store.id,
+                name: expense.store.name
+            }
+        });
     };
     ExpensesRepository = __decorate([
         typeorm_1.EntityRepository(Expense_1.default)

@@ -26,6 +26,14 @@ interface TypedExpense {
   payment_type: {
     id: string
     description: string
+  },
+  bank?: {
+    id: string
+    name: string
+  }
+  store?: {
+    id: string
+    name: string
   }
 }
 
@@ -128,9 +136,23 @@ class ExpensesRepository extends Repository<Expense> {
       amount: expense.amount,
       date: expense.date,
       ...isShared && { type: expense.owner_id === owner_id ? Types.Income : Types.Outcome },
-      payment_type: {
-        id: expense.payment_type.id,
-        description: expense.payment_type.description
+      ...expense.payment_type && {
+        payment_type: {
+          id: expense.payment_type.id,
+          description: expense.payment_type.description
+        }
+      },
+      ...expense.bank && {
+        bank: {
+          id: expense.bank.id,
+          name: expense.bank.name
+        }
+      },
+      ...expense.store && {
+        store: {
+          id: expense.store.id,
+          name: expense.store.name
+        }
       }
     }
   }

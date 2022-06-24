@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var typeorm_1 = require("typeorm");
+var bankAssembler_1 = require("../assemblers/bankAssembler");
 var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
@@ -56,10 +57,10 @@ banksRouter.get('/', function (_request, response) { return __awaiter(void 0, vo
         switch (_a.label) {
             case 0:
                 banksRepository = typeorm_1.getRepository(Bank_1.default);
-                return [4 /*yield*/, banksRepository.find()];
+                return [4 /*yield*/, banksRepository.find({ where: { deleted_at: typeorm_1.IsNull() } })];
             case 1:
                 banks = _a.sent();
-                return [2 /*return*/, response.json(banks)];
+                return [2 /*return*/, response.json(banks.map(bankAssembler_1.bankAssembleUser))];
         }
     });
 }); });
@@ -75,7 +76,7 @@ banksRouter.get('/:id', validateInput_1.validateId, function (request, response)
                 bank = _a.sent();
                 if (!bank)
                     throw new AppError_1.default(constants_1.default.errorMessages.notFoundBank, 404);
-                return [2 /*return*/, response.json(bank)];
+                return [2 /*return*/, response.json(bankAssembler_1.bankAssembleUser(bank))];
         }
     });
 }); });
@@ -87,7 +88,7 @@ banksRouter.patch('/:id', validateInput_1.validateId, validateInput_1.validateNa
                 id = request.params.id;
                 name = request.body.name;
                 updateBank = new UpdateBankService_1.default();
-                return [4 /*yield*/, updateBank.execute({ id: id, name: name })];
+                return [4 /*yield*/, updateBank.execute(id, name)];
             case 1:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
@@ -109,14 +110,19 @@ banksRouter.post('/', validateInput_1.validateName, function (request, response)
     });
 }); });
 banksRouter.delete('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, bankTypeRepository;
+    var id, banksRepository, existingBank;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
-                bankTypeRepository = typeorm_1.getRepository(Bank_1.default);
-                return [4 /*yield*/, bankTypeRepository.softDelete(id)];
+                banksRepository = typeorm_1.getRepository(Bank_1.default);
+                return [4 /*yield*/, banksRepository.findOne(id)];
             case 1:
+                existingBank = _a.sent();
+                if (!existingBank || existingBank.deleted_at)
+                    return [2 /*return*/, response.status(204).json()];
+                return [4 /*yield*/, banksRepository.update(id, { deleted_at: new Date() })];
+            case 2:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
         }

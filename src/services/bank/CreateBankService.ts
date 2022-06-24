@@ -1,29 +1,26 @@
 import { getRepository } from 'typeorm'
+import { bankAssembleUser } from '../../assemblers/bankAssembler'
 import constants from '../../constants'
-import { IBank } from '../../domains/bank'
 import AppError from '../../errors/AppError'
 import Bank from '../../models/Bank'
 
 class CreateBankService {
-  private assembleBankResponse(bank: IBank) {
-    return {
-      id: bank.id,
-      name: bank.name,
-      created_at: bank.created_at
-    }
+  private async reactivateBank(bankToRestore: Bank): Promise<void> {
+    const banksRepository = getRepository(Bank)
+    await banksRepository.save({ ...bankToRestore, deleted_at: null })
   }
 
-  public async execute(name: string): Promise<Omit<IBank, 'updated_at'>> {
-    const bankRepository = getRepository(Bank)
-    const existingBank = await bankRepository.findOne({ where: { name }, withDeleted: true })
+  public async execute(name: string): Promise<Omit<Bank, 'deleted_at'>> {
+    const banksRepository = getRepository(Bank)
+    const existingBank = await banksRepository.findOne({ where: { name }, withDeleted: true })
     if (existingBank) {
       if (!existingBank.deleted_at) throw new AppError(constants.errorMessages.existingBank)
-      else await bankRepository.restore(existingBank.id)
-      return this.assembleBankResponse(existingBank)
+      else await this.reactivateBank(existingBank)
+      return bankAssembleUser(existingBank)
     }
-    const bank = bankRepository.create({ name })
-    await bankRepository.save(bank)
-    return this.assembleBankResponse(bank)
+    const bank = banksRepository.create({ name })
+    await banksRepository.save(bank)
+    return bankAssembleUser(bank)
   }
 }
 
