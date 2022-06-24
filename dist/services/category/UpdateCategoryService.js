@@ -59,18 +59,18 @@ var UpdateCategoryService = /** @class */ (function () {
     }
     UpdateCategoryService.prototype.reactivate = function (categoryIdToDelete, categoryIdToRestore) {
         return __awaiter(this, void 0, void 0, function () {
-            var categoryRepository, category;
+            var categoriesRepository, category;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        categoryRepository = typeorm_1.getRepository(Category_1.default);
+                        categoriesRepository = typeorm_1.getRepository(Category_1.default);
                         return [4 /*yield*/, Promise.all([
-                                categoryRepository.softDelete(categoryIdToDelete),
-                                categoryRepository.restore(categoryIdToRestore)
+                                categoriesRepository.save({ id: categoryIdToDelete, deleted_at: new Date() }),
+                                categoriesRepository.save({ id: categoryIdToRestore, deleted_at: null })
                             ])];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, categoryRepository.findOne(categoryIdToRestore)];
+                        return [4 /*yield*/, categoriesRepository.findOne(categoryIdToRestore)];
                     case 2:
                         category = _a.sent();
                         return [2 /*return*/, category || null];
@@ -78,38 +78,37 @@ var UpdateCategoryService = /** @class */ (function () {
             });
         });
     };
-    UpdateCategoryService.prototype.execute = function (_a) {
-        var id = _a.id, description = _a.description;
+    UpdateCategoryService.prototype.execute = function (id, description) {
         return __awaiter(this, void 0, void 0, function () {
-            var categoryRepository, _b, category, sameDescriptionCategory, reactivatedCategory;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var categoriesRepository, _a, category, sameDescriptionCategory, reactivatedCategory;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        categoryRepository = typeorm_1.getRepository(Category_1.default);
+                        categoriesRepository = typeorm_1.getRepository(Category_1.default);
                         return [4 /*yield*/, Promise.all([
-                                categoryRepository.findOne(id),
-                                categoryRepository.findOne({ where: { description: description }, withDeleted: true })
+                                categoriesRepository.findOne(id),
+                                categoriesRepository.findOne({ where: { description: description }, withDeleted: true })
                             ])];
                     case 1:
-                        _b = _c.sent(), category = _b[0], sameDescriptionCategory = _b[1];
+                        _a = _b.sent(), category = _a[0], sameDescriptionCategory = _a[1];
                         if (!category)
                             throw new AppError_1.default(constants_1.default.errorMessages.notFoundCategory, 404);
                         if (!((category && !sameDescriptionCategory) || ((sameDescriptionCategory === null || sameDescriptionCategory === void 0 ? void 0 : sameDescriptionCategory.id) === id))) return [3 /*break*/, 3];
-                        return [4 /*yield*/, categoryRepository.save(__assign(__assign({}, category), { description: description, updated_at: new Date() }))];
+                        return [4 /*yield*/, categoriesRepository.save(__assign(__assign({}, category), { description: description, updated_at: new Date() }))];
                     case 2:
-                        _c.sent();
-                        _c.label = 3;
+                        _b.sent();
+                        return [2 /*return*/];
                     case 3:
                         if (!sameDescriptionCategory) return [3 /*break*/, 5];
-                        if (sameDescriptionCategory === null || sameDescriptionCategory === void 0 ? void 0 : sameDescriptionCategory.deleted_at) {
+                        if (!(sameDescriptionCategory === null || sameDescriptionCategory === void 0 ? void 0 : sameDescriptionCategory.deleted_at)) {
                             throw new AppError_1.default(constants_1.default.errorMessages.duplicatedCategoryDescription, 400);
                         }
                         return [4 /*yield*/, this.reactivate(id, sameDescriptionCategory.id)];
                     case 4:
-                        reactivatedCategory = _c.sent();
+                        reactivatedCategory = _b.sent();
                         if (!reactivatedCategory)
                             throw new AppError_1.default(constants_1.default.errorMessages.internalError, 500);
-                        _c.label = 5;
+                        _b.label = 5;
                     case 5: return [2 /*return*/];
                 }
             });

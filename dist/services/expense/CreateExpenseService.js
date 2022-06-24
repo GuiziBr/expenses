@@ -43,8 +43,10 @@ var date_fns_1 = require("date-fns");
 var typeorm_1 = require("typeorm");
 var constants_1 = __importDefault(require("../../constants"));
 var AppError_1 = __importDefault(require("../../errors/AppError"));
+var Bank_1 = __importDefault(require("../../models/Bank"));
 var Category_1 = __importDefault(require("../../models/Category"));
 var PaymentType_1 = __importDefault(require("../../models/PaymentType"));
+var Store_1 = __importDefault(require("../../models/Store"));
 var ExpensesRepository_1 = __importDefault(require("../../repositories/ExpensesRepository"));
 var CrateExpenseService = /** @class */ (function () {
     function CrateExpenseService() {
@@ -68,25 +70,43 @@ var CrateExpenseService = /** @class */ (function () {
         return personal ? amount : (split ? Math.round(amount / 2) : amount);
     };
     CrateExpenseService.prototype.execute = function (_a) {
-        var owner_id = _a.owner_id, description = _a.description, date = _a.date, amount = _a.amount, category_id = _a.category_id, personal = _a.personal, split = _a.split, payment_type_id = _a.payment_type_id;
+        var owner_id = _a.owner_id, description = _a.description, date = _a.date, amount = _a.amount, category_id = _a.category_id, personal = _a.personal, split = _a.split, payment_type_id = _a.payment_type_id, bank_id = _a.bank_id, store_id = _a.store_id;
         return __awaiter(this, void 0, void 0, function () {
-            var expensesRepository, isSameExpense, netAmount, expense;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _b, _c, expensesRepository, isSameExpense, netAmount, expense;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0: return [4 /*yield*/, this.checkIfParameterExists(category_id, Category_1.default)];
                     case 1:
-                        if (!(_b.sent()))
+                        if (!(_d.sent()))
                             throw new AppError_1.default(constants_1.default.errorMessages.notFoundCategory);
                         return [4 /*yield*/, this.checkIfParameterExists(payment_type_id, PaymentType_1.default)];
                     case 2:
-                        if (!(_b.sent()))
+                        if (!(_d.sent()))
                             throw new AppError_1.default(constants_1.default.errorMessages.notFoundPaymentType);
+                        _b = bank_id;
+                        if (!_b) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.checkIfParameterExists(bank_id, Bank_1.default)];
+                    case 3:
+                        _b = !(_d.sent());
+                        _d.label = 4;
+                    case 4:
+                        if (_b)
+                            throw new AppError_1.default(constants_1.default.errorMessages.notFoundBank);
+                        _c = store_id;
+                        if (!_c) return [3 /*break*/, 6];
+                        return [4 /*yield*/, this.checkIfParameterExists(store_id, Store_1.default)];
+                    case 5:
+                        _c = !(_d.sent());
+                        _d.label = 6;
+                    case 6:
+                        if (_c)
+                            throw new AppError_1.default(constants_1.default.errorMessages.notFoundStore);
                         if (date_fns_1.isFuture(date))
                             throw new AppError_1.default(constants_1.default.errorMessages.futureDate);
                         expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
                         return [4 /*yield*/, expensesRepository.findByDescriptionAndDate(description, date_fns_1.startOfDay(date))];
-                    case 3:
-                        isSameExpense = _b.sent();
+                    case 7:
+                        isSameExpense = _d.sent();
                         if (isSameExpense)
                             throw new AppError_1.default(constants_1.default.errorMessages.existingExpense);
                         netAmount = this.calculateNetAmount(amount, personal, split);
@@ -98,11 +118,13 @@ var CrateExpenseService = /** @class */ (function () {
                             category_id: category_id,
                             personal: personal || false,
                             split: personal ? false : (split || false),
-                            payment_type_id: payment_type_id
+                            payment_type_id: payment_type_id,
+                            bank_id: bank_id,
+                            store_id: store_id
                         });
                         return [4 /*yield*/, expensesRepository.save(expense)];
-                    case 4:
-                        _b.sent();
+                    case 8:
+                        _d.sent();
                         return [2 /*return*/, expense];
                 }
             });

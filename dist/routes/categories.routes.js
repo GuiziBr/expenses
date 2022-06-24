@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var typeorm_1 = require("typeorm");
+var categoryAssembler_1 = require("../assemblers/categoryAssembler");
 var constants_1 = __importDefault(require("../constants"));
 var AppError_1 = __importDefault(require("../errors/AppError"));
 var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
@@ -59,7 +60,7 @@ categoriesRouter.get('/', function (_request, response) { return __awaiter(void 
                 return [4 /*yield*/, categoriesRepository.find({ where: { deleted_at: typeorm_1.IsNull() } })];
             case 1:
                 categories = _a.sent();
-                return [2 /*return*/, response.json(categories)];
+                return [2 /*return*/, response.json(categories.map(categoryAssembler_1.categoryAssembleUser))];
         }
     });
 }); });
@@ -75,7 +76,7 @@ categoriesRouter.get('/:id', validateInput_1.validateId, function (request, resp
                 category = _a.sent();
                 if (!category)
                     throw new AppError_1.default(constants_1.default.errorMessages.notFoundCategory);
-                return [2 /*return*/, response.json(category)];
+                return [2 /*return*/, response.json(categoryAssembler_1.categoryAssembleUser(category))];
         }
     });
 }); });
@@ -87,7 +88,7 @@ categoriesRouter.patch('/:id', validateInput_1.validateId, validateInput_1.valid
                 id = request.params.id;
                 description = request.body.description;
                 updateCategory = new UpdateCategoryService_1.default();
-                return [4 /*yield*/, updateCategory.execute({ id: id, description: description })];
+                return [4 /*yield*/, updateCategory.execute(id, description)];
             case 1:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
@@ -109,14 +110,19 @@ categoriesRouter.post('/', validateInput_1.validateDescription, function (reques
     });
 }); });
 categoriesRouter.delete('/:id', validateInput_1.validateId, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, categoryTypeRepository;
+    var id, categoriesRepository, existingCategory;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = request.params.id;
-                categoryTypeRepository = typeorm_1.getRepository(Category_1.default);
-                return [4 /*yield*/, categoryTypeRepository.softDelete(id)];
+                categoriesRepository = typeorm_1.getRepository(Category_1.default);
+                return [4 /*yield*/, categoriesRepository.findOne(id)];
             case 1:
+                existingCategory = _a.sent();
+                if (!existingCategory || existingCategory.deleted_at)
+                    return [2 /*return*/, response.status(204).json()];
+                return [4 /*yield*/, categoriesRepository.update(id, { deleted_at: new Date() })];
+            case 2:
                 _a.sent();
                 return [2 /*return*/, response.status(204).json()];
         }

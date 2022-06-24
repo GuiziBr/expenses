@@ -4,7 +4,7 @@ import AppError from '../../errors/AppError'
 import Store from '../../models/Store'
 
 class UpdateBankService {
-  private async reactivate(storeIdToDelete: string, storeIdToRestore: string): Promise<PaymentType | null> {
+  private async reactivate(storeIdToDelete: string, storeIdToRestore: string): Promise<Store | null> {
     const storesRepository = getRepository(Store)
     await Promise.all([
       storesRepository.save({ id: storeIdToDelete, deleted_at: new Date() }),

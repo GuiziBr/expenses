@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -40,33 +51,52 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
+var bankAssembler_1 = require("../../assemblers/bankAssembler");
 var constants_1 = __importDefault(require("../../constants"));
 var AppError_1 = __importDefault(require("../../errors/AppError"));
 var Bank_1 = __importDefault(require("../../models/Bank"));
 var CreateBankService = /** @class */ (function () {
     function CreateBankService() {
     }
-    CreateBankService.prototype.execute = function (name) {
+    CreateBankService.prototype.reactivateBank = function (bankToRestore) {
         return __awaiter(this, void 0, void 0, function () {
-            var bankRepository, bankExists, bank;
+            var banksRepository;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        bankRepository = typeorm_1.getRepository(Bank_1.default);
-                        return [4 /*yield*/, bankRepository.findOne({ where: { name: name } })];
+                        banksRepository = typeorm_1.getRepository(Bank_1.default);
+                        return [4 /*yield*/, banksRepository.save(__assign(__assign({}, bankToRestore), { deleted_at: null }))];
                     case 1:
-                        bankExists = _a.sent();
-                        if (bankExists)
-                            throw new AppError_1.default(constants_1.default.errorMessages.existingBank);
-                        bank = bankRepository.create({ name: name });
-                        return [4 /*yield*/, bankRepository.save(bank)];
-                    case 2:
                         _a.sent();
-                        return [2 /*return*/, {
-                                id: bank.id,
-                                name: bank.name,
-                                created_at: bank.created_at
-                            }];
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    CreateBankService.prototype.execute = function (name) {
+        return __awaiter(this, void 0, void 0, function () {
+            var banksRepository, existingBank, bank;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        banksRepository = typeorm_1.getRepository(Bank_1.default);
+                        return [4 /*yield*/, banksRepository.findOne({ where: { name: name }, withDeleted: true })];
+                    case 1:
+                        existingBank = _a.sent();
+                        if (!existingBank) return [3 /*break*/, 5];
+                        if (!!existingBank.deleted_at) return [3 /*break*/, 2];
+                        throw new AppError_1.default(constants_1.default.errorMessages.existingBank);
+                    case 2: return [4 /*yield*/, this.reactivateBank(existingBank)];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4: return [2 /*return*/, bankAssembler_1.bankAssembleUser(existingBank)];
+                    case 5:
+                        bank = banksRepository.create({ name: name });
+                        return [4 /*yield*/, banksRepository.save(bank)];
+                    case 6:
+                        _a.sent();
+                        return [2 /*return*/, bankAssembler_1.bankAssembleUser(bank)];
                 }
             });
         });

@@ -59,18 +59,18 @@ var UpdateBankService = /** @class */ (function () {
     }
     UpdateBankService.prototype.reactivate = function (bankIdToDelete, bankIdToRestore) {
         return __awaiter(this, void 0, void 0, function () {
-            var bankRepository, bank;
+            var banksRepository, bank;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        bankRepository = typeorm_1.getRepository(Bank_1.default);
+                        banksRepository = typeorm_1.getRepository(Bank_1.default);
                         return [4 /*yield*/, Promise.all([
-                                bankRepository.softDelete(bankIdToDelete),
-                                bankRepository.restore(bankIdToRestore)
+                                banksRepository.save({ id: bankIdToDelete, deleted_at: new Date() }),
+                                banksRepository.save({ id: bankIdToRestore, deleted_at: null })
                             ])];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, bankRepository.findOne(bankIdToDelete)];
+                        return [4 /*yield*/, banksRepository.findOne(bankIdToRestore)];
                     case 2:
                         bank = _a.sent();
                         return [2 /*return*/, bank || null];
@@ -78,38 +78,37 @@ var UpdateBankService = /** @class */ (function () {
             });
         });
     };
-    UpdateBankService.prototype.execute = function (_a) {
-        var id = _a.id, name = _a.name;
+    UpdateBankService.prototype.execute = function (id, name) {
         return __awaiter(this, void 0, void 0, function () {
-            var bankRepository, _b, bank, sameNameBank, reactivatedBank;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var banksRepository, _a, bank, sameNameBank, reactivatedBank;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        bankRepository = typeorm_1.getRepository(Bank_1.default);
+                        banksRepository = typeorm_1.getRepository(Bank_1.default);
                         return [4 /*yield*/, Promise.all([
-                                bankRepository.findOne(id),
-                                bankRepository.findOne({ where: { name: name }, withDeleted: true })
+                                banksRepository.findOne(id),
+                                banksRepository.findOne({ where: { name: name }, withDeleted: true })
                             ])];
                     case 1:
-                        _b = _c.sent(), bank = _b[0], sameNameBank = _b[1];
+                        _a = _b.sent(), bank = _a[0], sameNameBank = _a[1];
                         if (!bank)
                             throw new AppError_1.default(constants_1.default.errorMessages.notFoundBank, 404);
                         if (!((bank && !sameNameBank) || ((sameNameBank === null || sameNameBank === void 0 ? void 0 : sameNameBank.id) === id))) return [3 /*break*/, 3];
-                        return [4 /*yield*/, bankRepository.save(__assign(__assign({}, bank), { name: name, updated_at: new Date() }))];
+                        return [4 /*yield*/, banksRepository.save(__assign(__assign({}, bank), { name: name, updated_at: new Date() }))];
                     case 2:
-                        _c.sent();
-                        _c.label = 3;
+                        _b.sent();
+                        return [2 /*return*/];
                     case 3:
                         if (!sameNameBank) return [3 /*break*/, 5];
-                        if (sameNameBank === null || sameNameBank === void 0 ? void 0 : sameNameBank.deleted_at) {
+                        if (!(sameNameBank === null || sameNameBank === void 0 ? void 0 : sameNameBank.deleted_at)) {
                             throw new AppError_1.default(constants_1.default.errorMessages.duplicatedBankName, 400);
                         }
                         return [4 /*yield*/, this.reactivate(id, sameNameBank.id)];
                     case 4:
-                        reactivatedBank = _c.sent();
+                        reactivatedBank = _b.sent();
                         if (!reactivatedBank)
                             throw new AppError_1.default(constants_1.default.errorMessages.internalError, 500);
-                        _c.label = 5;
+                        _b.label = 5;
                     case 5: return [2 /*return*/];
                 }
             });

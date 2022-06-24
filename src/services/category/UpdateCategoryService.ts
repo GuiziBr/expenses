@@ -4,7 +4,7 @@ import AppError from '../../errors/AppError'
 import Category from '../../models/Category'
 
 class UpdateCategoryService {
-  private async reactivate(categoryIdToDelete: string, categoryIdToRestore: string): Promise<Bank | null> {
+  private async reactivate(categoryIdToDelete: string, categoryIdToRestore: string): Promise<Category | null> {
     const categoriesRepository = getRepository(Category)
     await Promise.all([
       categoriesRepository.save({ id: categoryIdToDelete, deleted_at: new Date() }),

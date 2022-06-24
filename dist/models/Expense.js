@@ -16,6 +16,8 @@ var typeorm_1 = require("typeorm");
 var Category_1 = __importDefault(require("./Category"));
 var PaymentType_1 = __importDefault(require("./PaymentType"));
 var User_1 = __importDefault(require("./User"));
+var Bank_1 = __importDefault(require("./Bank"));
+var Store_1 = __importDefault(require("./Store"));
 var Expense = /** @class */ (function () {
     function Expense() {
     }
@@ -43,6 +45,16 @@ var Expense = /** @class */ (function () {
         __metadata("design:type", PaymentType_1.default)
     ], Expense.prototype, "payment_type", void 0);
     __decorate([
+        typeorm_1.ManyToOne(function () { return Bank_1.default; }, { eager: true }),
+        typeorm_1.JoinColumn({ name: 'bank_id' }),
+        __metadata("design:type", Bank_1.default)
+    ], Expense.prototype, "bank", void 0);
+    __decorate([
+        typeorm_1.ManyToOne(function () { return Store_1.default; }, { eager: true }),
+        typeorm_1.JoinColumn({ name: 'store_id' }),
+        __metadata("design:type", Store_1.default)
+    ], Expense.prototype, "store", void 0);
+    __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)
     ], Expense.prototype, "category_id", void 0);
@@ -50,6 +62,14 @@ var Expense = /** @class */ (function () {
         typeorm_1.Column(),
         __metadata("design:type", String)
     ], Expense.prototype, "payment_type_id", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Expense.prototype, "bank_id", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Expense.prototype, "store_id", void 0);
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)

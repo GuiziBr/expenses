@@ -15,7 +15,7 @@ paymentTypeRouter.use(ensureAuthenticated)
 
 paymentTypeRouter.get('/', async (_request, response) => {
   const paymentTypesRepository = getRepository(PaymentType)
-  const paymentTypes = await paymentTypesRepository.find()
+  const paymentTypes = await paymentTypesRepository.find({ where: { deleted_at: IsNull() }})
   return response.json(paymentTypes.map(paymentTypeAssembleUser))
 })
 

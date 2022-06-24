@@ -1,29 +1,26 @@
 import { getRepository } from 'typeorm'
+import { storeAssembleUser } from '../../assemblers/storeAssembler'
 import constants from '../../constants'
-import { IStore } from '../../domains/store'
 import AppError from '../../errors/AppError'
 import Store from '../../models/Store'
 
 class CreateStoreService {
-  private assemblePaymentTypeResponse(store: IStore) {
-    return {
-      id: store.id,
-      name: store.name,
-      created_at: store.created_at
-    }
+  private async reactivateStore(storeToRestore: Store): Promise<void> {
+    const banksRepository = getRepository(Store)
+    await banksRepository.save({ ...storeToRestore, deleted_at: null })
   }
 
-  public async execute(name: string): Promise<Omit<IStore, 'updated_at'>> {
+  public async execute(name: string): Promise<Omit<Store, 'deleted_at'>> {
     const storeRepository = getRepository(Store)
     const existingStore = await storeRepository.findOne({ where: { name }})
     if (existingStore) {
       if (!existingStore.deleted_at) throw new AppError(constants.errorMessages.existingStore)
-      else await storeRepository.restore(existingStore.id)
-      return this.assemblePaymentTypeResponse(existingStore)
+      else await this.reactivateStore(existingStore)
+      return storeAssembleUser(existingStore)
     }
     const store = storeRepository.create({ name })
     await storeRepository.save(store)
-    return this.assemblePaymentTypeResponse(store)
+    return storeAssembleUser(store)
   }
 }
 

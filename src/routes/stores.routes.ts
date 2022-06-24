@@ -15,7 +15,7 @@ storesRouter.use(ensureAuthenticated)
 
 storesRouter.get('/', async (_request, response) => {
   const storesRepository = getRepository(Store)
-  const stores = await storesRepository.find()
+  const stores = await storesRepository.find({ where: { deleted_at: IsNull() }})
   return response.json(stores.map(storeAssembleUser))
 })
 
