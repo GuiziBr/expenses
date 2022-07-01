@@ -57,7 +57,7 @@ storesRouter.get('/', function (_request, response) { return __awaiter(void 0, v
         switch (_a.label) {
             case 0:
                 storesRepository = typeorm_1.getRepository(Store_1.default);
-                return [4 /*yield*/, storesRepository.find()];
+                return [4 /*yield*/, storesRepository.find({ where: { deleted_at: typeorm_1.IsNull() } })];
             case 1:
                 stores = _a.sent();
                 return [2 /*return*/, response.json(stores.map(storeAssembler_1.storeAssembleUser))];
