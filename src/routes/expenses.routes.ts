@@ -36,12 +36,14 @@ expensesRouter.get('/shared', validateGetExpenses, async ({ user, query }, respo
   const { id: owner_id } = user
   const { date, offset = constants.defaultOffset, limit = constants.defaultLimit } = query
   const parsedDate = date ? parseISO(date.toString()) : new Date()
+  console.log('\nPARSED_DATE-------', parsedDate)
   const { expenses, totalCount } = await expensesRepository.getSharedExpenses({
     owner_id,
     date: parsedDate,
     offset: Number(offset),
     limit: Number(limit)
   })
+  console.log('\nEXPENSES-----------', JSON.stringify(expenses))
   response.setHeader(constants.headerTypes.totalCount, totalCount)
   return response.json(expenses)
 })
