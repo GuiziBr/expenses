@@ -57,7 +57,7 @@ paymentTypeRouter.get('/', function (_request, response) { return __awaiter(void
         switch (_a.label) {
             case 0:
                 paymentTypesRepository = typeorm_1.getRepository(PaymentType_1.default);
-                return [4 /*yield*/, paymentTypesRepository.find()];
+                return [4 /*yield*/, paymentTypesRepository.find({ where: { deleted_at: typeorm_1.IsNull() } })];
             case 1:
                 paymentTypes = _a.sent();
                 return [2 /*return*/, response.json(paymentTypes.map(paymentTypeAssembler_1.paymentTypeAssembleUser))];
