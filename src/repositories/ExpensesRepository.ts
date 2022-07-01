@@ -67,18 +67,15 @@ interface BalanceResponse {
 class ExpensesRepository extends Repository<Expense> {
   public async getSharedExpenses({ owner_id, date, offset, limit }: Request): Promise<SharedExpensesResponse> {
     const startDate = startOfMonth(date)
-    console.log('\nSTART_DATE--------', startDate)
     const endDate = endOfMonth(date)
-    console.log('\nEND_DATE--------', endDate)
     const [expenses, totalCount] = await this.findAndCount({
       where: { personal: false, date: Between(startDate, endDate) },
       order: { date: Order.desc }
     })
-    console.log('\nFIND_EXPENSES', JSON.stringify(expenses))
     const typedExpenses = expenses
       .splice(offset, limit)
       .map((expense) => this.assembleExpense(expense, owner_id, true))
-    console.log('\nTYPED_EXPENSES', JSON.stringify(typedExpenses))
+
     return { expenses: typedExpenses, totalCount }
   }
 
