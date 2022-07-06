@@ -16,6 +16,9 @@ class PaymentType {
 
   @Column({ type: Date, nullable: true })
   deleted_at?: Date | null
+
+  @Column()
+  hasStatement: boolean
 }
 
 export default PaymentType

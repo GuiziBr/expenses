@@ -14,7 +14,7 @@ class UpdatePaymentTypeService {
     return paymentType || null
   }
 
-  public async execute(id: string, description: string): Promise<void> {
+  public async execute(id: string, description: string, hasStatement?: boolean): Promise<void> {
     const paymentTypeRepository = getRepository(PaymentType)
 
     const [paymentType, sameDescriptionPaymentType] = await Promise.all([
@@ -28,6 +28,7 @@ class UpdatePaymentTypeService {
       await paymentTypeRepository.save({
         ...paymentType,
         description,
+        hasStatement,
         updated_at: new Date()
       })
       return
