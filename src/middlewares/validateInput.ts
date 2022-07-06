@@ -46,6 +46,19 @@ export async function validateDescription({ body }: Request, _response: Response
   return next()
 }
 
+export async function validatePaymentType({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
+  try {
+    const schema = Yup.object().shape({
+      description: Yup.string().required(constants.schemaValidationErrors.descriptionRequired),
+      hasStatement: Yup.boolean()
+    })
+    await schema.validate(body, { abortEarly: false })
+  } catch (err) {
+    if (err instanceof Yup.ValidationError) throw new AppError(err.message)
+  }
+  return next()
+}
+
 export async function validateCreateExpense({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
     const schema = Yup.object().shape({

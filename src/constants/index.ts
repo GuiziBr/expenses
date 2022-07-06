@@ -16,7 +16,7 @@ const constants = {
     incorrectLogin: 'Incorrect email/password combination',
     existingCategory: 'Category already exists',
     notFoundCategory: 'Category not found',
-    futureDate: 'Date must be in the future',
+    futureDate: 'Date must not be in the future',
     existingExpense: 'This expense is already registered',
     emailInUse: 'Email address already in use',
     changeAvatarNotAllowed: 'Only authenticated users can change avatar',
@@ -31,7 +31,8 @@ const constants = {
     duplicatedBankName: 'There is already a bank with same name',
     notFoundStore: 'Store not found',
     existingStore: 'Store already exists',
-    duplicatedStoreName: 'There is already a store with same name'
+    duplicatedStoreName: 'There is already a store with same name',
+    statementPeriodNotFound: 'No statement period for provided payment type and bank was found'
   },
   headerTypes: { totalCount: 'X-Total-Count' },
   defaultLimit: 5,

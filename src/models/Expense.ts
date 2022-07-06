@@ -65,6 +65,9 @@ class Expense {
 
   @Column()
   personal: boolean
+
+  @Column('date')
+  due_date: Date
 }
 
 export default Expense
