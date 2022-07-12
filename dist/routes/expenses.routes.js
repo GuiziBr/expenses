@@ -82,17 +82,19 @@ expensesRouter.post('/', validateInput_1.validateCreateExpense, parseDate_1.pars
 expensesRouter.get('/shared', validateInput_1.validateGetExpenses, function (_a, response) {
     var user = _a.user, query = _a.query;
     return __awaiter(void 0, void 0, void 0, function () {
-        var expensesRepository, owner_id, date, _b, offset, _c, limit, parsedDate, _d, expenses, totalCount;
+        var expensesRepository, owner_id, startDate, endDate, _b, offset, _c, limit, parsedStartDate, parsedEndDate, _d, expenses, totalCount;
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
                     expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
                     owner_id = user.id;
-                    date = query.date, _b = query.offset, offset = _b === void 0 ? constants_1.default.defaultOffset : _b, _c = query.limit, limit = _c === void 0 ? constants_1.default.defaultLimit : _c;
-                    parsedDate = date ? date_fns_1.parseISO(date.toString()) : new Date();
+                    startDate = query.startDate, endDate = query.endDate, _b = query.offset, offset = _b === void 0 ? constants_1.default.defaultOffset : _b, _c = query.limit, limit = _c === void 0 ? constants_1.default.defaultLimit : _c;
+                    parsedStartDate = startDate ? date_fns_1.parseISO(startDate.toString()) : null;
+                    parsedEndDate = endDate ? date_fns_1.parseISO(endDate.toString()) : new Date();
                     return [4 /*yield*/, expensesRepository.getSharedExpenses({
                             owner_id: owner_id,
-                            date: parsedDate,
+                            startDate: parsedStartDate,
+                            endDate: parsedEndDate,
                             offset: Number(offset),
                             limit: Number(limit)
                         })];
@@ -107,17 +109,19 @@ expensesRouter.get('/shared', validateInput_1.validateGetExpenses, function (_a,
 expensesRouter.get('/personal', validateInput_1.validateGetExpenses, function (_a, response) {
     var user = _a.user, query = _a.query;
     return __awaiter(void 0, void 0, void 0, function () {
-        var expensesRepository, owner_id, date, _b, offset, _c, limit, parsedDate, _d, expenses, totalCount;
+        var expensesRepository, owner_id, startDate, endDate, _b, offset, _c, limit, parsedStartDate, parsedEndDate, _d, expenses, totalCount;
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
                     expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
                     owner_id = user.id;
-                    date = query.date, _b = query.offset, offset = _b === void 0 ? constants_1.default.defaultOffset : _b, _c = query.limit, limit = _c === void 0 ? constants_1.default.defaultLimit : _c;
-                    parsedDate = date ? date_fns_1.parseISO(date.toString()) : new Date();
+                    startDate = query.startDate, endDate = query.endDate, _b = query.offset, offset = _b === void 0 ? constants_1.default.defaultOffset : _b, _c = query.limit, limit = _c === void 0 ? constants_1.default.defaultLimit : _c;
+                    parsedStartDate = startDate ? date_fns_1.parseISO(startDate.toString()) : null;
+                    parsedEndDate = endDate ? date_fns_1.parseISO(endDate.toString()) : new Date();
                     return [4 /*yield*/, expensesRepository.getPersonalExpenses({
                             owner_id: owner_id,
-                            date: parsedDate,
+                            startDate: parsedStartDate,
+                            endDate: parsedEndDate,
                             offset: Number(offset),
                             limit: Number(limit)
                         })];

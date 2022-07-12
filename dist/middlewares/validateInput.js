@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateName = exports.validateId = exports.validateGetBalance = exports.validateGetExpenses = exports.validateCreateExpense = exports.validateDescription = exports.validateSession = exports.validateUser = void 0;
+exports.validateName = exports.validateId = exports.validateGetBalance = exports.validateGetExpenses = exports.validateCreateExpense = exports.validatePaymentType = exports.validateDescription = exports.validateSession = exports.validateUser = void 0;
 var date_fns_1 = require("date-fns");
 var Yup = __importStar(require("yup"));
 var uuid_1 = require("uuid");
@@ -146,10 +146,37 @@ function validateDescription(_a, _response, next) {
     });
 }
 exports.validateDescription = validateDescription;
-function validateCreateExpense(_a, _response, next) {
+function validatePaymentType(_a, _response, next) {
     var body = _a.body;
     return __awaiter(this, void 0, void 0, function () {
         var schema, err_4;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    schema = Yup.object().shape({
+                        description: Yup.string().required(constants_1.default.schemaValidationErrors.descriptionRequired),
+                        hasStatement: Yup.boolean()
+                    });
+                    return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
+                case 1:
+                    _b.sent();
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_4 = _b.sent();
+                    if (err_4 instanceof Yup.ValidationError)
+                        throw new AppError_1.default(err_4.message);
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/, next()];
+            }
+        });
+    });
+}
+exports.validatePaymentType = validatePaymentType;
+function validateCreateExpense(_a, _response, next) {
+    var body = _a.body;
+    return __awaiter(this, void 0, void 0, function () {
+        var schema, err_5;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -170,9 +197,9 @@ function validateCreateExpense(_a, _response, next) {
                     _b.sent();
                     return [3 /*break*/, 3];
                 case 2:
-                    err_4 = _b.sent();
-                    if (err_4 instanceof Yup.ValidationError)
-                        throw new AppError_1.default(err_4.message);
+                    err_5 = _b.sent();
+                    if (err_5 instanceof Yup.ValidationError)
+                        throw new AppError_1.default(err_5.message);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/, next()];
             }
@@ -183,13 +210,14 @@ exports.validateCreateExpense = validateCreateExpense;
 function validateGetExpenses(_a, _response, next) {
     var query = _a.query;
     return __awaiter(this, void 0, void 0, function () {
-        var schema, err_5;
+        var schema, err_6;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
                     schema = Yup.object().shape({
-                        date: Yup.date().transform(parseDateString).typeError(constants_1.default.schemaValidationErrors.dateFormat),
+                        startDate: Yup.date().transform(parseDateString).typeError(constants_1.default.schemaValidationErrors.dateFormat),
+                        endDate: Yup.date().transform(parseDateString).typeError(constants_1.default.schemaValidationErrors.dateFormat),
                         offset: Yup.number().min(0).default(1).typeError(constants_1.default.schemaValidationErrors.offsetType),
                         limit: Yup.number().min(1).max(20).default(20)
                             .typeError(constants_1.default.schemaValidationErrors.limitType)
@@ -199,9 +227,9 @@ function validateGetExpenses(_a, _response, next) {
                     _b.sent();
                     return [3 /*break*/, 3];
                 case 2:
-                    err_5 = _b.sent();
-                    if (err_5 instanceof Yup.ValidationError)
-                        throw new AppError_1.default(err_5.message);
+                    err_6 = _b.sent();
+                    if (err_6 instanceof Yup.ValidationError)
+                        throw new AppError_1.default(err_6.message);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/, next()];
             }
@@ -212,20 +240,23 @@ exports.validateGetExpenses = validateGetExpenses;
 function validateGetBalance(_a, _response, next) {
     var query = _a.query;
     return __awaiter(this, void 0, void 0, function () {
-        var schema, err_6;
+        var schema, err_7;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
-                    schema = Yup.object().shape({ date: Yup.date().transform(parseDateString).typeError(constants_1.default.schemaValidationErrors.dateFormat) });
+                    schema = Yup.object().shape({
+                        startDate: Yup.date().transform(parseDateString).typeError(constants_1.default.schemaValidationErrors.dateFormat),
+                        endDate: Yup.date().transform(parseDateString).typeError(constants_1.default.schemaValidationErrors.dateFormat)
+                    });
                     return [4 /*yield*/, schema.validate(query, { abortEarly: false })];
                 case 1:
                     _b.sent();
                     return [3 /*break*/, 3];
                 case 2:
-                    err_6 = _b.sent();
-                    if (err_6 instanceof Yup.ValidationError)
-                        throw new AppError_1.default(err_6.message);
+                    err_7 = _b.sent();
+                    if (err_7 instanceof Yup.ValidationError)
+                        throw new AppError_1.default(err_7.message);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/, next()];
             }
@@ -249,7 +280,7 @@ exports.validateId = validateId;
 function validateName(_a, _response, next) {
     var body = _a.body;
     return __awaiter(this, void 0, void 0, function () {
-        var schema, err_7;
+        var schema, err_8;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -260,9 +291,9 @@ function validateName(_a, _response, next) {
                     _b.sent();
                     return [3 /*break*/, 3];
                 case 2:
-                    err_7 = _b.sent();
-                    if (err_7 instanceof Yup.ValidationError)
-                        throw new AppError_1.default(err_7.message);
+                    err_8 = _b.sent();
+                    if (err_8 instanceof Yup.ValidationError)
+                        throw new AppError_1.default(err_8.message);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/, next()];
             }

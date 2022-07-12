@@ -78,7 +78,7 @@ var UpdatePaymentTypeService = /** @class */ (function () {
             });
         });
     };
-    UpdatePaymentTypeService.prototype.execute = function (id, description) {
+    UpdatePaymentTypeService.prototype.execute = function (id, description, hasStatement) {
         return __awaiter(this, void 0, void 0, function () {
             var paymentTypeRepository, _a, paymentType, sameDescriptionPaymentType, reactivatedPaymentType;
             return __generator(this, function (_b) {
@@ -94,7 +94,8 @@ var UpdatePaymentTypeService = /** @class */ (function () {
                         if (!paymentType)
                             throw new AppError_1.default(constants_1.default.errorMessages.notFoundCategory, 404);
                         if (!((paymentType && !sameDescriptionPaymentType) || ((sameDescriptionPaymentType === null || sameDescriptionPaymentType === void 0 ? void 0 : sameDescriptionPaymentType.id) === id))) return [3 /*break*/, 3];
-                        return [4 /*yield*/, paymentTypeRepository.save(__assign(__assign({}, paymentType), { description: description, updated_at: new Date() }))];
+                        return [4 /*yield*/, paymentTypeRepository.save(__assign(__assign({}, paymentType), { description: description,
+                                hasStatement: hasStatement, updated_at: new Date() }))];
                     case 2:
                         _b.sent();
                         return [2 /*return*/];

@@ -80,31 +80,31 @@ paymentTypeRouter.get('/:id', validateInput_1.validateId, function (request, res
         }
     });
 }); });
-paymentTypeRouter.post('/', validateInput_1.validateDescription, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var description, createPaymentType, paymentType;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+paymentTypeRouter.post('/', validateInput_1.validatePaymentType, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, description, hasStatement, createPaymentType, paymentType;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                description = request.body.description;
+                _a = request.body, description = _a.description, hasStatement = _a.hasStatement;
                 createPaymentType = new CreatePaymentTypeService_1.default();
-                return [4 /*yield*/, createPaymentType.execute(description)];
+                return [4 /*yield*/, createPaymentType.execute(description, hasStatement)];
             case 1:
-                paymentType = _a.sent();
+                paymentType = _b.sent();
                 return [2 /*return*/, response.status(201).json(paymentType)];
         }
     });
 }); });
-paymentTypeRouter.patch('/:id', validateInput_1.validateId, validateInput_1.validateDescription, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, description, updatePaymentType;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+paymentTypeRouter.patch('/:id', validateInput_1.validateId, validateInput_1.validatePaymentType, function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, _a, description, hasStatement, updatePaymentType;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 id = request.params.id;
-                description = request.body.description;
+                _a = request.body, description = _a.description, hasStatement = _a.hasStatement;
                 updatePaymentType = new UpdatePaymentTypeService_1.default();
-                return [4 /*yield*/, updatePaymentType.execute(id, description)];
+                return [4 /*yield*/, updatePaymentType.execute(id, description, hasStatement)];
             case 1:
-                _a.sent();
+                _b.sent();
                 return [2 /*return*/, response.status(204).json()];
         }
     });

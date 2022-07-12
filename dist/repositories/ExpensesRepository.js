@@ -69,7 +69,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var date_fns_1 = require("date-fns");
 var typeorm_1 = require("typeorm");
 var Expense_1 = __importDefault(require("../models/Expense"));
 var Types;
@@ -88,17 +87,18 @@ var ExpensesRepository = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ExpensesRepository.prototype.getSharedExpenses = function (_a) {
-        var owner_id = _a.owner_id, date = _a.date, offset = _a.offset, limit = _a.limit;
+        var owner_id = _a.owner_id, startDate = _a.startDate, endDate = _a.endDate, offset = _a.offset, limit = _a.limit;
         return __awaiter(this, void 0, void 0, function () {
-            var startDate, endDate, _b, expenses, totalCount, typedExpenses;
+            var whereClause, _b, expenses, totalCount, typedExpenses;
             var _this = this;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        startDate = date_fns_1.startOfMonth(date);
-                        endDate = date_fns_1.endOfMonth(date);
+                        whereClause = __assign({ personal: false }, startDate
+                            ? { date: typeorm_1.Between(startDate, endDate) }
+                            : { date: typeorm_1.LessThanOrEqual(endDate) });
                         return [4 /*yield*/, this.findAndCount({
-                                where: { personal: false, date: typeorm_1.Between(startDate, endDate) },
+                                where: whereClause,
                                 order: { date: Order.desc }
                             })];
                     case 1:
@@ -125,14 +125,14 @@ var ExpensesRepository = /** @class */ (function (_super) {
         });
     };
     ExpensesRepository.prototype.getPersonalExpenses = function (_a) {
-        var owner_id = _a.owner_id, date = _a.date, offset = _a.offset, limit = _a.limit;
+        var owner_id = _a.owner_id, startDate = _a.startDate, endDate = _a.endDate, offset = _a.offset, limit = _a.limit;
         return __awaiter(this, void 0, void 0, function () {
             var searchDate, _b, expenses, totalCount, formattedExpenses;
             var _this = this;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        searchDate = typeorm_1.Between(date_fns_1.startOfMonth(date), date_fns_1.endOfMonth(date));
+                        searchDate = startDate ? typeorm_1.Between(startDate, endDate) : typeorm_1.LessThanOrEqual(endDate);
                         return [4 /*yield*/, this.findAndCount({
                                 where: [
                                     { owner_id: owner_id, date: searchDate, personal: true },
@@ -152,13 +152,13 @@ var ExpensesRepository = /** @class */ (function (_super) {
         });
     };
     ExpensesRepository.prototype.getBalance = function (_a) {
-        var owner_id = _a.owner_id, date = _a.date;
+        var owner_id = _a.owner_id, startDate = _a.startDate, endDate = _a.endDate;
         return __awaiter(this, void 0, void 0, function () {
             var searchDate, _b, personalExpenses, sharedExpenses, personalBalance, sharedBalance;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        searchDate = typeorm_1.Between(date_fns_1.startOfMonth(date), date_fns_1.endOfMonth(date));
+                        searchDate = startDate ? typeorm_1.Between(startDate, endDate) : typeorm_1.LessThanOrEqual(endDate);
                         return [4 /*yield*/, Promise.all([
                                 this.find({
                                     where: [
