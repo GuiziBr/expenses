@@ -12,9 +12,10 @@ balanceRouter.use(ensureAuthenticated)
 balanceRouter.get('/', validateGetBalance, async ({ user, query }, response) => {
   const expensesRepository = getCustomRepository(ExpensesRepository)
   const { id: owner_id } = user
-  const { date } = query
-  const parsedDate = date ? parseISO(date.toString()) : new Date()
-  const balance = await expensesRepository.getBalance({ owner_id, date: parsedDate })
+  const { startDate, endDate } = query
+  const parsedStartDate = startDate ? parseISO(startDate.toString()) : null
+  const parsedEndDate = endDate ? parseISO(endDate.toString()) : new Date()
+  const balance = await expensesRepository.getBalance({ owner_id, startDate: parsedStartDate, endDate: parsedEndDate })
   return response.json(balance)
 })
 

@@ -3,7 +3,7 @@ const constants = {
     nameRequired: 'name is required',
     emailRequired: 'email is required',
     passwordRequired: 'password is required',
-    dateFormat: 'Date format must be YYYY-MM',
+    dateFormat: 'Date format must be YYYY-MM-DD',
     offsetType: 'Offset must be a number',
     limitType: 'Limit must be a number',
     descriptionRequired: 'description is required',

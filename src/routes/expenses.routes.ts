@@ -34,11 +34,13 @@ expensesRouter.post('/', validateCreateExpense, parseBodyDate, async ({ user, bo
 expensesRouter.get('/shared', validateGetExpenses, async ({ user, query }, response) => {
   const expensesRepository = getCustomRepository(ExpensesRepository)
   const { id: owner_id } = user
-  const { date, offset = constants.defaultOffset, limit = constants.defaultLimit } = query
-  const parsedDate = date ? parseISO(date.toString()) : new Date()
+  const { startDate, endDate, offset = constants.defaultOffset, limit = constants.defaultLimit } = query
+  const parsedStartDate = startDate ? parseISO(startDate.toString()) : null
+  const parsedEndDate = endDate ? parseISO(endDate.toString()) : new Date()
   const { expenses, totalCount } = await expensesRepository.getSharedExpenses({
     owner_id,
-    date: parsedDate,
+    startDate: parsedStartDate,
+    endDate: parsedEndDate,
     offset: Number(offset),
     limit: Number(limit)
   })
@@ -49,11 +51,13 @@ expensesRouter.get('/shared', validateGetExpenses, async ({ user, query }, respo
 expensesRouter.get('/personal', validateGetExpenses, async ({ user, query }, response) => {
   const expensesRepository = getCustomRepository(ExpensesRepository)
   const { id: owner_id } = user
-  const { date, offset = constants.defaultOffset, limit = constants.defaultLimit } = query
-  const parsedDate = date ? parseISO(date.toString()) : new Date()
+  const { startDate, endDate, offset = constants.defaultOffset, limit = constants.defaultLimit } = query
+  const parsedStartDate = startDate ? parseISO(startDate.toString()) : null
+  const parsedEndDate = endDate ? parseISO(endDate.toString()) : new Date()
   const { expenses, totalCount } = await expensesRepository.getPersonalExpenses({
     owner_id,
-    date: parsedDate,
+    startDate: parsedStartDate,
+    endDate: parsedEndDate,
     offset: Number(offset),
     limit: Number(limit)
   })

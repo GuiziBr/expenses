@@ -82,7 +82,8 @@ export async function validateCreateExpense({ body }: Request, _response: Respon
 export async function validateGetExpenses({ query }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
     const schema = Yup.object().shape({
-      date: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat),
+      startDate: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat),
+      endDate: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat),
       offset: Yup.number().min(0).default(1).typeError(constants.schemaValidationErrors.offsetType),
       limit: Yup.number().min(1).max(20).default(20)
         .typeError(constants.schemaValidationErrors.limitType)
@@ -96,7 +97,10 @@ export async function validateGetExpenses({ query }: Request, _response: Respons
 
 export async function validateGetBalance({ query }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
-    const schema = Yup.object().shape({ date: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat) })
+    const schema = Yup.object().shape({
+      startDate: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat),
+      endDate: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat)
+    })
     await schema.validate(query, { abortEarly: false })
   } catch (err) {
     if (err instanceof Yup.ValidationError) throw new AppError(err.message)
