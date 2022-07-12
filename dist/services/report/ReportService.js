@@ -67,8 +67,8 @@ var ReportService = /** @class */ (function () {
                     case 1:
                         users = _a.sent();
                         return [4 /*yield*/, Promise.all([
-                                this.expensesRepository.getBalance({ owner_id: users[0].id, date: this.reportDate }),
-                                this.expensesRepository.getBalance({ owner_id: users[1].id, date: this.reportDate })
+                                this.expensesRepository.getBalance({ owner_id: users[0].id, endDate: this.reportDate, startDate: this.reportDate }),
+                                this.expensesRepository.getBalance({ owner_id: users[1].id, endDate: this.reportDate, startDate: this.reportDate })
                             ])];
                     case 2:
                         balances = _a.sent();

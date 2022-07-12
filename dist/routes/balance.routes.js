@@ -50,15 +50,16 @@ balanceRouter.use(ensureAuthenticated_1.default);
 balanceRouter.get('/', validateInput_1.validateGetBalance, function (_a, response) {
     var user = _a.user, query = _a.query;
     return __awaiter(void 0, void 0, void 0, function () {
-        var expensesRepository, owner_id, date, parsedDate, balance;
+        var expensesRepository, owner_id, startDate, endDate, parsedStartDate, parsedEndDate, balance;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     expensesRepository = typeorm_1.getCustomRepository(ExpensesRepository_1.default);
                     owner_id = user.id;
-                    date = query.date;
-                    parsedDate = date ? date_fns_1.parseISO(date.toString()) : new Date();
-                    return [4 /*yield*/, expensesRepository.getBalance({ owner_id: owner_id, date: parsedDate })];
+                    startDate = query.startDate, endDate = query.endDate;
+                    parsedStartDate = startDate ? date_fns_1.parseISO(startDate.toString()) : null;
+                    parsedEndDate = endDate ? date_fns_1.parseISO(endDate.toString()) : new Date();
+                    return [4 /*yield*/, expensesRepository.getBalance({ owner_id: owner_id, startDate: parsedStartDate, endDate: parsedEndDate })];
                 case 1:
                     balance = _b.sent();
                     return [2 /*return*/, response.json(balance)];

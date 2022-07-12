@@ -98,6 +98,10 @@ var Expense = /** @class */ (function () {
         typeorm_1.Column(),
         __metadata("design:type", Boolean)
     ], Expense.prototype, "personal", void 0);
+    __decorate([
+        typeorm_1.Column('date'),
+        __metadata("design:type", Date)
+    ], Expense.prototype, "due_date", void 0);
     Expense = __decorate([
         typeorm_1.Entity('expenses')
     ], Expense);

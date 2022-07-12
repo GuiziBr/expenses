@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -46,26 +35,76 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CreateStatementPeriods1657082888876 = void 0;
 var typeorm_1 = require("typeorm");
-var paymentTypeAssembler_1 = require("../../assemblers/paymentTypeAssembler");
-var constants_1 = __importDefault(require("../../constants"));
-var AppError_1 = __importDefault(require("../../errors/AppError"));
-var PaymentType_1 = __importDefault(require("../../models/PaymentType"));
-var CreatePaymentTypeService = /** @class */ (function () {
-    function CreatePaymentTypeService() {
+var CreateStatementPeriods1657082888876 = /** @class */ (function () {
+    function CreateStatementPeriods1657082888876() {
     }
-    CreatePaymentTypeService.prototype.reactivatePaymentType = function (paymentTypeToRestore) {
+    CreateStatementPeriods1657082888876.prototype.up = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
-            var paymentTypesRepository;
+            var userIdFK, bankIdFK;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        paymentTypesRepository = typeorm_1.getRepository(PaymentType_1.default);
-                        return [4 /*yield*/, paymentTypesRepository.save(__assign(__assign({}, paymentTypeToRestore), { deleted_at: null }))];
+                    case 0: return [4 /*yield*/, queryRunner.createTable(new typeorm_1.Table({
+                            name: 'statement_periods',
+                            columns: [
+                                {
+                                    name: 'id',
+                                    type: 'uuid',
+                                    isPrimary: true,
+                                    generationStrategy: 'uuid',
+                                    default: 'uuid_generate_v4()'
+                                },
+                                {
+                                    name: 'user_id',
+                                    type: 'uuid'
+                                },
+                                {
+                                    name: 'bank_id',
+                                    type: 'uuid'
+                                },
+                                {
+                                    name: 'initial_day',
+                                    type: 'varchar'
+                                },
+                                {
+                                    name: 'final_day',
+                                    type: 'varchar'
+                                }
+                            ]
+                        }))];
+                    case 1:
+                        _a.sent();
+                        userIdFK = new typeorm_1.TableForeignKey({
+                            name: 'UserId',
+                            columnNames: ['user_id'],
+                            referencedColumnNames: ['id'],
+                            referencedTableName: 'users',
+                            onDelete: 'CASCADE',
+                            onUpdate: 'CASCADE'
+                        });
+                        bankIdFK = new typeorm_1.TableForeignKey({
+                            name: 'BankId',
+                            columnNames: ['bank_id'],
+                            referencedColumnNames: ['id'],
+                            referencedTableName: 'banks',
+                            onDelete: 'CASCADE',
+                            onUpdate: 'CASCADE'
+                        });
+                        return [4 /*yield*/, queryRunner.createForeignKeys('statement_periods', [userIdFK, bankIdFK])];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    CreateStatementPeriods1657082888876.prototype.down = function (queryRunner) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, queryRunner.dropTable('statement_periods')];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -73,34 +112,6 @@ var CreatePaymentTypeService = /** @class */ (function () {
             });
         });
     };
-    CreatePaymentTypeService.prototype.execute = function (description, hasStatement) {
-        return __awaiter(this, void 0, void 0, function () {
-            var paymentTypeRepository, existingPaymentType, paymentType;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        paymentTypeRepository = typeorm_1.getRepository(PaymentType_1.default);
-                        return [4 /*yield*/, paymentTypeRepository.findOne({ where: { description: description }, withDeleted: true })];
-                    case 1:
-                        existingPaymentType = _a.sent();
-                        if (!existingPaymentType) return [3 /*break*/, 5];
-                        if (!!existingPaymentType.deleted_at) return [3 /*break*/, 2];
-                        throw new AppError_1.default(constants_1.default.errorMessages.existingPaymentType);
-                    case 2: return [4 /*yield*/, this.reactivatePaymentType(existingPaymentType)];
-                    case 3:
-                        _a.sent();
-                        _a.label = 4;
-                    case 4: return [2 /*return*/, paymentTypeAssembler_1.paymentTypeAssembleUser(existingPaymentType)];
-                    case 5:
-                        paymentType = paymentTypeRepository.create({ description: description, hasStatement: hasStatement });
-                        return [4 /*yield*/, paymentTypeRepository.save(paymentType)];
-                    case 6:
-                        _a.sent();
-                        return [2 /*return*/, paymentTypeAssembler_1.paymentTypeAssembleUser(paymentType)];
-                }
-            });
-        });
-    };
-    return CreatePaymentTypeService;
+    return CreateStatementPeriods1657082888876;
 }());
-exports.default = CreatePaymentTypeService;
+exports.CreateStatementPeriods1657082888876 = CreateStatementPeriods1657082888876;

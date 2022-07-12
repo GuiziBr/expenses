@@ -33,6 +33,10 @@ var PaymentType = /** @class */ (function () {
         typeorm_1.Column({ type: Date, nullable: true }),
         __metadata("design:type", Object)
     ], PaymentType.prototype, "deleted_at", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", Boolean)
+    ], PaymentType.prototype, "hasStatement", void 0);
     PaymentType = __decorate([
         typeorm_1.Entity('payment_type')
     ], PaymentType);
