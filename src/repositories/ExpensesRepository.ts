@@ -1,5 +1,4 @@
-import { endOfMonth, startOfMonth } from 'date-fns'
-import { Between, EntityRepository, Not, Repository } from 'typeorm'
+import { Between, EntityRepository, LessThanOrEqual, Not, Repository } from 'typeorm'
 import Expense from '../models/Expense'
 
 enum Types {
@@ -39,7 +38,8 @@ interface TypedExpense {
 
 interface Request {
   owner_id: string
-  date: Date,
+  startDate: Date | null
+  endDate?: Date,
   offset: number,
   limit: number
 }
@@ -65,11 +65,15 @@ interface BalanceResponse {
 
 @EntityRepository(Expense)
 class ExpensesRepository extends Repository<Expense> {
-  public async getSharedExpenses({ owner_id, date, offset, limit }: Request): Promise<SharedExpensesResponse> {
-    const startDate = startOfMonth(date)
-    const endDate = endOfMonth(date)
+  public async getSharedExpenses({ owner_id, startDate, endDate, offset, limit }: Request): Promise<SharedExpensesResponse> {
+    const whereClause = {
+      personal: false,
+      ...startDate
+        ? { date: Between(startDate, endDate) }
+        : { date: LessThanOrEqual(endDate) }
+    }
     const [expenses, totalCount] = await this.findAndCount({
-      where: { personal: false, date: Between(startDate, endDate) },
+      where: whereClause,
       order: { date: Order.desc }
     })
     const typedExpenses = expenses
@@ -84,8 +88,8 @@ class ExpensesRepository extends Repository<Expense> {
     return isSameExpense || null
   }
 
-  public async getPersonalExpenses({ owner_id, date, offset, limit }: Request): Promise<PersonalExpensesResponse> {
-    const searchDate = Between(startOfMonth(date), endOfMonth(date))
+  public async getPersonalExpenses({ owner_id, startDate, endDate, offset, limit }: Request): Promise<PersonalExpensesResponse> {
+    const searchDate = startDate ? Between(startDate, endDate) : LessThanOrEqual(endDate)
     const [expenses, totalCount] = await this.findAndCount({
       where: [
         { owner_id, date: searchDate, personal: true },
@@ -100,8 +104,8 @@ class ExpensesRepository extends Repository<Expense> {
     return { expenses: formattedExpenses, totalCount }
   }
 
-  public async getBalance({ owner_id, date }: Omit<Request, 'offset' | 'limit'>): Promise<BalanceResponse> {
-    const searchDate = Between(startOfMonth(date), endOfMonth(date))
+  public async getBalance({ owner_id, startDate, endDate }: Omit<Request, 'offset' | 'limit'>): Promise<BalanceResponse> {
+    const searchDate = startDate ? Between(startDate, endDate) : LessThanOrEqual(endDate)
     const [personalExpenses, sharedExpenses] = await Promise.all([
       this.find({
         where: [
