@@ -35,6 +35,7 @@ class CrateExpenseService {
     const paymentTypeRepository = getRepository(PaymentType)
     const paymentType = await paymentTypeRepository.findOne(paymentTypeId)
     if (!paymentType?.hasStatement) return transactionDate
+    if (paymentType?.hasStatement && !bankId) throw new AppError(constants.errorMessages.paymentTypeStatementWithNoBank)
 
     const statementPeriodRepository = getRepository(StatementPeriod)
     const statementPeriod = await statementPeriodRepository.findOne({ where: { user_id: userId, bank_id: bankId }})

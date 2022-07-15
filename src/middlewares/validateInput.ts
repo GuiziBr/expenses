@@ -12,11 +12,11 @@ function parseDateString(dateValue: Date, date: string) {
 export async function validateUser({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
     const schema = Yup.object().shape({
-      name: Yup.string().required(constants.schemaValidationErrors.nameRequired),
-      email: Yup.string().required(constants.schemaValidationErrors.emailRequired),
-      password: Yup.string().required(constants.schemaValidationErrors.passwordRequired)
+      name: Yup.string().min(1).required(constants.schemaValidationErrors.nameRequired),
+      email: Yup.string().min(1).required(constants.schemaValidationErrors.emailRequired),
+      password: Yup.string().min(1).required(constants.schemaValidationErrors.passwordRequired)
     })
-    await schema.validate(body, { abortEarly: false })
+    await schema.validate(body, { abortEarly: true })
   } catch (err) {
     if (err instanceof Yup.ValidationError) throw new AppError(err.message)
   }
@@ -26,10 +26,10 @@ export async function validateUser({ body }: Request, _response: Response, next:
 export async function validateSession({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
     const schema = Yup.object().shape({
-      email: Yup.string().required(constants.schemaValidationErrors.emailRequired),
-      password: Yup.string().required(constants.schemaValidationErrors.passwordRequired)
+      email: Yup.string().min(1).required(constants.schemaValidationErrors.emailRequired),
+      password: Yup.string().min(1).required(constants.schemaValidationErrors.passwordRequired)
     })
-    await schema.validate(body, { abortEarly: false })
+    await schema.validate(body, { abortEarly: true })
   } catch (err) {
     if (err instanceof Yup.ValidationError) throw new AppError(err.message)
   }
@@ -38,7 +38,7 @@ export async function validateSession({ body }: Request, _response: Response, ne
 
 export async function validateDescription({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
-    const schema = Yup.object().shape({ description: Yup.string().required(constants.schemaValidationErrors.descriptionRequired) })
+    const schema = Yup.object().shape({ description: Yup.string().min(1).required(constants.schemaValidationErrors.descriptionRequired) })
     await schema.validate(body, { abortEarly: false })
   } catch (err) {
     if (err instanceof Yup.ValidationError) throw new AppError(err.message)
@@ -49,10 +49,10 @@ export async function validateDescription({ body }: Request, _response: Response
 export async function validatePaymentType({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
     const schema = Yup.object().shape({
-      description: Yup.string().required(constants.schemaValidationErrors.descriptionRequired),
+      description: Yup.string().min(1).required(constants.schemaValidationErrors.descriptionRequired),
       hasStatement: Yup.boolean()
     })
-    await schema.validate(body, { abortEarly: false })
+    await schema.validate(body, { abortEarly: true })
   } catch (err) {
     if (err instanceof Yup.ValidationError) throw new AppError(err.message)
   }
@@ -62,17 +62,17 @@ export async function validatePaymentType({ body }: Request, _response: Response
 export async function validateCreateExpense({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
     const schema = Yup.object().shape({
-      description: Yup.string().required(constants.schemaValidationErrors.descriptionRequired),
+      description: Yup.string().min(1).required(constants.schemaValidationErrors.descriptionRequired),
       date: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateRequired),
       amount: Yup.number().required(constants.schemaValidationErrors.amountRequired),
-      category_id: Yup.string().required(constants.schemaValidationErrors.categoryRequired),
+      category_id: Yup.string().min(1).required(constants.schemaValidationErrors.categoryRequired),
       personal: Yup.boolean(),
       split: Yup.boolean(),
-      payment_type_id: Yup.string().required(constants.schemaValidationErrors.paymentTypeRequired),
-      bank_id: Yup.string(),
-      store_id: Yup.string()
+      payment_type_id: Yup.string().min(1).required(constants.schemaValidationErrors.paymentTypeRequired),
+      bank_id: Yup.string().min(1),
+      store_id: Yup.string().min(1)
     })
-    await schema.validate(body, { abortEarly: false })
+    await schema.validate(body, { abortEarly: true })
   } catch (err) {
     if (err instanceof Yup.ValidationError) throw new AppError(err.message)
   }
@@ -116,7 +116,7 @@ export async function validateId({ params }: Request, _response: Response, next:
 
 export async function validateName({ body }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
-    const schema = Yup.object().shape({ name: Yup.string().required(constants.schemaValidationErrors.nameRequired) })
+    const schema = Yup.object().shape({ name: Yup.string().min(1).required(constants.schemaValidationErrors.nameRequired) })
     await schema.validate(body, { abortEarly: false })
   } catch (err) {
     if (err instanceof Yup.ValidationError) throw new AppError(err.message)
