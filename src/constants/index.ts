@@ -32,7 +32,8 @@ const constants = {
     notFoundStore: 'Store not found',
     existingStore: 'Store already exists',
     duplicatedStoreName: 'There is already a store with same name',
-    statementPeriodNotFound: 'No statement period for provided payment type and bank was found'
+    statementPeriodNotFound: 'No statement period for provided payment type and bank was found',
+    paymentTypeStatementWithNoBank: 'This payment type must have a bank'
   },
   headerTypes: { totalCount: 'X-Total-Count' },
   defaultLimit: 5,
