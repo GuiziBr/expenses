@@ -42,7 +42,19 @@ const constants = {
   reportSubject: 'Expenses Portal - Monthly Report',
   corsOrigins: ['https://expenses-portal.herokuapp.com', 'http://localhost:3000'],
   cronJobTime: '0 0 9 28-31 * *',
-  cronJobTimeZone: 'America/Sao_Paulo'
+  cronJobTimeZone: 'America/Sao_Paulo',
+  orderColumns: {
+    description: 'expenses.description',
+    amount: 'expenses.amount',
+    date: 'expenses.date',
+    due_date: 'expenses.due_date',
+    category: 'categories.description',
+    payment_type: 'payment_type.description',
+    bank: 'banks.name',
+    store: 'stores.name'
+  },
+  dateFormat: 'yyyy-MM-dd'
+
 }
 
 export default constants
