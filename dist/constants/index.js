@@ -34,7 +34,8 @@ var constants = {
         notFoundStore: 'Store not found',
         existingStore: 'Store already exists',
         duplicatedStoreName: 'There is already a store with same name',
-        statementPeriodNotFound: 'No statement period for provided payment type and bank was found'
+        statementPeriodNotFound: 'No statement period for provided payment type and bank was found',
+        paymentTypeStatementWithNoBank: 'This payment type must have a bank'
     },
     headerTypes: { totalCount: 'X-Total-Count' },
     defaultLimit: 5,
@@ -43,6 +44,17 @@ var constants = {
     reportSubject: 'Expenses Portal - Monthly Report',
     corsOrigins: ['https://expenses-portal.herokuapp.com', 'http://localhost:3000'],
     cronJobTime: '0 0 9 28-31 * *',
-    cronJobTimeZone: 'America/Sao_Paulo'
+    cronJobTimeZone: 'America/Sao_Paulo',
+    orderColumns: {
+        description: 'expenses.description',
+        amount: 'expenses.amount',
+        date: 'expenses.date',
+        due_date: 'expenses.due_date',
+        category: 'categories.description',
+        payment_type: 'payment_type.description',
+        bank: 'banks.name',
+        store: 'stores.name'
+    },
+    dateFormat: 'yyyy-MM-dd'
 };
 exports.default = constants;
