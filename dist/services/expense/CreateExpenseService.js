@@ -85,6 +85,8 @@ var CrateExpenseService = /** @class */ (function () {
                         paymentType = _b.sent();
                         if (!(paymentType === null || paymentType === void 0 ? void 0 : paymentType.hasStatement))
                             return [2 /*return*/, transactionDate];
+                        if ((paymentType === null || paymentType === void 0 ? void 0 : paymentType.hasStatement) && !bankId)
+                            throw new AppError_1.default(constants_1.default.errorMessages.paymentTypeStatementWithNoBank);
                         statementPeriodRepository = typeorm_1.getRepository(StatementPeriod_1.default);
                         return [4 /*yield*/, statementPeriodRepository.findOne({ where: { user_id: userId, bank_id: bankId } })];
                     case 2:

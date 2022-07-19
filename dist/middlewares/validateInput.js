@@ -76,11 +76,11 @@ function validateUser(_a, _response, next) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
                     schema = Yup.object().shape({
-                        name: Yup.string().required(constants_1.default.schemaValidationErrors.nameRequired),
-                        email: Yup.string().required(constants_1.default.schemaValidationErrors.emailRequired),
-                        password: Yup.string().required(constants_1.default.schemaValidationErrors.passwordRequired)
+                        name: Yup.string().min(1).required(constants_1.default.schemaValidationErrors.nameRequired),
+                        email: Yup.string().min(1).required(constants_1.default.schemaValidationErrors.emailRequired),
+                        password: Yup.string().min(1).required(constants_1.default.schemaValidationErrors.passwordRequired)
                     });
-                    return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
+                    return [4 /*yield*/, schema.validate(body, { abortEarly: true })];
                 case 1:
                     _b.sent();
                     return [3 /*break*/, 3];
@@ -104,10 +104,10 @@ function validateSession(_a, _response, next) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
                     schema = Yup.object().shape({
-                        email: Yup.string().required(constants_1.default.schemaValidationErrors.emailRequired),
-                        password: Yup.string().required(constants_1.default.schemaValidationErrors.passwordRequired)
+                        email: Yup.string().min(1).required(constants_1.default.schemaValidationErrors.emailRequired),
+                        password: Yup.string().min(1).required(constants_1.default.schemaValidationErrors.passwordRequired)
                     });
-                    return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
+                    return [4 /*yield*/, schema.validate(body, { abortEarly: true })];
                 case 1:
                     _b.sent();
                     return [3 /*break*/, 3];
@@ -130,7 +130,7 @@ function validateDescription(_a, _response, next) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
-                    schema = Yup.object().shape({ description: Yup.string().required(constants_1.default.schemaValidationErrors.descriptionRequired) });
+                    schema = Yup.object().shape({ description: Yup.string().min(1).required(constants_1.default.schemaValidationErrors.descriptionRequired) });
                     return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
                 case 1:
                     _b.sent();
@@ -155,10 +155,10 @@ function validatePaymentType(_a, _response, next) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
                     schema = Yup.object().shape({
-                        description: Yup.string().required(constants_1.default.schemaValidationErrors.descriptionRequired),
+                        description: Yup.string().min(1).required(constants_1.default.schemaValidationErrors.descriptionRequired),
                         hasStatement: Yup.boolean()
                     });
-                    return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
+                    return [4 /*yield*/, schema.validate(body, { abortEarly: true })];
                 case 1:
                     _b.sent();
                     return [3 /*break*/, 3];
@@ -182,17 +182,17 @@ function validateCreateExpense(_a, _response, next) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
                     schema = Yup.object().shape({
-                        description: Yup.string().required(constants_1.default.schemaValidationErrors.descriptionRequired),
+                        description: Yup.string().min(1).required(constants_1.default.schemaValidationErrors.descriptionRequired),
                         date: Yup.date().transform(parseDateString).typeError(constants_1.default.schemaValidationErrors.dateRequired),
                         amount: Yup.number().required(constants_1.default.schemaValidationErrors.amountRequired),
-                        category_id: Yup.string().required(constants_1.default.schemaValidationErrors.categoryRequired),
+                        category_id: Yup.string().min(1).required(constants_1.default.schemaValidationErrors.categoryRequired),
                         personal: Yup.boolean(),
                         split: Yup.boolean(),
-                        payment_type_id: Yup.string().required(constants_1.default.schemaValidationErrors.paymentTypeRequired),
-                        bank_id: Yup.string(),
-                        store_id: Yup.string()
+                        payment_type_id: Yup.string().min(1).required(constants_1.default.schemaValidationErrors.paymentTypeRequired),
+                        bank_id: Yup.string().min(1),
+                        store_id: Yup.string().min(1)
                     });
-                    return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
+                    return [4 /*yield*/, schema.validate(body, { abortEarly: true })];
                 case 1:
                     _b.sent();
                     return [3 /*break*/, 3];
@@ -220,7 +220,9 @@ function validateGetExpenses(_a, _response, next) {
                         endDate: Yup.date().transform(parseDateString).typeError(constants_1.default.schemaValidationErrors.dateFormat),
                         offset: Yup.number().min(0).default(1).typeError(constants_1.default.schemaValidationErrors.offsetType),
                         limit: Yup.number().min(1).max(20).default(20)
-                            .typeError(constants_1.default.schemaValidationErrors.limitType)
+                            .typeError(constants_1.default.schemaValidationErrors.limitType),
+                        orderBy: Yup.string().oneOf(Object.keys(constants_1.default.orderColumns)),
+                        orderType: Yup.string().oneOf(['asc', 'desc'])
                     });
                     return [4 /*yield*/, schema.validate(query, { abortEarly: false })];
                 case 1:
@@ -285,7 +287,7 @@ function validateName(_a, _response, next) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
-                    schema = Yup.object().shape({ name: Yup.string().required(constants_1.default.schemaValidationErrors.nameRequired) });
+                    schema = Yup.object().shape({ name: Yup.string().min(1).required(constants_1.default.schemaValidationErrors.nameRequired) });
                     return [4 /*yield*/, schema.validate(body, { abortEarly: false })];
                 case 1:
                     _b.sent();

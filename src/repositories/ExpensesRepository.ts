@@ -49,14 +49,20 @@ interface TypedExpense {
   }
 }
 
-interface Request {
+interface IRequest {
   owner_id: string
   startDate?: string
-  endDate: string,
-  offset: number,
-  limit: number,
+  endDate: string
+  offset: number
+  limit: number
   orderBy?: string | OrderByColumn
   orderType?: 'asc' | 'desc'
+}
+
+interface IBalanceRequest {
+  owner_id: string
+  startDate: Date | null
+  endDate: Date
 }
 
 interface SharedExpensesResponse {
@@ -136,7 +142,7 @@ class ExpensesRepository extends Repository<Expense> {
     limit,
     orderBy,
     orderType
-  }: Request): Promise<SharedExpensesResponse> {
+  }: IRequest): Promise<SharedExpensesResponse> {
     const [expenses, totalCount] = await this.createQueryBuilder('expenses')
       .innerJoinAndSelect('expenses.category', 'categories')
       .innerJoinAndSelect('expenses.payment_type', 'payment_type')
@@ -145,7 +151,6 @@ class ExpensesRepository extends Repository<Expense> {
       .where(`expenses.personal = false AND ${this.getSearchDateClause(endDate, startDate)}`)
       .orderBy(this.getOrderByClause(orderBy), this.getOrderTypeClause(orderType))
       .getManyAndCount()
-
     const typedExpenses = expenses
       .splice(offset, limit)
       .map((expense) => this.assembleExpense(expense, owner_id, true))
@@ -166,7 +171,7 @@ class ExpensesRepository extends Repository<Expense> {
     limit,
     orderBy,
     orderType
-  }: Request): Promise<PersonalExpensesResponse> {
+  }: IRequest): Promise<PersonalExpensesResponse> {
     const searchDateClause = this.getSearchDateClause(endDate, startDate)
 
     const [expenses, totalCount] = await this.createQueryBuilder('expenses')
@@ -186,7 +191,7 @@ class ExpensesRepository extends Repository<Expense> {
     return { expenses: formattedExpenses, totalCount }
   }
 
-  public async getBalance({ owner_id, startDate, endDate }: Omit<Request, 'offset' | 'limit'>): Promise<BalanceResponse> {
+  public async getBalance({ owner_id, startDate, endDate }: IBalanceRequest): Promise<BalanceResponse> {
     const searchDate = startDate ? Between(startDate, endDate) : LessThanOrEqual(endDate)
     const [personalExpenses, sharedExpenses] = await Promise.all([
       this.find({
