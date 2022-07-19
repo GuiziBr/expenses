@@ -86,7 +86,9 @@ export async function validateGetExpenses({ query }: Request, _response: Respons
       endDate: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat),
       offset: Yup.number().min(0).default(1).typeError(constants.schemaValidationErrors.offsetType),
       limit: Yup.number().min(1).max(20).default(20)
-        .typeError(constants.schemaValidationErrors.limitType)
+        .typeError(constants.schemaValidationErrors.limitType),
+      orderBy: Yup.string().oneOf(Object.keys(constants.orderColumns)),
+      orderType: Yup.string().oneOf(['asc', 'desc'])
     })
     await schema.validate(query, { abortEarly: false })
   } catch (err) {

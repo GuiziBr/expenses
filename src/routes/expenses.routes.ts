@@ -1,4 +1,4 @@
-import { parseISO } from 'date-fns'
+import { format } from 'date-fns'
 import { Router } from 'express'
 import { getCustomRepository } from 'typeorm'
 import constants from '../constants'
@@ -34,15 +34,17 @@ expensesRouter.post('/', validateCreateExpense, parseBodyDate, async ({ user, bo
 expensesRouter.get('/shared', validateGetExpenses, async ({ user, query }, response) => {
   const expensesRepository = getCustomRepository(ExpensesRepository)
   const { id: owner_id } = user
-  const { startDate, endDate, offset = constants.defaultOffset, limit = constants.defaultLimit } = query
-  const parsedStartDate = startDate ? parseISO(startDate.toString()) : null
-  const parsedEndDate = endDate ? parseISO(endDate.toString()) : new Date()
+  const { startDate, endDate, offset = constants.defaultOffset, limit = constants.defaultLimit, orderBy, orderType } = query
+  const parsedEndDate = endDate?.toString() || format(new Date(), constants.dateFormat)
+  const parsedOrderType = !orderType || orderType === 'asc' ? 'asc' : 'desc'
   const { expenses, totalCount } = await expensesRepository.getSharedExpenses({
     owner_id,
-    startDate: parsedStartDate,
+    startDate: startDate?.toString(),
     endDate: parsedEndDate,
     offset: Number(offset),
-    limit: Number(limit)
+    limit: Number(limit),
+    orderBy: orderBy?.toString(),
+    orderType: parsedOrderType
   })
   response.setHeader(constants.headerTypes.totalCount, totalCount)
   return response.json(expenses)
@@ -51,15 +53,17 @@ expensesRouter.get('/shared', validateGetExpenses, async ({ user, query }, respo
 expensesRouter.get('/personal', validateGetExpenses, async ({ user, query }, response) => {
   const expensesRepository = getCustomRepository(ExpensesRepository)
   const { id: owner_id } = user
-  const { startDate, endDate, offset = constants.defaultOffset, limit = constants.defaultLimit } = query
-  const parsedStartDate = startDate ? parseISO(startDate.toString()) : null
-  const parsedEndDate = endDate ? parseISO(endDate.toString()) : new Date()
+  const { startDate, endDate, offset = constants.defaultOffset, limit = constants.defaultLimit, orderBy, orderType } = query
+  const parsedEndDate = endDate?.toString() || format(new Date(), constants.dateFormat)
+  const parsedOrderType = !orderType || orderType === 'asc' ? 'asc' : 'desc'
   const { expenses, totalCount } = await expensesRepository.getPersonalExpenses({
     owner_id,
-    startDate: parsedStartDate,
+    startDate: startDate?.toString(),
     endDate: parsedEndDate,
     offset: Number(offset),
-    limit: Number(limit)
+    limit: Number(limit),
+    orderBy: orderBy?.toString(),
+    orderType: parsedOrderType
   })
   response.setHeader(constants.headerTypes.totalCount, totalCount)
   return response.json(expenses)

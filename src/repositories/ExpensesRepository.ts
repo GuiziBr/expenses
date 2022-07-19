@@ -1,4 +1,5 @@
 import { Between, EntityRepository, LessThanOrEqual, Not, Repository } from 'typeorm'
+import constants from '../constants'
 import Expense from '../models/Expense'
 
 enum Types {
@@ -11,6 +12,17 @@ enum Order {
   asc = 'ASC'
 }
 
+enum OrderByColumn {
+  description = 'description',
+  amount = 'amount',
+  date = 'date',
+  due_date = 'due_date',
+  category = 'category',
+  payment_type = 'payment_type',
+  bank = 'bank',
+  store = 'store'
+}
+
 interface TypedExpense {
   id: string,
   owner_id: string,
@@ -21,6 +33,7 @@ interface TypedExpense {
   description: string,
   amount: number,
   date: Date,
+  due_date?: Date,
   type?: Types
   payment_type: {
     id: string
@@ -38,10 +51,12 @@ interface TypedExpense {
 
 interface Request {
   owner_id: string
-  startDate: Date | null
-  endDate?: Date,
+  startDate?: string
+  endDate: string,
   offset: number,
-  limit: number
+  limit: number,
+  orderBy?: string | OrderByColumn
+  orderType?: 'asc' | 'desc'
 }
 
 interface SharedExpensesResponse {
@@ -65,17 +80,72 @@ interface BalanceResponse {
 
 @EntityRepository(Expense)
 class ExpensesRepository extends Repository<Expense> {
-  public async getSharedExpenses({ owner_id, startDate, endDate, offset, limit }: Request): Promise<SharedExpensesResponse> {
-    const whereClause = {
-      personal: false,
-      ...startDate
-        ? { date: Between(startDate, endDate) }
-        : { date: LessThanOrEqual(endDate) }
+  private assembleExpense(expense: TypedExpense, owner_id: string, isShared?: boolean): TypedExpense {
+    return {
+      id: expense.id,
+      owner_id: expense.owner_id,
+      description: expense.description,
+      category: {
+        id: expense.category.id,
+        description: expense.category.description
+      },
+      amount: expense.amount,
+      date: expense.date,
+      due_date: expense.due_date,
+      ...isShared && { type: expense.owner_id === owner_id ? Types.Income : Types.Outcome },
+      ...expense.payment_type && {
+        payment_type: {
+          id: expense.payment_type.id,
+          description: expense.payment_type.description
+        }
+      },
+      ...expense.bank && {
+        bank: {
+          id: expense.bank.id,
+          name: expense.bank.name
+        }
+      },
+      ...expense.store && {
+        store: {
+          id: expense.store.id,
+          name: expense.store.name
+        }
+      }
     }
-    const [expenses, totalCount] = await this.findAndCount({
-      where: whereClause,
-      order: { date: Order.desc }
-    })
+  }
+
+  private getSearchDateClause(endDate: string, startDate?: string): string {
+    return startDate ? `expenses.date between '${startDate}' AND '${endDate}'` : `expenses.date <= ${endDate}`
+  }
+
+  private getOrderByClause(orderBy?: string): string {
+    return orderBy
+      ? constants.orderColumns[orderBy as keyof typeof constants.orderColumns]
+      : constants.orderColumns.date
+  }
+
+  private getOrderTypeClause(orderType?: 'asc' | 'desc'): Order {
+    return Order[orderType || 'asc']
+  }
+
+  public async getSharedExpenses({
+    owner_id,
+    startDate,
+    endDate,
+    offset,
+    limit,
+    orderBy,
+    orderType
+  }: Request): Promise<SharedExpensesResponse> {
+    const [expenses, totalCount] = await this.createQueryBuilder('expenses')
+      .innerJoinAndSelect('expenses.category', 'categories')
+      .innerJoinAndSelect('expenses.payment_type', 'payment_type')
+      .leftJoinAndSelect('expenses.bank', 'banks')
+      .leftJoinAndSelect('expenses.store', 'stores')
+      .where(`expenses.personal = false AND ${this.getSearchDateClause(endDate, startDate)}`)
+      .orderBy(this.getOrderByClause(orderBy), this.getOrderTypeClause(orderType))
+      .getManyAndCount()
+
     const typedExpenses = expenses
       .splice(offset, limit)
       .map((expense) => this.assembleExpense(expense, owner_id, true))
@@ -88,16 +158,28 @@ class ExpensesRepository extends Repository<Expense> {
     return isSameExpense || null
   }
 
-  public async getPersonalExpenses({ owner_id, startDate, endDate, offset, limit }: Request): Promise<PersonalExpensesResponse> {
-    const searchDate = startDate ? Between(startDate, endDate) : LessThanOrEqual(endDate)
-    const [expenses, totalCount] = await this.findAndCount({
-      where: [
-        { owner_id, date: searchDate, personal: true },
-        { owner_id, date: searchDate, split: true },
-        { owner_id: Not(owner_id), date: searchDate, personal: false }
-      ],
-      order: { date: Order.desc }
-    })
+  public async getPersonalExpenses({
+    owner_id,
+    startDate,
+    endDate,
+    offset,
+    limit,
+    orderBy,
+    orderType
+  }: Request): Promise<PersonalExpensesResponse> {
+    const searchDateClause = this.getSearchDateClause(endDate, startDate)
+
+    const [expenses, totalCount] = await this.createQueryBuilder('expenses')
+      .innerJoinAndSelect('expenses.category', 'categories')
+      .innerJoinAndSelect('expenses.payment_type', 'payment_type')
+      .leftJoinAndSelect('expenses.bank', 'banks')
+      .leftJoinAndSelect('expenses.store', 'stores')
+      .where(`expenses.owner_id = :ownerId AND ${searchDateClause} AND expenses.personal = true`, { ownerId: owner_id })
+      .orWhere(`expenses.owner_id = :ownerId AND ${searchDateClause} AND expenses.split = true`, { ownerId: owner_id })
+      .orWhere(`expenses.owner_id <> :ownerId AND ${searchDateClause} AND expenses.personal = false`, { ownerId: owner_id })
+      .orderBy(this.getOrderByClause(orderBy), this.getOrderTypeClause(orderType))
+      .getManyAndCount()
+
     const formattedExpenses = expenses
       .splice(offset, limit)
       .map((expense) => this.assembleExpense(expense, owner_id))
@@ -125,39 +207,6 @@ class ExpensesRepository extends Repository<Expense> {
     return {
       personalBalance,
       sharedBalance: { total: sharedBalance.paying - sharedBalance.payed, paying: sharedBalance.paying, payed: sharedBalance.payed }
-    }
-  }
-
-  private assembleExpense(expense: TypedExpense, owner_id: string, isShared?: boolean): TypedExpense {
-    return {
-      id: expense.id,
-      owner_id: expense.owner_id,
-      description: expense.description,
-      category: {
-        id: expense.category.id,
-        description: expense.category.description
-      },
-      amount: expense.amount,
-      date: expense.date,
-      ...isShared && { type: expense.owner_id === owner_id ? Types.Income : Types.Outcome },
-      ...expense.payment_type && {
-        payment_type: {
-          id: expense.payment_type.id,
-          description: expense.payment_type.description
-        }
-      },
-      ...expense.bank && {
-        bank: {
-          id: expense.bank.id,
-          name: expense.bank.name
-        }
-      },
-      ...expense.store && {
-        store: {
-          id: expense.store.id,
-          name: expense.store.name
-        }
-      }
     }
   }
 }
