@@ -209,7 +209,15 @@
         "operationId": "getSharedExpenses",
         "parameters": [
           {
-            "name": "date",
+            "name": "startDate",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/searchDate"
+            },
+            "required": true
+          },
+          {
+            "name": "endDate",
             "in": "path",
             "schema": {
               "$ref": "#/components/schemas/searchDate"
@@ -231,6 +239,20 @@
               "$ref": "#/components/schemas/offset"
             },
             "required": true
+          },
+          {
+            "name": "orderBy",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/orderBy"
+            }
+          },
+          {
+            "name": "orderType",
+            "in": "path",
+            "schema":{
+              "$ref": "#/components/schemas/orderType"
+            }
           },
           {
             "name": "x-access-token",
@@ -281,7 +303,15 @@
         "operationId": "getPersonalExpenses",
         "parameters": [
           {
-            "name": "date",
+            "name": "startDate",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/searchDate"
+            },
+            "required": true
+          },
+          {
+            "name": "endDate",
             "in": "path",
             "schema": {
               "$ref": "#/components/schemas/searchDate"
@@ -303,6 +333,20 @@
               "$ref": "#/components/schemas/offset"
             },
             "required": true
+          },
+          {
+            "name": "orderBy",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/orderBy"
+            }
+          },
+          {
+            "name": "orderType",
+            "in": "path",
+            "schema":{
+              "$ref": "#/components/schemas/orderType"
+            }
           },
           {
             "name": "x-access-token",
@@ -1213,6 +1257,26 @@
       "offset": {
         "type": "integer",
         "example": 1
+      },
+      "orderBy": {
+        "type": "string",
+        "enum": [
+          "description",
+          "amount",
+          "date",
+          "due_date",
+          "category",
+          "payment_type",
+          "bank",
+          "store"
+        ]
+      },
+      "orderType": {
+        "type": "string",
+        "enum": [
+          "asc",
+          "desc"
+        ]
       },
       "category": {
         "type": "object",
