@@ -210,49 +210,51 @@
         "parameters": [
           {
             "name": "startDate",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/searchDate"
             },
-            "required": true
+            "required": false
           },
           {
             "name": "endDate",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/searchDate"
             },
-            "required": true
+            "required": false
           },
           {
             "name": "limit",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/limit"
             },
-            "required": true
+            "required": false
           },
           {
             "name": "offset",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/offset"
             },
-            "required": true
+            "required": false
           },
           {
             "name": "orderBy",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/orderBy"
-            }
+            },
+            "required": false
           },
           {
             "name": "orderType",
-            "in": "path",
+            "in": "query",
             "schema":{
               "$ref": "#/components/schemas/orderType"
-            }
+            },
+            "required": false
           },
           {
             "name": "x-access-token",
@@ -304,49 +306,51 @@
         "parameters": [
           {
             "name": "startDate",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/searchDate"
             },
-            "required": true
+            "required": false
           },
           {
             "name": "endDate",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/searchDate"
             },
-            "required": true
+            "required": false
           },
           {
             "name": "limit",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/limit"
             },
-            "required": true
+            "required": false
           },
           {
             "name": "offset",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/offset"
             },
-            "required": true
+            "required": false
           },
           {
             "name": "orderBy",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/orderBy"
-            }
+            },
+            "required": false
           },
           {
             "name": "orderType",
-            "in": "path",
+            "in": "query",
             "schema":{
               "$ref": "#/components/schemas/orderType"
-            }
+            },
+            "required": false
           },
           {
             "name": "x-access-token",
@@ -1238,6 +1242,14 @@
         "type": "string",
         "example": "17dfch7f-8fea-4a0e-8a18-072d9e07d939"
       },
+      "hasStatement": {
+        "type": "boolean",
+        "example": true
+      },
+      "bank_id": {
+        "type": "string",
+        "example": "17dfch7f-8fea-4a0e-8a18-072d9e07d939"
+      },
       "id": {
         "type": "string",
         "example": "17dfch7f-8fea-4a0e-8a18-072d9e07d939"
@@ -1248,7 +1260,7 @@
       },
       "searchDate": {
         "type": "string",
-        "example": "2021-01"
+        "example": "2021-01-01"
       },
       "limit": {
         "type": "integer",
@@ -1307,6 +1319,28 @@
           }
         }
       },
+      "bank": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "description": {
+            "$ref": "#/components/schemas/name"
+          }
+        }
+      },
+      "store": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "description": {
+            "$ref": "#/components/schemas/name"
+          }
+        }
+      },
       "User": {
         "type": "object",
         "properties": {
@@ -1355,9 +1389,13 @@
           },
           "payment_type_id": {
             "$ref": "#/components/schemas/payment_type_id"
+          },
+          "bank_id": {
+            "$ref": "#/components/schemas/bank_id"
           }
         },
         "required": [
+          "description",
           "category_id",
           "date",
           "amount",
@@ -1379,6 +1417,9 @@
         "properties": {
           "description": {
             "$ref": "#/components/schemas/description"
+          },
+          "hasStatement": {
+            "$ref": "#/components/schemas/hasStatement"
           }
         }
       },
@@ -1460,6 +1501,9 @@
           "date": {
             "$ref": "#/components/schemas/date"
           },
+          "due_date": {
+            "$ref": "#/components/schemas/date"
+          },
           "amount": {
             "$ref": "#/components/schemas/amount"
           },
@@ -1512,11 +1556,20 @@
             "date": {
               "$ref": "#/components/schemas/date"
             },
+            "due_date": {
+              "$ref": "#/components/schemas/date"
+            },
             "type": {
               "$ref": "#/components/schemas/type"
             },
             "payment_type": {
-              "$ref": "#/components/schemas/type"
+              "$ref": "#/components/schemas/payment_type"
+            },
+            "bank": {
+              "$ref": "#/components/schemas/bank"
+            },
+            "store": {
+              "$ref": "#/components/schemas/store"
             }
           }
         }
@@ -1546,6 +1599,12 @@
             },
             "payment_type": {
               "$ref": "#/components/schemas/type"
+            },
+            "bank": {
+              "$ref": "#/components/schemas/bank"
+            },
+            "store": {
+              "$ref": "#/components/schemas/store"
             }
           }
         }
@@ -1598,6 +1657,12 @@
           },
           "created_at": {
             "$ref": "#/components/schemas/dateTime"
+          },
+          "updated_at": {
+            "$ref": "#/components/schemas/dateTime"
+          },
+          "hasStatement": {
+            "$ref": "#/components/schemas/hasStatement"
           }
         }
       },
