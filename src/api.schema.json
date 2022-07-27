@@ -827,6 +827,57 @@
         }
       }
     },
+    "/balance/consolidated": {
+      "get": {
+        "description": "Gets consolidated balance",
+        "operationId": "getConsolidatedBalance",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/month"
+            },
+            "required": true
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balance for provided user token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BalanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Invalid parameters",
+                  "code": "400",
+                  "error": "Bad Request"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/banks": {
       "post": {
         "description": "Creates a new bank",
@@ -1261,6 +1312,11 @@
       "searchDate": {
         "type": "string",
         "example": "2021-01-01"
+      },
+      "month": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 12
       },
       "limit": {
         "type": "integer",

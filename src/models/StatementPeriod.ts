@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, OneToOne } from 'typeorm'
 import User from './User'
 import Bank from './Bank'
+import PaymentType from './PaymentType'
 
 @Entity('statement_periods')
 class StatementPeriod {
@@ -13,6 +14,12 @@ class StatementPeriod {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
   owner: User
+
+  @Column()
+  payment_type_id: string
+
+  @OneToOne(() => PaymentType)
+  @JoinColumn({ name: 'payment_type_id' })
 
   @Column()
   bank_id: string
