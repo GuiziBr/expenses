@@ -209,28 +209,52 @@
         "operationId": "getSharedExpenses",
         "parameters": [
           {
-            "name": "date",
-            "in": "path",
+            "name": "startDate",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/searchDate"
             },
-            "required": true
+            "required": false
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/searchDate"
+            },
+            "required": false
           },
           {
             "name": "limit",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/limit"
             },
-            "required": true
+            "required": false
           },
           {
             "name": "offset",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/offset"
             },
-            "required": true
+            "required": false
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/orderBy"
+            },
+            "required": false
+          },
+          {
+            "name": "orderType",
+            "in": "query",
+            "schema":{
+              "$ref": "#/components/schemas/orderType"
+            },
+            "required": false
           },
           {
             "name": "x-access-token",
@@ -281,28 +305,52 @@
         "operationId": "getPersonalExpenses",
         "parameters": [
           {
-            "name": "date",
-            "in": "path",
+            "name": "startDate",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/searchDate"
             },
-            "required": true
+            "required": false
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/searchDate"
+            },
+            "required": false
           },
           {
             "name": "limit",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/limit"
             },
-            "required": true
+            "required": false
           },
           {
             "name": "offset",
-            "in": "path",
+            "in": "query",
             "schema": {
               "$ref": "#/components/schemas/offset"
             },
-            "required": true
+            "required": false
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/orderBy"
+            },
+            "required": false
+          },
+          {
+            "name": "orderType",
+            "in": "query",
+            "schema":{
+              "$ref": "#/components/schemas/orderType"
+            },
+            "required": false
           },
           {
             "name": "x-access-token",
@@ -779,6 +827,57 @@
         }
       }
     },
+    "/balance/consolidated": {
+      "get": {
+        "description": "Gets consolidated balance",
+        "operationId": "getConsolidatedBalance",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/month"
+            },
+            "required": true
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/jwtToken"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balance for provided user token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BalanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Invalid parameters",
+                  "code": "400",
+                  "error": "Bad Request"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/banks": {
       "post": {
         "description": "Creates a new bank",
@@ -1194,6 +1293,14 @@
         "type": "string",
         "example": "17dfch7f-8fea-4a0e-8a18-072d9e07d939"
       },
+      "hasStatement": {
+        "type": "boolean",
+        "example": true
+      },
+      "bank_id": {
+        "type": "string",
+        "example": "17dfch7f-8fea-4a0e-8a18-072d9e07d939"
+      },
       "id": {
         "type": "string",
         "example": "17dfch7f-8fea-4a0e-8a18-072d9e07d939"
@@ -1204,7 +1311,12 @@
       },
       "searchDate": {
         "type": "string",
-        "example": "2021-01"
+        "example": "2021-01-01"
+      },
+      "month": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 12
       },
       "limit": {
         "type": "integer",
@@ -1213,6 +1325,26 @@
       "offset": {
         "type": "integer",
         "example": 1
+      },
+      "orderBy": {
+        "type": "string",
+        "enum": [
+          "description",
+          "amount",
+          "date",
+          "due_date",
+          "category",
+          "payment_type",
+          "bank",
+          "store"
+        ]
+      },
+      "orderType": {
+        "type": "string",
+        "enum": [
+          "asc",
+          "desc"
+        ]
       },
       "category": {
         "type": "object",
@@ -1240,6 +1372,28 @@
           },
           "description": {
             "$ref": "#/components/schemas/description"
+          }
+        }
+      },
+      "bank": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "description": {
+            "$ref": "#/components/schemas/name"
+          }
+        }
+      },
+      "store": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "description": {
+            "$ref": "#/components/schemas/name"
           }
         }
       },
@@ -1291,9 +1445,13 @@
           },
           "payment_type_id": {
             "$ref": "#/components/schemas/payment_type_id"
+          },
+          "bank_id": {
+            "$ref": "#/components/schemas/bank_id"
           }
         },
         "required": [
+          "description",
           "category_id",
           "date",
           "amount",
@@ -1315,6 +1473,9 @@
         "properties": {
           "description": {
             "$ref": "#/components/schemas/description"
+          },
+          "hasStatement": {
+            "$ref": "#/components/schemas/hasStatement"
           }
         }
       },
@@ -1396,6 +1557,9 @@
           "date": {
             "$ref": "#/components/schemas/date"
           },
+          "due_date": {
+            "$ref": "#/components/schemas/date"
+          },
           "amount": {
             "$ref": "#/components/schemas/amount"
           },
@@ -1448,11 +1612,20 @@
             "date": {
               "$ref": "#/components/schemas/date"
             },
+            "due_date": {
+              "$ref": "#/components/schemas/date"
+            },
             "type": {
               "$ref": "#/components/schemas/type"
             },
             "payment_type": {
-              "$ref": "#/components/schemas/type"
+              "$ref": "#/components/schemas/payment_type"
+            },
+            "bank": {
+              "$ref": "#/components/schemas/bank"
+            },
+            "store": {
+              "$ref": "#/components/schemas/store"
             }
           }
         }
@@ -1482,6 +1655,12 @@
             },
             "payment_type": {
               "$ref": "#/components/schemas/type"
+            },
+            "bank": {
+              "$ref": "#/components/schemas/bank"
+            },
+            "store": {
+              "$ref": "#/components/schemas/store"
             }
           }
         }
@@ -1534,6 +1713,12 @@
           },
           "created_at": {
             "$ref": "#/components/schemas/dateTime"
+          },
+          "updated_at": {
+            "$ref": "#/components/schemas/dateTime"
+          },
+          "hasStatement": {
+            "$ref": "#/components/schemas/hasStatement"
           }
         }
       },

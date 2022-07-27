@@ -10,7 +10,8 @@ const constants = {
     dateRequired: 'date is required and must be YYYY-MM-DD',
     amountRequired: 'amount is required',
     categoryRequired: 'category_id is required',
-    paymentTypeRequired: 'payment_type_id is required'
+    paymentTypeRequired: 'payment_type_id is required',
+    monthRequired: 'month is required'
   },
   errorMessages: {
     incorrectLogin: 'Incorrect email/password combination',
@@ -33,7 +34,8 @@ const constants = {
     existingStore: 'Store already exists',
     duplicatedStoreName: 'There is already a store with same name',
     statementPeriodNotFound: 'No statement period for provided payment type and bank was found',
-    paymentTypeStatementWithNoBank: 'This payment type must have a bank'
+    paymentTypeStatementWithNoBank: 'This payment type must have a bank',
+    statementPeriodToConsolidate: 'No statement period for consolidation was found'
   },
   headerTypes: { totalCount: 'X-Total-Count' },
   defaultLimit: 5,
