@@ -21,12 +21,21 @@ interface IPayment {
 
 interface IReport {
   owner_id: string
+  owner_name: string
   payments: Array<IPayment>
   total: number
 }
 
-interface IConsolidatedReport {
-  consolidatedReport: Array<IReport>
+interface IOwner {
+  id?: string
+  name?: string
+  payments?: Array<IPayment>
+  total: number
+}
+
+interface IConsolidateResponse {
+  requester: IOwner,
+  partner?: IOwner,
   balance: number
 }
 
@@ -48,7 +57,33 @@ class ConsolidateExpensesService {
     return format(date, constants.dateFormat)
   }
 
-  public async consolidate(userId: string, month: number): Promise<IConsolidatedReport> {
+  private assembleResponse(
+    userId: string,
+    requesterBalance: number,
+    partnerBalance: number,
+    requester?: IReport,
+    partner?: IReport
+  ): IConsolidateResponse {
+    return {
+      requester: {
+        id: requester?.owner_id || userId,
+        name: requester?.owner_name,
+        payments: requester?.payments || [],
+        total: requesterBalance
+      },
+      ...partner?.owner_id && {
+        partner: {
+          id: partner.owner_id,
+          name: partner.owner_name,
+          payments: partner?.payments,
+          total: partnerBalance
+        }
+      },
+      balance: requesterBalance - partnerBalance
+    }
+  }
+
+  public async consolidate(userId: string, month: number): Promise<IConsolidateResponse> {
     const statementPeriodRepository = getRepository(StatementPeriod)
     const statementPeriods = await statementPeriodRepository.find()
     if (statementPeriods.length === 0) throw new AppError(constants.errorMessages.statementPeriodToConsolidate)
@@ -65,6 +100,7 @@ class ConsolidateExpensesService {
 
     const expensesRepository = getCustomRepository(ExpensesRepository)
     const expenses = await expensesRepository.createQueryBuilder('exp')
+      .innerJoinAndSelect('exp.owner', 'user')
       .innerJoinAndSelect('exp.payment_type', 'pt')
       .innerJoinAndSelect('exp.bank', 'bank')
       .where('exp.personal = false')
@@ -95,6 +131,7 @@ class ConsolidateExpensesService {
       } else {
         acc.push({
           owner_id: expense.owner_id,
+          owner_name: expense.owner.name,
           payments: [this.getPayment(expense)],
           total: expense.amount
         })
@@ -108,7 +145,7 @@ class ConsolidateExpensesService {
     const partner = consolidatedReport.find(({ owner_id }) => owner_id !== userId)
     const partnerBalance = partner ? partner.total : 0
 
-    return { consolidatedReport, balance: requesterBalance - partnerBalance }
+    return this.assembleResponse(userId, requesterBalance, partnerBalance, requester, partner)
   }
 }
 

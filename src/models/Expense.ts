@@ -10,9 +10,6 @@ class Expense {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column()
-  owner_id: string
-
   @ManyToOne(() => User)
   @JoinColumn({ name: 'owner_id' })
   owner: User
@@ -32,6 +29,9 @@ class Expense {
   @ManyToOne(() => Store, { eager: true })
   @JoinColumn({ name: 'store_id' })
   store: Store
+
+  @Column()
+  owner_id: string
 
   @Column()
   category_id: string
