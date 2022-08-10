@@ -143,10 +143,10 @@ class ExpensesRepository extends Repository<Expense> {
     return Order[orderType || 'asc']
   }
 
-  private getFilterClause(filterBy?: string, filterValue?: string): string {
-    if (!filterBy) return ''
+  private getFilterClause(filterBy?: string): string | null {
+    if (!filterBy) return null
     const filterByColumn = constants.filterColumns[filterBy as keyof typeof constants.filterColumns]
-    return `expenses.${filterByColumn} = '${filterValue}'`
+    return `expenses.${filterByColumn} = :filterValue`
   }
 
   public async getSharedExpenses({
@@ -160,17 +160,19 @@ class ExpensesRepository extends Repository<Expense> {
     filterBy,
     filterValue
   }: IRequest): Promise<SharedExpensesResponse> {
-    const filterClause = this.getFilterClause(filterBy, filterValue)
+    const filterClause = this.getFilterClause(filterBy)
 
-    const [expenses, totalCount] = await this.createQueryBuilder('expenses')
+    const query = this.createQueryBuilder('expenses')
       .innerJoinAndSelect('expenses.category', 'categories')
       .innerJoinAndSelect('expenses.payment_type', 'payment_type')
       .leftJoinAndSelect('expenses.bank', 'banks')
       .leftJoinAndSelect('expenses.store', 'stores')
       .where(`expenses.personal = false AND ${this.getSearchDateClause(endDate, startDate)}`)
-      .where(filterClause)
       .orderBy(this.getOrderByClause(orderBy), this.getOrderTypeClause(orderType))
-      .getManyAndCount()
+
+    if (filterClause) query.andWhere(filterClause, { filterValue })
+
+    const [expenses, totalCount] = await query.getManyAndCount()
 
     const typedExpenses = expenses
       .splice(offset, limit)
@@ -196,19 +198,26 @@ class ExpensesRepository extends Repository<Expense> {
     filterValue
   }: IRequest): Promise<PersonalExpensesResponse> {
     const searchDateClause = this.getSearchDateClause(endDate, startDate)
-    const filterClause = this.getFilterClause(filterBy, filterValue)
+    const filterClause = this.getFilterClause(filterBy)
 
-    const [expenses, totalCount] = await this.createQueryBuilder('expenses')
+    const query = this.createQueryBuilder('expenses')
       .innerJoinAndSelect('expenses.category', 'categories')
       .innerJoinAndSelect('expenses.payment_type', 'payment_type')
       .leftJoinAndSelect('expenses.bank', 'banks')
       .leftJoinAndSelect('expenses.store', 'stores')
-      .where(`expenses.owner_id = :ownerId AND ${searchDateClause} AND expenses.personal = true`, { ownerId: owner_id })
-      .orWhere(`expenses.owner_id = :ownerId AND ${searchDateClause} AND expenses.split = true`, { ownerId: owner_id })
-      .orWhere(`expenses.owner_id <> :ownerId AND ${searchDateClause} AND expenses.personal = false`, { ownerId: owner_id })
-      .where(filterClause)
+
+    if (filterClause) query.where(filterClause, { filterValue })
+
+    query
+      .andWhere(searchDateClause)
+      .andWhere(
+        '((expenses.owner_id = :ownerId AND (expenses.personal = true OR expenses.split = true))'
+        + 'OR (expenses.owner_id <> :ownerId AND expenses.personal = false))',
+        { ownerId: owner_id }
+      )
       .orderBy(this.getOrderByClause(orderBy), this.getOrderTypeClause(orderType))
-      .getManyAndCount()
+
+    const [expenses, totalCount] = await query.getManyAndCount()
 
     const formattedExpenses = expenses
       .splice(offset, limit)
