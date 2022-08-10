@@ -34,7 +34,16 @@ expensesRouter.post('/', validateCreateExpense, parseBodyDate, async ({ user, bo
 expensesRouter.get('/shared', validateGetExpenses, async ({ user, query }, response) => {
   const expensesRepository = getCustomRepository(ExpensesRepository)
   const { id: owner_id } = user
-  const { startDate, endDate, offset = constants.defaultOffset, limit = constants.defaultLimit, orderBy, orderType } = query
+  const {
+    startDate,
+    endDate,
+    offset = constants.defaultOffset,
+    limit = constants.defaultLimit,
+    orderBy,
+    orderType,
+    filterBy,
+    filterValue
+  } = query
   const parsedEndDate = endDate?.toString() || format(new Date(), constants.dateFormat)
   const parsedOrderType = !orderType || orderType === 'asc' ? 'asc' : 'desc'
   const { expenses, totalCount } = await expensesRepository.getSharedExpenses({
@@ -44,7 +53,9 @@ expensesRouter.get('/shared', validateGetExpenses, async ({ user, query }, respo
     offset: Number(offset),
     limit: Number(limit),
     orderBy: orderBy?.toString(),
-    orderType: parsedOrderType
+    orderType: parsedOrderType,
+    filterBy: filterBy?.toString(),
+    filterValue: filterValue?.toString()
   })
   response.setHeader(constants.headerTypes.totalCount, totalCount)
   return response.json(expenses)
@@ -53,7 +64,15 @@ expensesRouter.get('/shared', validateGetExpenses, async ({ user, query }, respo
 expensesRouter.get('/personal', validateGetExpenses, async ({ user, query }, response) => {
   const expensesRepository = getCustomRepository(ExpensesRepository)
   const { id: owner_id } = user
-  const { startDate, endDate, offset = constants.defaultOffset, limit = constants.defaultLimit, orderBy, orderType } = query
+  const {
+    startDate,
+    endDate,
+    offset = constants.defaultOffset,
+    limit = constants.defaultLimit,
+    orderBy, orderType,
+    filterBy,
+    filterValue
+  } = query
   const parsedEndDate = endDate?.toString() || format(new Date(), constants.dateFormat)
   const parsedOrderType = !orderType || orderType === 'asc' ? 'asc' : 'desc'
   const { expenses, totalCount } = await expensesRepository.getPersonalExpenses({
@@ -63,7 +82,9 @@ expensesRouter.get('/personal', validateGetExpenses, async ({ user, query }, res
     offset: Number(offset),
     limit: Number(limit),
     orderBy: orderBy?.toString(),
-    orderType: parsedOrderType
+    orderType: parsedOrderType,
+    filterBy: filterBy?.toString(),
+    filterValue: filterValue?.toString()
   })
   response.setHeader(constants.headerTypes.totalCount, totalCount)
   return response.json(expenses)

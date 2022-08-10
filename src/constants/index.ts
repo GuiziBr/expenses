@@ -55,7 +55,13 @@ const constants = {
     bank: 'banks.name',
     store: 'stores.name'
   },
-  dateFormat: 'yyyy-MM-dd'
+  dateFormat: 'yyyy-MM-dd',
+  filterColumns: {
+    category: 'category_id',
+    payment_type: 'payment_type_id',
+    bank: 'bank_id',
+    store: 'store_id'
+  }
 
 }
 

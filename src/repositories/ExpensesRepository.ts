@@ -23,6 +23,13 @@ enum OrderByColumn {
   store = 'store'
 }
 
+enum FilterByColumn {
+  category = 'category',
+  payment_type = 'paymentType',
+  bank = 'bank',
+  store = 'store'
+}
+
 interface TypedExpense {
   id: string,
   owner_id: string,
@@ -56,7 +63,9 @@ interface IRequest {
   offset: number
   limit: number
   orderBy?: string | OrderByColumn
-  orderType?: 'asc' | 'desc'
+  orderType?: 'asc' | 'desc',
+  filterBy?: string | FilterByColumn
+  filterValue?: string
 }
 
 interface IBalanceRequest {
@@ -134,6 +143,12 @@ class ExpensesRepository extends Repository<Expense> {
     return Order[orderType || 'asc']
   }
 
+  private getFilterClause(filterBy?: string, filterValue?: string): string {
+    if (!filterBy) return ''
+    const filterByColumn = constants.filterColumns[filterBy as keyof typeof constants.filterColumns]
+    return `expenses.${filterByColumn} = '${filterValue}'`
+  }
+
   public async getSharedExpenses({
     owner_id,
     startDate,
@@ -141,16 +156,22 @@ class ExpensesRepository extends Repository<Expense> {
     offset,
     limit,
     orderBy,
-    orderType
+    orderType,
+    filterBy,
+    filterValue
   }: IRequest): Promise<SharedExpensesResponse> {
+    const filterClause = this.getFilterClause(filterBy, filterValue)
+
     const [expenses, totalCount] = await this.createQueryBuilder('expenses')
       .innerJoinAndSelect('expenses.category', 'categories')
       .innerJoinAndSelect('expenses.payment_type', 'payment_type')
       .leftJoinAndSelect('expenses.bank', 'banks')
       .leftJoinAndSelect('expenses.store', 'stores')
       .where(`expenses.personal = false AND ${this.getSearchDateClause(endDate, startDate)}`)
+      .where(filterClause)
       .orderBy(this.getOrderByClause(orderBy), this.getOrderTypeClause(orderType))
       .getManyAndCount()
+
     const typedExpenses = expenses
       .splice(offset, limit)
       .map((expense) => this.assembleExpense(expense, owner_id, true))
@@ -170,9 +191,12 @@ class ExpensesRepository extends Repository<Expense> {
     offset,
     limit,
     orderBy,
-    orderType
+    orderType,
+    filterBy,
+    filterValue
   }: IRequest): Promise<PersonalExpensesResponse> {
     const searchDateClause = this.getSearchDateClause(endDate, startDate)
+    const filterClause = this.getFilterClause(filterBy, filterValue)
 
     const [expenses, totalCount] = await this.createQueryBuilder('expenses')
       .innerJoinAndSelect('expenses.category', 'categories')
@@ -182,12 +206,14 @@ class ExpensesRepository extends Repository<Expense> {
       .where(`expenses.owner_id = :ownerId AND ${searchDateClause} AND expenses.personal = true`, { ownerId: owner_id })
       .orWhere(`expenses.owner_id = :ownerId AND ${searchDateClause} AND expenses.split = true`, { ownerId: owner_id })
       .orWhere(`expenses.owner_id <> :ownerId AND ${searchDateClause} AND expenses.personal = false`, { ownerId: owner_id })
+      .where(filterClause)
       .orderBy(this.getOrderByClause(orderBy), this.getOrderTypeClause(orderType))
       .getManyAndCount()
 
     const formattedExpenses = expenses
       .splice(offset, limit)
       .map((expense) => this.assembleExpense(expense, owner_id))
+
     return { expenses: formattedExpenses, totalCount }
   }
 
@@ -209,6 +235,7 @@ class ExpensesRepository extends Repository<Expense> {
       else acc.payed += expense.amount
       return acc
     }, { paying: 0, payed: 0, total: 0 })
+
     return {
       personalBalance,
       sharedBalance: { total: sharedBalance.paying - sharedBalance.payed, paying: sharedBalance.paying, payed: sharedBalance.payed }
