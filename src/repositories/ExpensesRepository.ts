@@ -1,4 +1,4 @@
-import { Between, EntityRepository, LessThanOrEqual, Not, Repository } from 'typeorm'
+import { EntityRepository, Repository } from 'typeorm'
 import constants from '../constants'
 import Expense from '../models/Expense'
 
@@ -19,6 +19,13 @@ enum OrderByColumn {
   due_date = 'due_date',
   category = 'category',
   payment_type = 'payment_type',
+  bank = 'bank',
+  store = 'store'
+}
+
+enum FilterByColumn {
+  category = 'category',
+  payment_type = 'paymentType',
   bank = 'bank',
   store = 'store'
 }
@@ -53,16 +60,20 @@ interface IRequest {
   owner_id: string
   startDate?: string
   endDate: string
-  offset: number
-  limit: number
+  offset?: number
+  limit?: number
   orderBy?: string | OrderByColumn
-  orderType?: 'asc' | 'desc'
+  orderType?: 'asc' | 'desc',
+  filterBy?: string | FilterByColumn
+  filterValue?: string
 }
 
 interface IBalanceRequest {
   owner_id: string
-  startDate: Date | null
-  endDate: Date
+  startDate?: string
+  endDate: string
+  filterBy?: string | FilterByColumn
+  filterValue?: string
 }
 
 interface SharedExpensesResponse {
@@ -134,25 +145,39 @@ class ExpensesRepository extends Repository<Expense> {
     return Order[orderType || 'asc']
   }
 
+  private getFilterClause(filterBy?: string): string | null {
+    if (!filterBy) return null
+    const filterByColumn = constants.filterColumns[filterBy as keyof typeof constants.filterColumns]
+    return `expenses.${filterByColumn} = :filterValue`
+  }
+
   public async getSharedExpenses({
     owner_id,
     startDate,
     endDate,
-    offset,
+    offset = 0,
     limit,
     orderBy,
-    orderType
+    orderType,
+    filterBy,
+    filterValue
   }: IRequest): Promise<SharedExpensesResponse> {
-    const [expenses, totalCount] = await this.createQueryBuilder('expenses')
+    const filterClause = this.getFilterClause(filterBy)
+
+    const query = this.createQueryBuilder('expenses')
       .innerJoinAndSelect('expenses.category', 'categories')
       .innerJoinAndSelect('expenses.payment_type', 'payment_type')
       .leftJoinAndSelect('expenses.bank', 'banks')
       .leftJoinAndSelect('expenses.store', 'stores')
       .where(`expenses.personal = false AND ${this.getSearchDateClause(endDate, startDate)}`)
       .orderBy(this.getOrderByClause(orderBy), this.getOrderTypeClause(orderType))
-      .getManyAndCount()
+
+    if (filterClause) query.andWhere(filterClause, { filterValue })
+
+    const [expenses, totalCount] = await query.getManyAndCount()
+
     const typedExpenses = expenses
-      .splice(offset, limit)
+      .splice(offset, limit || expenses.length)
       .map((expense) => this.assembleExpense(expense, owner_id, true))
 
     return { expenses: typedExpenses, totalCount }
@@ -167,48 +192,57 @@ class ExpensesRepository extends Repository<Expense> {
     owner_id,
     startDate,
     endDate,
-    offset,
+    offset = 0,
     limit,
     orderBy,
-    orderType
+    orderType,
+    filterBy,
+    filterValue
   }: IRequest): Promise<PersonalExpensesResponse> {
     const searchDateClause = this.getSearchDateClause(endDate, startDate)
+    const filterClause = this.getFilterClause(filterBy)
 
-    const [expenses, totalCount] = await this.createQueryBuilder('expenses')
+    const query = this.createQueryBuilder('expenses')
       .innerJoinAndSelect('expenses.category', 'categories')
       .innerJoinAndSelect('expenses.payment_type', 'payment_type')
       .leftJoinAndSelect('expenses.bank', 'banks')
       .leftJoinAndSelect('expenses.store', 'stores')
-      .where(`expenses.owner_id = :ownerId AND ${searchDateClause} AND expenses.personal = true`, { ownerId: owner_id })
-      .orWhere(`expenses.owner_id = :ownerId AND ${searchDateClause} AND expenses.split = true`, { ownerId: owner_id })
-      .orWhere(`expenses.owner_id <> :ownerId AND ${searchDateClause} AND expenses.personal = false`, { ownerId: owner_id })
+
+    if (filterClause) query.where(filterClause, { filterValue })
+
+    query
+      .andWhere(searchDateClause)
+      .andWhere(
+        '((expenses.owner_id = :ownerId AND (expenses.personal = true OR expenses.split = true))'
+        + 'OR (expenses.owner_id <> :ownerId AND expenses.personal = false))',
+        { ownerId: owner_id }
+      )
       .orderBy(this.getOrderByClause(orderBy), this.getOrderTypeClause(orderType))
-      .getManyAndCount()
+
+    const [expenses, totalCount] = await query.getManyAndCount()
 
     const formattedExpenses = expenses
-      .splice(offset, limit)
+      .splice(offset, limit || expenses.length)
       .map((expense) => this.assembleExpense(expense, owner_id))
+
     return { expenses: formattedExpenses, totalCount }
   }
 
-  public async getBalance({ owner_id, startDate, endDate }: IBalanceRequest): Promise<BalanceResponse> {
-    const searchDate = startDate ? Between(startDate, endDate) : LessThanOrEqual(endDate)
-    const [personalExpenses, sharedExpenses] = await Promise.all([
-      this.find({
-        where: [
-          { owner_id, date: searchDate, personal: true },
-          { owner_id, date: searchDate, split: true },
-          { owner_id: Not(owner_id), date: searchDate, personal: false }
-        ]
-      }),
-      this.find({ where: { personal: false, date: searchDate }})
+  public async getBalance(data: IBalanceRequest): Promise<BalanceResponse> {
+    const [{ expenses: personalExpenses }, { expenses: sharedExpenses }] = await Promise.all([
+      this.getPersonalExpenses(data),
+      this.getSharedExpenses(data)
     ])
+
+    const { owner_id } = data
+
     const personalBalance = personalExpenses.reduce((acc, expense) => acc + expense.amount, 0)
     const sharedBalance = sharedExpenses.reduce((acc, expense) => {
       if (expense.owner_id === owner_id) acc.paying += expense.amount
       else acc.payed += expense.amount
       return acc
     }, { paying: 0, payed: 0, total: 0 })
+
     return {
       personalBalance,
       sharedBalance: { total: sharedBalance.paying - sharedBalance.payed, paying: sharedBalance.paying, payed: sharedBalance.payed }
