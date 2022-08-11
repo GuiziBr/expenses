@@ -65,8 +65,8 @@ class ReportService {
   public async execute() {
     const users = await this.usersRepository.find()
     const balances = await Promise.all([
-      this.expensesRepository.getBalance({ owner_id: users[0].id, endDate: this.reportDate, startDate: this.reportDate }),
-      this.expensesRepository.getBalance({ owner_id: users[1].id, endDate: this.reportDate, startDate: this.reportDate })
+      this.expensesRepository.getBalance({ owner_id: users[0].id, endDate: this.reportDate.toString(), startDate: this.reportDate.toString() }),
+      this.expensesRepository.getBalance({ owner_id: users[1].id, endDate: this.reportDate.toString(), startDate: this.reportDate.toString() })
     ])
     const reports = balances.map((balance, index) => this.buildReport(balance, users[index].email, users[index].name))
     return Promise.all(reports.map((report) => this.emailService.execute(report)))

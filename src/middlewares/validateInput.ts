@@ -90,7 +90,7 @@ export async function validateGetExpenses({ query }: Request, _response: Respons
       orderBy: Yup.string().oneOf(Object.keys(constants.orderColumns)),
       orderType: Yup.string().oneOf(['asc', 'desc']),
       filterBy: Yup.string().oneOf(Object.keys(constants.filterColumns)),
-      filterValue: Yup.string().when('filterBy', (filterBy, filterValue) => filterBy && filterValue.required())
+      filterValue: Yup.string().when('filterBy', (filterBy: string, filterValue: Yup.AnySchema) => filterBy && filterValue.required())
     })
     await schema.validate(query, { abortEarly: false })
   } catch (err) {
@@ -105,7 +105,7 @@ export async function validateGetBalance({ query }: Request, _response: Response
       startDate: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat),
       endDate: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat),
       filterBy: Yup.string().oneOf(Object.keys(constants.filterColumns)),
-      filterValue: Yup.string().when('filterBy', (filterBy, filterValue) => filterBy && filterValue.required())
+      filterValue: Yup.string().when('filterBy', (filterBy: string, filterValue: Yup.AnySchema) => filterBy && filterValue.required())
     })
     await schema.validate(query, { abortEarly: false })
   } catch (err) {
