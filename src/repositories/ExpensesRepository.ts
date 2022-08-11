@@ -1,4 +1,4 @@
-import { Between, EntityRepository, LessThanOrEqual, Not, Repository } from 'typeorm'
+import { EntityRepository, Repository } from 'typeorm'
 import constants from '../constants'
 import Expense from '../models/Expense'
 
@@ -60,8 +60,8 @@ interface IRequest {
   owner_id: string
   startDate?: string
   endDate: string
-  offset: number
-  limit: number
+  offset?: number
+  limit?: number
   orderBy?: string | OrderByColumn
   orderType?: 'asc' | 'desc',
   filterBy?: string | FilterByColumn
@@ -70,8 +70,10 @@ interface IRequest {
 
 interface IBalanceRequest {
   owner_id: string
-  startDate: Date | null
-  endDate: Date
+  startDate?: string
+  endDate: string
+  filterBy?: string | FilterByColumn
+  filterValue?: string
 }
 
 interface SharedExpensesResponse {
@@ -153,7 +155,7 @@ class ExpensesRepository extends Repository<Expense> {
     owner_id,
     startDate,
     endDate,
-    offset,
+    offset = 0,
     limit,
     orderBy,
     orderType,
@@ -175,7 +177,7 @@ class ExpensesRepository extends Repository<Expense> {
     const [expenses, totalCount] = await query.getManyAndCount()
 
     const typedExpenses = expenses
-      .splice(offset, limit)
+      .splice(offset, limit || expenses.length)
       .map((expense) => this.assembleExpense(expense, owner_id, true))
 
     return { expenses: typedExpenses, totalCount }
@@ -190,7 +192,7 @@ class ExpensesRepository extends Repository<Expense> {
     owner_id,
     startDate,
     endDate,
-    offset,
+    offset = 0,
     limit,
     orderBy,
     orderType,
@@ -220,24 +222,20 @@ class ExpensesRepository extends Repository<Expense> {
     const [expenses, totalCount] = await query.getManyAndCount()
 
     const formattedExpenses = expenses
-      .splice(offset, limit)
+      .splice(offset, limit || expenses.length)
       .map((expense) => this.assembleExpense(expense, owner_id))
 
     return { expenses: formattedExpenses, totalCount }
   }
 
-  public async getBalance({ owner_id, startDate, endDate }: IBalanceRequest): Promise<BalanceResponse> {
-    const searchDate = startDate ? Between(startDate, endDate) : LessThanOrEqual(endDate)
-    const [personalExpenses, sharedExpenses] = await Promise.all([
-      this.find({
-        where: [
-          { owner_id, date: searchDate, personal: true },
-          { owner_id, date: searchDate, split: true },
-          { owner_id: Not(owner_id), date: searchDate, personal: false }
-        ]
-      }),
-      this.find({ where: { personal: false, date: searchDate }})
+  public async getBalance(data: IBalanceRequest): Promise<BalanceResponse> {
+    const [{ expenses: personalExpenses }, { expenses: sharedExpenses }] = await Promise.all([
+      this.getPersonalExpenses(data),
+      this.getSharedExpenses(data)
     ])
+
+    const { owner_id } = data
+
     const personalBalance = personalExpenses.reduce((acc, expense) => acc + expense.amount, 0)
     const sharedBalance = sharedExpenses.reduce((acc, expense) => {
       if (expense.owner_id === owner_id) acc.paying += expense.amount

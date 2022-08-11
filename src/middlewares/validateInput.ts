@@ -103,7 +103,9 @@ export async function validateGetBalance({ query }: Request, _response: Response
   try {
     const schema = Yup.object().shape({
       startDate: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat),
-      endDate: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat)
+      endDate: Yup.date().transform(parseDateString).typeError(constants.schemaValidationErrors.dateFormat),
+      filterBy: Yup.string().oneOf(Object.keys(constants.filterColumns)),
+      filterValue: Yup.string().when('filterBy', (filterBy, filterValue) => filterBy && filterValue.required())
     })
     await schema.validate(query, { abortEarly: false })
   } catch (err) {

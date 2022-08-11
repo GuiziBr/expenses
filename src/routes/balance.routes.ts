@@ -1,6 +1,7 @@
-import { parseISO } from 'date-fns'
+import { format } from 'date-fns'
 import { Router } from 'express'
 import { getCustomRepository } from 'typeorm'
+import constants from '../constants'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 import { validateGetBalance, validateGetConsolidatedBalance } from '../middlewares/validateInput'
 import ExpensesRepository from '../repositories/ExpensesRepository'
@@ -12,11 +13,16 @@ balanceRouter.use(ensureAuthenticated)
 
 balanceRouter.get('/', validateGetBalance, async ({ user, query }, response) => {
   const { id: owner_id } = user
-  const { startDate, endDate } = query
-  const parsedStartDate = startDate ? parseISO(startDate.toString()) : null
-  const parsedEndDate = endDate ? parseISO(endDate.toString()) : new Date()
+  const { startDate, endDate, filterBy, filterValue } = query
+  const parsedEndDate = endDate?.toString() || format(new Date(), constants.dateFormat)
   const expensesRepository = getCustomRepository(ExpensesRepository)
-  const balance = await expensesRepository.getBalance({ owner_id, startDate: parsedStartDate, endDate: parsedEndDate })
+  const balance = await expensesRepository.getBalance({
+    owner_id,
+    startDate: startDate?.toString(),
+    endDate: parsedEndDate,
+    filterBy: filterBy?.toString(),
+    filterValue: filterValue?.toString()
+  })
   return response.json(balance)
 })
 
