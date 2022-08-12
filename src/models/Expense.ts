@@ -70,7 +70,7 @@ class Expense {
   due_date: Date
 
   @AfterInsert()
-  logExpenseInsertions() {
+  logExpenseInsertion() {
     console.log(`Expense ID: ${this.id}, recorded at: ${this.created_at.toISOString()}, by User ID: ${this.owner_id}`)
   }
 }

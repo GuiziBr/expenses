@@ -2,7 +2,7 @@ import { getRepository } from 'typeorm'
 import { bankAssembleUser } from '../../assemblers/bankAssembler'
 import constants from '../../constants'
 import AppError from '../../errors/AppError'
-import Bank from '../../models/Bank'
+import Bank, { TBank } from '../../models/Bank'
 
 class CreateBankService {
   private async reactivateBank(bankToRestore: Bank): Promise<void> {
@@ -10,7 +10,7 @@ class CreateBankService {
     await banksRepository.save({ ...bankToRestore, deleted_at: null })
   }
 
-  public async execute(name: string): Promise<Omit<Bank, 'deleted_at'>> {
+  public async execute(name: string): Promise<TBank> {
     const banksRepository = getRepository(Bank)
     const existingBank = await banksRepository.findOne({ where: { name }, withDeleted: true })
     if (existingBank) {

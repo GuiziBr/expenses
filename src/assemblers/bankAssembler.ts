@@ -1,7 +1,5 @@
-import Bank from '../models/Bank'
+import Bank, { TBank } from '../models/Bank'
 
-type IBank = Omit<Bank, 'deleted_at'>
-
-export function bankAssembleUser({ id, name, created_at, updated_at }: Omit<Bank, 'deleted_at'>): IBank {
+export function bankAssembleUser({ id, name, created_at, updated_at }: Bank): TBank {
   return { id, name, created_at, updated_at }
 }

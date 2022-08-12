@@ -2,7 +2,7 @@ import { getRepository } from 'typeorm'
 import { storeAssembleUser } from '../../assemblers/storeAssembler'
 import constants from '../../constants'
 import AppError from '../../errors/AppError'
-import Store from '../../models/Store'
+import Store, { TStore } from '../../models/Store'
 
 class CreateStoreService {
   private async reactivateStore(storeToRestore: Store): Promise<void> {
@@ -10,7 +10,7 @@ class CreateStoreService {
     await banksRepository.save({ ...storeToRestore, deleted_at: null })
   }
 
-  public async execute(name: string): Promise<Omit<Store, 'deleted_at'>> {
+  public async execute(name: string): Promise<TStore> {
     const storeRepository = getRepository(Store)
     const existingStore = await storeRepository.findOne({ where: { name }})
     if (existingStore) {

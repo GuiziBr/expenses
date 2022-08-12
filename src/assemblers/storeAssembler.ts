@@ -1,7 +1,5 @@
-import Store from '../models/Store'
+import Store, { TStore } from '../models/Store'
 
-type IStore = Omit<Store, 'deleted_at'>
-
-export function storeAssembleUser({ id, name, created_at, updated_at }: Omit<Store, 'deleted_at'>): IStore {
+export function storeAssembleUser({ id, name, created_at, updated_at }: Omit<Store, 'deleted_at'>): TStore {
   return { id, name, created_at, updated_at }
 }

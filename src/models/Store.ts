@@ -18,7 +18,7 @@ class Store {
   deleted_at?: Date | null
 
   @AfterInsert()
-  logStoreInsertions() {
+  logStoreInsertion() {
     console.log(`Store ID: ${this.id}, recorded at: ${this.created_at.toISOString()}`)
   }
 
@@ -29,3 +29,5 @@ class Store {
 }
 
 export default Store
+
+export type TStore = Omit<Store, 'deleted_at'|'logStoreInsertion'|'logStoreUpdate'>

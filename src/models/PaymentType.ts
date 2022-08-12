@@ -21,7 +21,7 @@ class PaymentType {
   hasStatement: boolean
 
   @AfterInsert()
-  logPaymentTypeInsertions() {
+  logPaymentTypeInsertion() {
     console.log(`PaymentType ID: ${this.id}, recorded at: ${this.created_at.toISOString()}`)
   }
 
@@ -32,3 +32,5 @@ class PaymentType {
 }
 
 export default PaymentType
+
+export type TPaymentType = Omit<PaymentType, 'deleted_at'|'logPaymentTypeInsertion'|'logPaymentTypeUpdate'>

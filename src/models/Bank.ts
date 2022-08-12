@@ -18,7 +18,7 @@ class Bank {
   deleted_at?: Date | null
 
   @AfterInsert()
-  logBankInsertions() {
+  logBankInsertion() {
     console.log(`Bank ID: ${this.id}, recorded at: ${this.created_at.toISOString()}`)
   }
 
@@ -29,3 +29,5 @@ class Bank {
 }
 
 export default Bank
+
+export type TBank = Omit<Bank, 'deleted_at'|'logBankInsertion'|'logBankUpdate'>

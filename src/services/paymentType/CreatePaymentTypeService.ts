@@ -2,7 +2,7 @@ import { getRepository } from 'typeorm'
 import { paymentTypeAssembleUser } from '../../assemblers/paymentTypeAssembler'
 import constants from '../../constants'
 import AppError from '../../errors/AppError'
-import PaymentType from '../../models/PaymentType'
+import PaymentType, { TPaymentType } from '../../models/PaymentType'
 
 class CreatePaymentTypeService {
   private async reactivatePaymentType(paymentTypeToRestore: PaymentType): Promise<void> {
@@ -10,7 +10,7 @@ class CreatePaymentTypeService {
     await paymentTypesRepository.save({ ...paymentTypeToRestore, deleted_at: null })
   }
 
-  public async execute(description: string, hasStatement: boolean): Promise<Omit<PaymentType, 'deleted_at'>> {
+  public async execute(description: string, hasStatement: boolean): Promise<TPaymentType> {
     const paymentTypeRepository = getRepository(PaymentType)
     const existingPaymentType = await paymentTypeRepository.findOne({ where: { description }, withDeleted: true })
     if (existingPaymentType) {

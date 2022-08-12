@@ -1,6 +1,4 @@
-import PaymentType from '../models/PaymentType'
-
-type IPaymentType = Omit<PaymentType, 'deleted_at'>
+import PaymentType, { TPaymentType } from '../models/PaymentType'
 
 export function paymentTypeAssembleUser({
   id,
@@ -8,6 +6,6 @@ export function paymentTypeAssembleUser({
   hasStatement,
   created_at,
   updated_at
-}: Omit<PaymentType, 'deleted_at'>): IPaymentType {
+}: Omit<PaymentType, 'deleted_at'>): TPaymentType {
   return { id, description, hasStatement: hasStatement || false, created_at, updated_at }
 }

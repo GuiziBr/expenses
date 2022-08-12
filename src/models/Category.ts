@@ -18,7 +18,7 @@ class Category {
   deleted_at?: Date | null
 
   @AfterInsert()
-  logCategoryInsertions() {
+  logCategoryInsertion() {
     console.log(`Category ID: ${this.id}, recorded at: ${this.created_at.toISOString()}`)
   }
 
@@ -29,3 +29,5 @@ class Category {
 }
 
 export default Category
+
+export type TCategory = Omit<Category, 'deleted_at'|'logCategoryInsertion'|'logCategoryUpdate'>
