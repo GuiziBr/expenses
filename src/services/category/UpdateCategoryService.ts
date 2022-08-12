@@ -6,12 +6,16 @@ import Category from '../../models/Category'
 class UpdateCategoryService {
   private async reactivate(categoryIdToDelete: string, categoryIdToRestore: string): Promise<Category | null> {
     const categoriesRepository = getRepository(Category)
+
+    const categoryToDelete = categoriesRepository.create({ id: categoryIdToDelete, deleted_at: new Date() })
+    const categoryToReactivate = categoriesRepository.create({ id: categoryIdToRestore, deleted_at: null })
+
     await Promise.all([
-      categoriesRepository.save({ id: categoryIdToDelete, deleted_at: new Date() }),
-      categoriesRepository.save({ id: categoryIdToRestore, deleted_at: null })
+      categoriesRepository.save(categoryToDelete),
+      categoriesRepository.save(categoryToReactivate)
     ])
-    const category = await categoriesRepository.findOne(categoryIdToRestore)
-    return category || null
+
+    return categoryToReactivate
   }
 
   public async execute(id: string, description: string): Promise<void> {
@@ -25,11 +29,8 @@ class UpdateCategoryService {
     if (!category) throw new AppError(constants.errorMessages.notFoundCategory, 404)
 
     if ((category && !sameDescriptionCategory) || (sameDescriptionCategory?.id === id)) {
-      await categoriesRepository.save({
-        ...category,
-        description,
-        updated_at: new Date()
-      })
+      const categoryToUpdate = categoriesRepository.create({ ...category, description, updated_at: new Date() })
+      await categoriesRepository.save(categoryToUpdate)
       return
     }
     if (sameDescriptionCategory) {

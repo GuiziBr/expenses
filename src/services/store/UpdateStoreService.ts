@@ -6,12 +6,16 @@ import Store from '../../models/Store'
 class UpdateBankService {
   private async reactivate(storeIdToDelete: string, storeIdToRestore: string): Promise<Store | null> {
     const storesRepository = getRepository(Store)
+
+    const storeToDelete = storesRepository.create({ id: storeIdToDelete, deleted_at: new Date() })
+    const storeToReactivate = storesRepository.create({ id: storeIdToRestore, deleted_at: null })
+
     await Promise.all([
-      storesRepository.save({ id: storeIdToDelete, deleted_at: new Date() }),
-      storesRepository.save({ id: storeIdToRestore, deleted_at: null })
+      storesRepository.save(storeToDelete),
+      storesRepository.save(storeToReactivate)
     ])
-    const store = await storesRepository.findOne(storeIdToRestore)
-    return store || null
+
+    return storeToReactivate
   }
 
   public async execute(id: string, name: string): Promise<void> {
@@ -25,11 +29,8 @@ class UpdateBankService {
     if (!store) throw new AppError(constants.errorMessages.notFoundStore, 404)
 
     if ((store && !sameNameStore) || (sameNameStore?.id === id)) {
-      await storesRepository.save({
-        ...store,
-        name,
-        updated_at: new Date()
-      })
+      const storeToUpdate = storesRepository.create({ ...store, name, updated_at: new Date() })
+      await storesRepository.save(storeToUpdate)
       return
     }
     if (sameNameStore) {
