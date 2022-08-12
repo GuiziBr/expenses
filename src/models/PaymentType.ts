@@ -33,4 +33,4 @@ class PaymentType {
 
 export default PaymentType
 
-export type TPaymentType = Omit<PaymentType, 'deleted_at'|'logPaymentTypeInsertion'|'logPaymentTypeUpdate'>
+export type PlainObjectPaymentType = Omit<PaymentType, 'deleted_at'|'logPaymentTypeInsertion'|'logPaymentTypeUpdate'>

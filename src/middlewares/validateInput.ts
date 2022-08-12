@@ -139,3 +139,17 @@ export async function validateGetConsolidatedBalance({ params }: Request, _respo
   }
   return next()
 }
+
+export async function validateListRoutes({ query }: Request, _response: Response, next: NextFunction): Promise<void> {
+  try {
+    const schema = Yup.object().shape({
+      offset: Yup.number().min(0).default(1).typeError(constants.schemaValidationErrors.offsetType),
+      limit: Yup.number().min(1).max(20).default(20)
+        .typeError(constants.schemaValidationErrors.limitType)
+    })
+    await schema.validate(query, { abortEarly: false })
+  } catch (err) {
+    if (err instanceof Yup.ValidationError) throw new AppError(err.message)
+  }
+  return next()
+}

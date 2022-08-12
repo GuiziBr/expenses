@@ -1,30 +1,31 @@
 import { Router } from 'express'
-import { getRepository, IsNull } from 'typeorm'
-import { storeAssembleUser } from '../assemblers/storeAssembler'
 import constants from '../constants'
 import AppError from '../errors/AppError'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
-import { validateId, validateName } from '../middlewares/validateInput'
-import Store from '../models/Store'
+import { validateId, validateListRoutes, validateName } from '../middlewares/validateInput'
 import CreateStoreService from '../services/store/CreateStoreService'
+import DeleteStoreService from '../services/store/DeleteStoreService'
+import GetStoreService from '../services/store/GetStoreService'
 import UpdateStoreService from '../services/store/UpdateStoreService'
 
 const storesRouter = Router()
 
 storesRouter.use(ensureAuthenticated)
 
-storesRouter.get('/', async (_request, response) => {
-  const storesRepository = getRepository(Store)
-  const stores = await storesRepository.find({ where: { deleted_at: IsNull() }})
-  return response.json(stores.map(storeAssembleUser))
+storesRouter.get('/', validateListRoutes, async ({ query }, response) => {
+  const { offset = constants.defaultOffset, limit = constants.defaultLimit } = query
+  const getStoreService = new GetStoreService()
+  const { stores, totalCount } = await getStoreService.list(Number(offset), Number(limit))
+  response.setHeader(constants.headerTypes.totalCount, totalCount)
+  return response.json(stores)
 })
 
 storesRouter.get('/:id', validateId, async (request, response) => {
   const { id } = request.params
-  const storesRepository = getRepository(Store)
-  const store = await storesRepository.findOne({ where: { id, deleted_at: IsNull() }})
-  if (!store) throw new AppError(constants.errorMessages.notFoundStore)
-  return response.json(storeAssembleUser(store))
+  const getStoreService = new GetStoreService()
+  const store = await getStoreService.getById(id)
+  if (!store) throw new AppError(constants.errorMessages.notFoundStore, 404)
+  return response.json(store)
 })
 
 storesRouter.patch('/:id', validateId, validateName, async (request, response) => {
@@ -44,10 +45,8 @@ storesRouter.post('/', validateName, async (request, response) => {
 
 storesRouter.delete('/:id', validateId, async (request, response) => {
   const { id } = request.params
-  const storesRepository = getRepository(Store)
-  const existingStore = await storesRepository.findOne(id)
-  if (!existingStore || existingStore.deleted_at) return response.status(204).json()
-  await storesRepository.update(id, { deleted_at: new Date() })
+  const deleteStoreService = new DeleteStoreService()
+  await deleteStoreService.execute(id)
   return response.status(204).json()
 })
 

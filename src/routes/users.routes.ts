@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import multer from 'multer'
-import { assembleUser } from '../assemblers/userAssembler'
 import uploadConfig from '../config/upload'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
 import { validateUser } from '../middlewares/validateInput'
@@ -22,7 +21,7 @@ usersRouter.post('/', validateUser, async (request, response) => {
 usersRouter.patch('/avatar', upload.single('avatar'), async (request, response) => {
   const updateUserAvatar = new UpdateUserAvatarService()
   const user = await updateUserAvatar.execute({ user_id: request.user.id, avatarFileName: request.file.filename })
-  return response.json(assembleUser(user))
+  return response.json(user)
 })
 
 export default usersRouter

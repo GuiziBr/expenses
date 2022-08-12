@@ -1,8 +1,7 @@
 import { getRepository } from 'typeorm'
-import { storeAssembleUser } from '../../assemblers/storeAssembler'
 import constants from '../../constants'
 import AppError from '../../errors/AppError'
-import Store, { TStore } from '../../models/Store'
+import Store, { PlainObjectStore } from '../../models/Store'
 
 class CreateStoreService {
   private async reactivateStore(storeToRestore: Store): Promise<void> {
@@ -10,17 +9,21 @@ class CreateStoreService {
     await banksRepository.save({ ...storeToRestore, deleted_at: null })
   }
 
-  public async execute(name: string): Promise<TStore> {
+  private parseStore({ id, name, created_at, updated_at }: Store): PlainObjectStore {
+    return { id, name, created_at, updated_at }
+  }
+
+  public async execute(name: string): Promise<PlainObjectStore> {
     const storeRepository = getRepository(Store)
     const existingStore = await storeRepository.findOne({ where: { name }})
     if (existingStore) {
       if (!existingStore.deleted_at) throw new AppError(constants.errorMessages.existingStore)
       else await this.reactivateStore(existingStore)
-      return storeAssembleUser(existingStore)
+      return this.parseStore(existingStore)
     }
     const store = storeRepository.create({ name })
     await storeRepository.save(store)
-    return storeAssembleUser(store)
+    return this.parseStore(store)
   }
 }
 

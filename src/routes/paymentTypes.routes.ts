@@ -1,30 +1,31 @@
 import { Router } from 'express'
-import { getRepository, IsNull } from 'typeorm'
 import constants from '../constants'
 import AppError from '../errors/AppError'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
-import { validateId, validatePaymentType } from '../middlewares/validateInput'
-import PaymentType from '../models/PaymentType'
+import { validateId, validateListRoutes, validatePaymentType } from '../middlewares/validateInput'
 import CreatePaymentTypeService from '../services/paymentType/CreatePaymentTypeService'
+import DeletePaymentTypeService from '../services/paymentType/DeletePaymentTypeService'
+import GetPaymentTypeService from '../services/paymentType/GetPaymentTypeService'
 import UpdatePaymentTypeService from '../services/paymentType/UpdatePaymentTypeService'
-import { paymentTypeAssembleUser } from '../assemblers/paymentTypeAssembler'
 
 const paymentTypeRouter = Router()
 
 paymentTypeRouter.use(ensureAuthenticated)
 
-paymentTypeRouter.get('/', async (_request, response) => {
-  const paymentTypesRepository = getRepository(PaymentType)
-  const paymentTypes = await paymentTypesRepository.find({ where: { deleted_at: IsNull() }})
-  return response.json(paymentTypes.map(paymentTypeAssembleUser))
+paymentTypeRouter.get('/', validateListRoutes, async ({ query }, response) => {
+  const { offset = constants.defaultOffset, limit = constants.defaultLimit } = query
+  const getPaymentTypeService = new GetPaymentTypeService()
+  const { paymentTypes, totalCount } = await getPaymentTypeService.list(Number(offset), Number(limit))
+  response.setHeader(constants.headerTypes.totalCount, totalCount)
+  return response.json(paymentTypes)
 })
 
 paymentTypeRouter.get('/:id', validateId, async (request, response) => {
   const { id } = request.params
-  const paymentTypesRepository = getRepository(PaymentType)
-  const paymentType = await paymentTypesRepository.findOne({ where: { id, deleted_at: IsNull() }})
+  const getPaymentTypeService = new GetPaymentTypeService()
+  const paymentType = await getPaymentTypeService.getById(id)
   if (!paymentType) throw new AppError(constants.errorMessages.notFoundPaymentType, 404)
-  return response.json(paymentTypeAssembleUser(paymentType))
+  return response.json(paymentType)
 })
 
 paymentTypeRouter.post('/', validatePaymentType, async (request, response) => {
@@ -44,10 +45,8 @@ paymentTypeRouter.patch('/:id', validateId, validatePaymentType, async (request,
 
 paymentTypeRouter.delete('/:id', validateId, async (request, response) => {
   const { id } = request.params
-  const paymentTypesRepository = getRepository(PaymentType)
-  const existingPaymentType = await paymentTypesRepository.findOne(id)
-  if (!existingPaymentType || existingPaymentType.deleted_at) return response.status(204).json()
-  await paymentTypesRepository.update(id, { deleted_at: new Date() })
+  const deletePaymentTypeService = new DeletePaymentTypeService()
+  await deletePaymentTypeService.execute(id)
   return response.status(204).json()
 })
 

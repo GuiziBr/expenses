@@ -30,4 +30,4 @@ class Bank {
 
 export default Bank
 
-export type TBank = Omit<Bank, 'deleted_at'|'logBankInsertion'|'logBankUpdate'>
+export type PlainObjectBank = Omit<Bank, 'deleted_at'|'logBankInsertion'|'logBankUpdate'>

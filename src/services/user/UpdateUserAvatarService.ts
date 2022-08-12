@@ -3,12 +3,17 @@ import path from 'path'
 import { getRepository } from 'typeorm'
 import uploadConfig from '../../config/upload'
 import constants from '../../constants'
+import { IUpdateAvatarRequest } from '../../domains/request'
+import { IUser } from '../../domains/user'
 import AppError from '../../errors/AppError'
 import User from '../../models/User'
-import { IUpdateAvatarRequest } from '../../domains/request'
 
 class UpdateUserAvatarService {
-  public async execute({ user_id, avatarFileName }: IUpdateAvatarRequest): Promise<User> {
+  private parseUser({ id, name, email, avatar, created_at, updated_at }: User): IUser {
+    return { id, name, email, avatar, created_at, updated_at }
+  }
+
+  public async execute({ user_id, avatarFileName }: IUpdateAvatarRequest): Promise<IUser> {
     const usersRepository = getRepository(User)
     const user = await usersRepository.findOne(user_id)
     if (!user) throw new AppError(constants.errorMessages.changeAvatarNotAllowed, 401)
@@ -19,7 +24,7 @@ class UpdateUserAvatarService {
     }
     user.avatar = avatarFileName
     await usersRepository.save(user)
-    return user
+    return this.parseUser(user)
   }
 }
 

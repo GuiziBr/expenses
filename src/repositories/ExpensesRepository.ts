@@ -155,7 +155,7 @@ class ExpensesRepository extends Repository<Expense> {
     owner_id,
     startDate,
     endDate,
-    offset = 0,
+    offset = constants.defaultOffset,
     limit,
     orderBy,
     orderType,

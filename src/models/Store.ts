@@ -30,4 +30,4 @@ class Store {
 
 export default Store
 
-export type TStore = Omit<Store, 'deleted_at'|'logStoreInsertion'|'logStoreUpdate'>
+export type PlainObjectStore = Omit<Store, 'deleted_at'|'logStoreInsertion'|'logStoreUpdate'>

@@ -1,8 +1,7 @@
 import { getRepository } from 'typeorm'
-import { bankAssembleUser } from '../../assemblers/bankAssembler'
 import constants from '../../constants'
 import AppError from '../../errors/AppError'
-import Bank, { TBank } from '../../models/Bank'
+import Bank, { PlainObjectBank } from '../../models/Bank'
 
 class CreateBankService {
   private async reactivateBank(bankToRestore: Bank): Promise<void> {
@@ -10,17 +9,21 @@ class CreateBankService {
     await banksRepository.save({ ...bankToRestore, deleted_at: null })
   }
 
-  public async execute(name: string): Promise<TBank> {
+  private parseBank({ id, name, created_at, updated_at }: Bank): PlainObjectBank {
+    return { id, name, created_at, updated_at }
+  }
+
+  public async execute(name: string): Promise<PlainObjectBank> {
     const banksRepository = getRepository(Bank)
     const existingBank = await banksRepository.findOne({ where: { name }, withDeleted: true })
     if (existingBank) {
       if (!existingBank.deleted_at) throw new AppError(constants.errorMessages.existingBank)
       else await this.reactivateBank(existingBank)
-      return bankAssembleUser(existingBank)
+      return this.parseBank(existingBank)
     }
     const bank = banksRepository.create({ name })
     await banksRepository.save(bank)
-    return bankAssembleUser(bank)
+    return this.parseBank(bank)
   }
 }
 

@@ -30,4 +30,4 @@ class Category {
 
 export default Category
 
-export type TCategory = Omit<Category, 'deleted_at'|'logCategoryInsertion'|'logCategoryUpdate'>
+export type PlainObjectCategory = Omit<Category, 'deleted_at'|'logCategoryInsertion'|'logCategoryUpdate'>

@@ -3,6 +3,7 @@ import { sign } from 'jsonwebtoken'
 import { getRepository } from 'typeorm'
 import authConfig from '../../config/auth'
 import constants from '../../constants'
+import { IUser } from '../../domains/user'
 import AppError from '../../errors/AppError'
 import User from '../../models/User'
 
@@ -12,11 +13,15 @@ interface Request {
 }
 
 interface Response {
-  user: User,
+  user: Omit<User, 'password'>,
   token: string
 }
 
 class AuthenticateUserService {
+  private parseSession({ id, name, email, avatar, created_at, updated_at }: IUser, token: string): Response {
+    return { user: { id, name, email, avatar, created_at, updated_at }, token }
+  }
+
   public async execute({ email, password }: Request): Promise<Response> {
     const usersRepository = getRepository(User)
     const user = await usersRepository.findOne({ where: { email }})
@@ -24,7 +29,7 @@ class AuthenticateUserService {
     const passwordMatched = await compare(password, user.password)
     if (!passwordMatched) throw new AppError(constants.errorMessages.incorrectLogin, 401)
     const token = sign({}, authConfig.jwt.secret, { subject: user.id, expiresIn: authConfig.jwt.expiresIn })
-    return { user, token }
+    return this.parseSession(user, token)
   }
 }
 

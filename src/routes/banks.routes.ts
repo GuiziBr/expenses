@@ -1,30 +1,31 @@
 import { Router } from 'express'
-import { getRepository, IsNull } from 'typeorm'
-import { bankAssembleUser } from '../assemblers/bankAssembler'
 import constants from '../constants'
 import AppError from '../errors/AppError'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
-import { validateId, validateName } from '../middlewares/validateInput'
-import Bank from '../models/Bank'
+import { validateId, validateListRoutes, validateName } from '../middlewares/validateInput'
 import CreateBankService from '../services/bank/CreateBankService'
+import DeleteBankService from '../services/bank/DeleteBankService'
+import GetBankService from '../services/bank/GetBankService'
 import UpdateBankService from '../services/bank/UpdateBankService'
 
 const banksRouter = Router()
 
 banksRouter.use(ensureAuthenticated)
 
-banksRouter.get('/', async (_request, response) => {
-  const banksRepository = getRepository(Bank)
-  const banks = await banksRepository.find({ where: { deleted_at: IsNull() }})
-  return response.json(banks.map(bankAssembleUser))
+banksRouter.get('/', validateListRoutes, async ({ query }, response) => {
+  const { offset = constants.defaultOffset, limit = constants.defaultLimit } = query
+  const getBankService = new GetBankService()
+  const { banks, totalCount } = await getBankService.list(Number(offset), Number(limit))
+  response.setHeader(constants.headerTypes.totalCount, totalCount)
+  return response.json(banks)
 })
 
 banksRouter.get('/:id', validateId, async (request, response) => {
   const { id } = request.params
-  const banksRepository = getRepository(Bank)
-  const bank = await banksRepository.findOne({ where: { id, deleted_at: IsNull() }})
+  const getBankService = new GetBankService()
+  const bank = await getBankService.getById(id)
   if (!bank) throw new AppError(constants.errorMessages.notFoundBank, 404)
-  return response.json(bankAssembleUser(bank))
+  return response.json(bank)
 })
 
 banksRouter.patch('/:id', validateId, validateName, async (request, response) => {
@@ -44,10 +45,8 @@ banksRouter.post('/', validateName, async (request, response) => {
 
 banksRouter.delete('/:id', validateId, async (request, response) => {
   const { id } = request.params
-  const banksRepository = getRepository(Bank)
-  const existingBank = await banksRepository.findOne(id)
-  if (!existingBank || existingBank.deleted_at) return response.status(204).json()
-  await banksRepository.update(id, { deleted_at: new Date() })
+  const deleteBankService = new DeleteBankService()
+  await deleteBankService.execute(id)
   return response.status(204).json()
 })
 
