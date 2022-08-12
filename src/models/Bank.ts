@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, AfterInsert, AfterUpdate } from 'typeorm'
 
 @Entity('banks')
 class Bank {
@@ -16,6 +16,18 @@ class Bank {
 
   @Column({ type: Date, nullable: true })
   deleted_at?: Date | null
+
+  @AfterInsert()
+  logBankInsertion() {
+    console.log(`Bank ID: ${this.id}, recorded at: ${this.created_at.toISOString()}`)
+  }
+
+  @AfterUpdate()
+  logBankUpdate() {
+    console.log(`Bank ID: ${this.id}, updated at: ${this.updated_at.toISOString()}`)
+  }
 }
 
 export default Bank
+
+export type TBank = Omit<Bank, 'deleted_at'|'logBankInsertion'|'logBankUpdate'>

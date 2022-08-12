@@ -6,12 +6,16 @@ import PaymentType from '../../models/PaymentType'
 class UpdatePaymentTypeService {
   private async reactivate(paymentTypeIdToDelete: string, paymentTypeIdToRestore: string): Promise<PaymentType | null> {
     const paymentTypesRepository = getRepository(PaymentType)
+
+    const paymentTypeToDelete = paymentTypesRepository.create({ id: paymentTypeIdToDelete, deleted_at: new Date() })
+    const paymentTypeToReactivate = paymentTypesRepository.create({ id: paymentTypeIdToRestore, deleted_at: null })
+
     await Promise.all([
-      paymentTypesRepository.save({ id: paymentTypeIdToDelete, deleted_at: new Date() }),
-      paymentTypesRepository.save({ id: paymentTypeIdToRestore, deleted_at: null })
+      paymentTypesRepository.save(paymentTypeToDelete),
+      paymentTypesRepository.save(paymentTypeToReactivate)
     ])
-    const paymentType = await paymentTypesRepository.findOne(paymentTypeIdToRestore)
-    return paymentType || null
+
+    return paymentTypeToReactivate
   }
 
   public async execute(id: string, description: string, hasStatement?: boolean): Promise<void> {
@@ -25,12 +29,13 @@ class UpdatePaymentTypeService {
     if (!paymentType) throw new AppError(constants.errorMessages.notFoundCategory, 404)
 
     if ((paymentType && !sameDescriptionPaymentType) || (sameDescriptionPaymentType?.id === id)) {
-      await paymentTypeRepository.save({
+      const paymentTypeToUpdate = paymentTypeRepository.create({
         ...paymentType,
         description,
         hasStatement,
         updated_at: new Date()
       })
+      await paymentTypeRepository.save(paymentTypeToUpdate)
       return
     }
     if (sameDescriptionPaymentType) {

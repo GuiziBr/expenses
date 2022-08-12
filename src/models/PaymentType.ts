@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, AfterInsert, AfterUpdate } from 'typeorm'
 
 @Entity('payment_type')
 class PaymentType {
@@ -19,6 +19,18 @@ class PaymentType {
 
   @Column()
   hasStatement: boolean
+
+  @AfterInsert()
+  logPaymentTypeInsertion() {
+    console.log(`PaymentType ID: ${this.id}, recorded at: ${this.created_at.toISOString()}`)
+  }
+
+  @AfterUpdate()
+  logPaymentTypeUpdate() {
+    console.log(`PaymentType ID: ${this.id}, updated at: ${this.updated_at.toISOString()}`)
+  }
 }
 
 export default PaymentType
+
+export type TPaymentType = Omit<PaymentType, 'deleted_at'|'logPaymentTypeInsertion'|'logPaymentTypeUpdate'>
