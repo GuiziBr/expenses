@@ -13,7 +13,7 @@ const banksRouter = Router()
 banksRouter.use(ensureAuthenticated)
 
 banksRouter.get('/', validateListRoutes, async ({ query }, response) => {
-  const { offset = constants.defaultOffset, limit = constants.defaultLimit } = query
+  const { offset, limit } = query
   const getBankService = new GetBankService()
   const { banks, totalCount } = await getBankService.list(Number(offset), Number(limit))
   response.setHeader(constants.headerTypes.totalCount, totalCount)

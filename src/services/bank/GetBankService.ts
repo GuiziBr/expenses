@@ -1,5 +1,4 @@
 import { getRepository, IsNull } from 'typeorm'
-import constants from '../../constants'
 import Bank, { PlainObjectBank } from '../../models/Bank'
 
 interface IListBankResponse {
@@ -12,10 +11,10 @@ class GetBankService {
     return { id, name, created_at, updated_at }
   }
 
-  public async list(offset = constants.defaultOffset, limit = constants.defaultLimit): Promise<IListBankResponse> {
+  public async list(offset?: number, limit?: number): Promise<IListBankResponse> {
     const banksRepository = getRepository(Bank)
-    const [banks, totalCount] = await banksRepository.findAndCount({ where: { deleted_at: IsNull() }})
-    const paginatedBanks = banks.splice(Number(offset), Number(limit) || banks.length)
+    const [banks, totalCount] = await banksRepository.findAndCount({ where: { deleted_at: IsNull() }, order: { name: 'ASC' }})
+    const paginatedBanks = typeof offset === 'number' ? banks.splice(offset, limit || banks.length) : banks
     return {
       banks: paginatedBanks.map(this.parseBank),
       totalCount

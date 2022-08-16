@@ -13,7 +13,7 @@ const categoriesRouter = Router()
 categoriesRouter.use(ensureAuthenticated)
 
 categoriesRouter.get('/', validateListRoutes, async ({ query }, response) => {
-  const { offset = constants.defaultOffset, limit = constants.defaultLimit } = query
+  const { offset, limit } = query
   const getCategoryService = new GetCategoryService()
   const { categories, totalCount } = await getCategoryService.list(Number(offset), Number(limit))
   response.setHeader(constants.headerTypes.totalCount, totalCount)

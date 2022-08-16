@@ -1,5 +1,4 @@
 import { getRepository, IsNull } from 'typeorm'
-import constants from '../../constants'
 import Store, { PlainObjectStore } from '../../models/Store'
 
 interface IListStoreResponse {
@@ -12,10 +11,10 @@ class GetStoreService {
     return { id, name, created_at, updated_at }
   }
 
-  public async list(offset = constants.defaultOffset, limit = constants.defaultLimit): Promise<IListStoreResponse> {
+  public async list(offset?: number, limit?: number): Promise<IListStoreResponse> {
     const storesRepository = getRepository(Store)
-    const [stores, totalCount] = await storesRepository.findAndCount({ where: { deleted_at: IsNull() }})
-    const paginatedStores = stores.splice(Number(offset), Number(limit) || stores.length)
+    const [stores, totalCount] = await storesRepository.findAndCount({ where: { deleted_at: IsNull() }, order: { name: 'ASC' }})
+    const paginatedStores = typeof offset === 'number' ? stores.splice(offset, limit || stores.length) : stores
     return {
       stores: paginatedStores.map(this.parseStore),
       totalCount
