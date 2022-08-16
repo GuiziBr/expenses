@@ -13,7 +13,7 @@ const storesRouter = Router()
 storesRouter.use(ensureAuthenticated)
 
 storesRouter.get('/', validateListRoutes, async ({ query }, response) => {
-  const { offset = constants.defaultOffset, limit = constants.defaultLimit } = query
+  const { offset, limit } = query
   const getStoreService = new GetStoreService()
   const { stores, totalCount } = await getStoreService.list(Number(offset), Number(limit))
   response.setHeader(constants.headerTypes.totalCount, totalCount)

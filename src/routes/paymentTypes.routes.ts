@@ -13,7 +13,7 @@ const paymentTypeRouter = Router()
 paymentTypeRouter.use(ensureAuthenticated)
 
 paymentTypeRouter.get('/', validateListRoutes, async ({ query }, response) => {
-  const { offset = constants.defaultOffset, limit = constants.defaultLimit } = query
+  const { offset, limit } = query
   const getPaymentTypeService = new GetPaymentTypeService()
   const { paymentTypes, totalCount } = await getPaymentTypeService.list(Number(offset), Number(limit))
   response.setHeader(constants.headerTypes.totalCount, totalCount)

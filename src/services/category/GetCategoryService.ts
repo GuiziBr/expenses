@@ -1,5 +1,4 @@
 import { getRepository, IsNull } from 'typeorm'
-import constants from '../../constants'
 import Bank, { PlainObjectCategory } from '../../models/Category'
 
 interface IListCategoryResponse {
@@ -12,10 +11,13 @@ class GetCategoryService {
     return { id, description, created_at, updated_at }
   }
 
-  public async list(offset = constants.defaultOffset, limit = constants.defaultLimit): Promise<IListCategoryResponse> {
+  public async list(offset?: number, limit?: number): Promise<IListCategoryResponse> {
     const categoriesRepository = getRepository(Bank)
-    const [categories, totalCount] = await categoriesRepository.findAndCount({ where: { deleted_at: IsNull() }})
-    const paginatedCategories = categories.splice(Number(offset), Number(limit) || categories.length)
+    const [categories, totalCount] = await categoriesRepository.findAndCount({
+      where: { deleted_at: IsNull() },
+      order: { description: 'ASC' }
+    })
+    const paginatedCategories = typeof offset === 'number' ? categories.splice(offset, limit || categories.length) : categories
     return {
       categories: paginatedCategories.map(this.parseCategory),
       totalCount

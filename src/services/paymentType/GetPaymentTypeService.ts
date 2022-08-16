@@ -12,10 +12,13 @@ class GetPaymentTypeService {
     return { id, description, created_at, updated_at, hasStatement }
   }
 
-  public async list(offset = constants.defaultOffset, limit = constants.defaultLimit): Promise<IListPaymentTypeResponse> {
+  public async list(offset?: number, limit?: number): Promise<IListPaymentTypeResponse> {
     const paymentTypesRepository = getRepository(Bank)
-    const [paymentType, totalCount] = await paymentTypesRepository.findAndCount({ where: { deleted_at: IsNull() }})
-    const paginatedPaymentTypes = paymentType.splice(Number(offset), Number(limit) || paymentType.length)
+    const [paymentTypes, totalCount] = await paymentTypesRepository.findAndCount({
+      where: { deleted_at: IsNull() },
+      order: { description: 'ASC' }
+    })
+    const paginatedPaymentTypes = typeof offset === 'number' ? paymentTypes.splice(offset, limit || paymentTypes.length) : paymentTypes
     return {
       paymentTypes: paginatedPaymentTypes.map(this.parsePaymentType),
       totalCount
