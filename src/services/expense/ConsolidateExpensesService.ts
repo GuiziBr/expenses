@@ -19,10 +19,17 @@ interface IPayment {
   total: number
 }
 
+interface ICategory {
+  id: string
+  description: string
+  total: number
+}
+
 interface IReport {
   owner_id: string
   owner_name: string
   payments: Array<IPayment>
+  categories: Array<ICategory>
   total: number
 }
 
@@ -30,6 +37,7 @@ interface IOwner {
   id?: string
   name?: string
   payments?: Array<IPayment>
+  categories?: Array<ICategory>
   total: number
 }
 
@@ -53,6 +61,14 @@ class ConsolidateExpensesService {
     }
   }
 
+  private getCategory(expense: Expense): ICategory {
+    return {
+      id: expense.category_id,
+      description: expense.category.description,
+      total: expense.amount
+    }
+  }
+
   private getStringDate(date: Date): string {
     return format(date, constants.dateFormat)
   }
@@ -69,6 +85,7 @@ class ConsolidateExpensesService {
         id: requester?.owner_id || userId,
         name: requester?.owner_name,
         payments: requester?.payments || [],
+        categories: requester?.categories || [],
         total: requesterBalance
       },
       ...partner?.owner_id && {
@@ -76,6 +93,7 @@ class ConsolidateExpensesService {
           id: partner.owner_id,
           name: partner.owner_name,
           payments: partner?.payments,
+          categories: partner?.categories || [],
           total: partnerBalance
         }
       },
@@ -103,6 +121,7 @@ class ConsolidateExpensesService {
       .innerJoinAndSelect('exp.owner', 'user')
       .innerJoinAndSelect('exp.payment_type', 'pt')
       .innerJoinAndSelect('exp.bank', 'bank')
+      .innerJoinAndSelect('exp.category', 'category')
       .where('exp.personal = false')
       .andWhere('pt.deleted_at is null')
       .andWhere(
@@ -115,6 +134,7 @@ class ConsolidateExpensesService {
       const ownerIndex = acc.findIndex(({ owner_id }) => owner_id === expense.owner_id)
       if (ownerIndex >= 0) {
         const owner = acc[ownerIndex]
+
         const paymentTypeIndex = owner.payments?.findIndex(({ id }) => id === expense.payment_type_id)
         if (paymentTypeIndex >= 0) {
           const bankIndex = owner.payments[paymentTypeIndex].banks.findIndex((bank) => bank.id === expense.bank_id)
@@ -127,12 +147,21 @@ class ConsolidateExpensesService {
         } else {
           owner.payments.push(this.getPayment(expense))
         }
+
+        const categoryIndex = owner.categories?.findIndex(({ id }) => id === expense.category_id)
+        if (categoryIndex >= 0) {
+          owner.categories[categoryIndex].total += expense.amount
+        } else {
+          owner.categories.push(this.getCategory(expense))
+        }
+
         owner.total += expense.amount
       } else {
         acc.push({
           owner_id: expense.owner_id,
           owner_name: expense.owner.name,
           payments: [this.getPayment(expense)],
+          categories: [this.getCategory(expense)],
           total: expense.amount
         })
       }
