@@ -1,4 +1,14 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, AfterInsert } from 'typeorm'
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  AfterInsert,
+  Index
+} from 'typeorm'
 import Category from './Category'
 import PaymentType from './PaymentType'
 import User from './User'
@@ -67,6 +77,7 @@ class Expense {
   personal: boolean
 
   @Column('date')
+  @Index('IDX_EXPENSES_DUE_DATE')
   due_date: Date
 
   @AfterInsert()

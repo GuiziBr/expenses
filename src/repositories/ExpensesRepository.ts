@@ -132,7 +132,7 @@ class ExpensesRepository extends Repository<Expense> {
   }
 
   private getSearchDateClause(endDate: string, startDate?: string): string {
-    return startDate ? `expenses.date between '${startDate}' AND '${endDate}'` : `expenses.date <= ${endDate}`
+    return startDate ? `expenses.due_date between '${startDate}' AND '${endDate}'` : `expenses.due_date <= ${endDate}`
   }
 
   private getOrderByClause(orderBy?: string): string {
