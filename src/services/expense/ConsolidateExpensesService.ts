@@ -1,4 +1,4 @@
-import { endOfMonth, format, getYear, subMonths } from 'date-fns'
+import { endOfMonth, format, getYear } from 'date-fns'
 import { getCustomRepository, getRepository } from 'typeorm'
 import constants from '../../constants'
 import AppError from '../../errors/AppError'
@@ -112,10 +112,6 @@ class ConsolidateExpensesService {
     const initialDateString = this.getStringDate(initialDate)
     const finalDateString = this.getStringDate(endOfMonth(initialDate))
 
-    const previousMonthDate = subMonths(initialDate, 1)
-    const previousMonthInitialDateString = this.getStringDate(previousMonthDate)
-    const previousMonthFinalDateString = this.getStringDate(endOfMonth(previousMonthDate))
-
     const expensesRepository = getCustomRepository(ExpensesRepository)
     const expenses = await expensesRepository.createQueryBuilder('exp')
       .innerJoinAndSelect('exp.owner', 'user')
@@ -124,10 +120,7 @@ class ConsolidateExpensesService {
       .innerJoinAndSelect('exp.category', 'category')
       .where('exp.personal = false')
       .andWhere('pt.deleted_at is null')
-      .andWhere(
-        `((pt.hasStatement = true and exp.due_date between '${initialDateString}' AND '${finalDateString}')
-        OR (pt.hasStatement is null and exp.date between '${previousMonthInitialDateString}' AND '${previousMonthFinalDateString}'))`
-      )
+      .andWhere(`(exp.due_date between '${initialDateString}' AND '${finalDateString}')`)
       .getMany()
 
     const consolidatedReport = expenses.reduce((acc, expense) => {
