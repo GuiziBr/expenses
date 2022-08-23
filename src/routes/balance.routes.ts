@@ -3,9 +3,9 @@ import { Router } from 'express'
 import { getCustomRepository } from 'typeorm'
 import constants from '../constants'
 import ensureAuthenticated from '../middlewares/ensureAuthenticated'
-import { validateGetBalance, validateGetConsolidatedBalance } from '../middlewares/validateInput'
+import { validateGetBalance, validateGetSharedBalance } from '../middlewares/validateInput'
 import ExpensesRepository from '../repositories/ExpensesRepository'
-import ConsolidateExpensesService from '../services/expense/ConsolidateExpensesService'
+import ConsolidateSharedExpensesService from '../services/expense/ConsolidateExpensesService'
 
 const balanceRouter = Router()
 
@@ -26,13 +26,13 @@ balanceRouter.get('/', validateGetBalance, async ({ user, query }, response) => 
   return response.json(balance)
 })
 
-balanceRouter.get('/consolidated/:month', validateGetConsolidatedBalance, async ({ user, params }, response) => {
+balanceRouter.get('/consolidated/:month', validateGetSharedBalance, async ({ user, params }, response) => {
   const { id: owner_id } = user
   const { month } = params
-  const consolidateExpensesService = new ConsolidateExpensesService()
+  const consolidateSharedExpensesService = new ConsolidateSharedExpensesService()
   const monthValue = Number(month) - 1
-  const consolidatedBalance = await consolidateExpensesService.consolidate(owner_id, monthValue)
-  return response.json(consolidatedBalance)
+  const SharedBalance = await consolidateSharedExpensesService.consolidate(owner_id, monthValue)
+  return response.json(SharedBalance)
 })
 
 export default balanceRouter

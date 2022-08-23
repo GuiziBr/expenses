@@ -3,11 +3,19 @@
 
 ## Features
 
-### App's objective
+### App's goal
 
 The following application's description takes into consideration both the [Back-end](https://github.com/GuiziBr/expenses) and the [Front-end](https://github.com/GuiziBr/expenses_portal)
 
-This application aims to help manage household expenses. Each person should register their own expenses throughout the month so the application can keep track and calculate the difference between each person's spending. It presents dashboards for both personal and shared expenses together with the total amount for incomes, outcomes and balance.
+This application aims to help manage household expenses. Each person should register their own expenses throughout the month so the application can keep track and calculate the difference between each person's spending. It presents the following:
+
+- Shared Dashboard => shared expenses list between each person's spending
+- Personal Dashboard => expenses list for the current user
+- Shared Balance => consolidated balance between each person's spending for selected month filtered by either category or payment type
+- Bank management => manage the bank list used for creating expenses
+- Category management => manage the category list used for creating expenses
+- Payment Type management => manage the payment type list used for creating expenses
+= Store management => manage the store list used for creating expenses
 
 The backend is built with nodejs + typescript containing the following features:
 
@@ -17,12 +25,15 @@ The backend is built with nodejs + typescript containing the following features:
 * Expense creation
 * Personal expenses listing
 * Shared expenses listing
-* Category creation
-* Payment Type creation
+* Consolidated expenses
+* Bank list/get/create/update/delete
+* Category list/get/create/update/delete
+* Payment Type list/get/create/update/delete
+* Store list/get/create/update/delete
 
 ## Technologies
 
-* NodeJs 12
+* NodeJs 14
 * Typescript
 * Express
 * JsonWebToken
@@ -32,7 +43,7 @@ The backend is built with nodejs + typescript containing the following features:
 
 ## Requirements
 
-* NodeJs 12 or latest
+* NodeJs 14 or latest
 * Docker Compose
 
 ## How to install

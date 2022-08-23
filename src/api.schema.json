@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "1.1.0",
+    "version": "3.0.1",
     "title": "Expenses",
     "description": "Expenses API",
     "license": {
@@ -257,6 +257,20 @@
             "required": false
           },
           {
+            "name": "filterBy",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/filterBy"
+            }
+          },
+          {
+            "name": "filterValue",
+            "in": "query",
+            "schema": {
+              "$ref":"#/components/schemas/filterValue"
+            }
+          },
+          {
             "name": "x-access-token",
             "in": "header",
             "schema": {
@@ -351,6 +365,20 @@
               "$ref": "#/components/schemas/orderType"
             },
             "required": false
+          },
+          {
+            "name": "filterBy",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/filterBy"
+            }
+          },
+          {
+            "name": "filterValue",
+            "in": "query",
+            "schema": {
+              "$ref":"#/components/schemas/filterValue"
+            }
           },
           {
             "name": "x-access-token",
@@ -829,8 +857,8 @@
     },
     "/balance/consolidated": {
       "get": {
-        "description": "Gets consolidated balance",
-        "operationId": "getConsolidatedBalance",
+        "description": "Gets shared balance",
+        "operationId": "getSharedBalance",
         "parameters": [
           {
             "name": "month",
@@ -855,7 +883,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BalanceResponse"
+                  "$ref": "#/components/schemas/SharedBalance"
                 }
               }
             }
@@ -1346,6 +1374,19 @@
           "desc"
         ]
       },
+      "filterBy": {
+        "type": "string",
+        "enum": [
+          "category",
+          "payment_type",
+          "bank",
+          "store"
+        ]
+      },
+      "filterValue": {
+        "type": "string",
+        "example": "17dfch7f-8fea-4a0e-8a18-072d9e07d939"
+      },
       "category": {
         "type": "object",
         "properties": {
@@ -1381,7 +1422,7 @@
           "id": {
             "$ref": "#/components/schemas/id"
           },
-          "description": {
+          "name": {
             "$ref": "#/components/schemas/name"
           }
         }
@@ -1392,7 +1433,7 @@
           "id": {
             "$ref": "#/components/schemas/id"
           },
-          "description": {
+          "name": {
             "$ref": "#/components/schemas/name"
           }
         }
@@ -1835,6 +1876,144 @@
                 "$ref": "#/components/schemas/amount"
               }
             }
+          }
+        }
+      },
+      "SharedBalance": {
+        "type": "object",
+        "properties": {
+          "requester": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/owner_id"
+              },
+              "name": {
+                "$ref": "#/components/schemas/name"
+              },
+              "payments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "#/components/schemas/id"
+                    },
+                    "description": {
+                      "$ref": "#/components/schemas/description"
+                    },
+                    "banks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "$ref": "#/components/schemas/id"
+                          },
+                          "name": {
+                            "$ref": "#/components/schemas/name"
+                          },
+                          "total": {
+                            "$ref": "#/components/schemas/amount"
+                          }
+                        }
+                      }
+                    },
+                    "total": {
+                      "$ref": "#/components/schemas/amount"
+                    }
+                  }
+                }
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "#/components/schemas/id"
+                    },
+                    "description": {
+                      "$ref": "#/components/schemas/description"
+                    },
+                    "total": {
+                      "$ref": "#/components/schemas/amount"
+                    }
+                  }
+                }
+              },
+              "total": {
+                "$ref": "#/components/schemas/amount"
+              }
+            }
+          },
+          "partner": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/owner_id"
+              },
+              "name": {
+                "$ref": "#/components/schemas/name"
+              },
+              "payments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "#/components/schemas/id"
+                    },
+                    "description": {
+                      "$ref": "#/components/schemas/description"
+                    },
+                    "banks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "$ref": "#/components/schemas/id"
+                          },
+                          "name": {
+                            "$ref": "#/components/schemas/name"
+                          },
+                          "total": {
+                            "$ref": "#/components/schemas/amount"
+                          }
+                        }
+                      }
+                    },
+                    "total": {
+                      "$ref": "#/components/schemas/amount"
+                    }
+                  }
+                }
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "#/components/schemas/id"
+                    },
+                    "description": {
+                      "$ref": "#/components/schemas/description"
+                    },
+                    "total": {
+                      "$ref": "#/components/schemas/amount"
+                    }
+                  }
+                }
+              },
+              "total": {
+                "$ref": "#/components/schemas/amount"
+              }
+            }
+          },
+          "balance": {
+            "$ref": "#/components/schemas/amount"
           }
         }
       },
