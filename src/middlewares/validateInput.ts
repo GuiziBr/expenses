@@ -130,7 +130,7 @@ export async function validateName({ body }: Request, _response: Response, next:
   return next()
 }
 
-export async function validateGetConsolidatedBalance({ params }: Request, _response: Response, next: NextFunction): Promise<void> {
+export async function validateGetSharedBalance({ params }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
     const schema = Yup.object().shape({ month: Yup.number().min(1).max(12).required(constants.schemaValidationErrors.monthRequired) })
     await schema.validate(params)

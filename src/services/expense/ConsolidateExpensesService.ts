@@ -47,7 +47,7 @@ interface IConsolidateResponse {
   balance: number
 }
 
-class ConsolidateExpensesService {
+class ConsolidateSharedExpensesService {
   private getBank(bank: { id: string, name: string }, amount: number): IBank {
     return { id: bank.id, name: bank.name, total: amount }
   }
@@ -171,4 +171,4 @@ class ConsolidateExpensesService {
   }
 }
 
-export default ConsolidateExpensesService
+export default ConsolidateSharedExpensesService
