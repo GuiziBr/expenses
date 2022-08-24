@@ -132,7 +132,7 @@ class ExpensesRepository extends Repository<Expense> {
   }
 
   private getSearchDateClause(endDate: string, startDate?: string): string {
-    return startDate ? `expenses.due_date between '${startDate}' AND '${endDate}'` : `expenses.due_date <= ${endDate}`
+    return startDate ? `expenses.due_date between '${startDate}' AND '${endDate}'` : `expenses.due_date <= '${endDate}'`
   }
 
   private getOrderByClause(orderBy?: string): string {
@@ -201,6 +201,8 @@ class ExpensesRepository extends Repository<Expense> {
   }: IRequest): Promise<PersonalExpensesResponse> {
     const searchDateClause = this.getSearchDateClause(endDate, startDate)
     const filterClause = this.getFilterClause(filterBy)
+
+    console.log('SEARCH', searchDateClause)
 
     const query = this.createQueryBuilder('expenses')
       .innerJoinAndSelect('expenses.category', 'categories')
