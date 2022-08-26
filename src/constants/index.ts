@@ -42,7 +42,7 @@ const constants = {
   defaultOffset: 0,
   smtpService: 'gmail',
   reportSubject: 'Expenses Portal - Monthly Report',
-  corsOrigins: ['https://expenses-portal.herokuapp.com', 'http://localhost:3000'],
+  corsOrigins: ['https://expenses-portal.herokuapp.com', 'http://localhost:3000', 'https://expenses-portal.vercel.app/'],
   cronJobTime: '0 0 9 28-31 * *',
   cronJobTimeZone: 'America/Sao_Paulo',
   orderColumns: {

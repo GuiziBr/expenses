@@ -202,8 +202,6 @@ class ExpensesRepository extends Repository<Expense> {
     const searchDateClause = this.getSearchDateClause(endDate, startDate)
     const filterClause = this.getFilterClause(filterBy)
 
-    console.log('SEARCH', searchDateClause)
-
     const query = this.createQueryBuilder('expenses')
       .innerJoinAndSelect('expenses.category', 'categories')
       .innerJoinAndSelect('expenses.payment_type', 'payment_type')
