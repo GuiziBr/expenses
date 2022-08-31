@@ -4,4 +4,4 @@ temp/
 tmp/*
 .env
 !tmp/.gitkeep
-dist
+
