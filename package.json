@@ -5,7 +5,7 @@
     "node": "14.x"
   },
   "description": "App to manage food expenses along the month",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
     "dev:server": "npx ts-node-dev --transpile-only --inspect --ignore node_modules src/server.ts",
