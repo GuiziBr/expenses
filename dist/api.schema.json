@@ -1,0 +1,2042 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "version": "3.0.1",
+        "title": "Expenses",
+        "description": "Expenses API",
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://food-expenses.netlify.app/doc/",
+            "description": "Production Server"
+        },
+        {
+            "url": "http://localhost:3333/",
+            "description": "Local Server"
+        }
+    ],
+    "paths": {
+        "/users": {
+            "post": {
+                "description": "Creates a new User",
+                "operationId": "createUser",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "The user has been created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserCreatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "Invalid parameters",
+                                    "code": "400",
+                                    "error": "Bad Request"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/sessions": {
+            "post": {
+                "description": "Creates a session",
+                "operationId": "createSession",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Session"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "User information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SessionCreatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "Incorrect email/password combination",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/expenses": {
+            "post": {
+                "description": "Creates a new expense",
+                "operationId": "createExpense",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Expense"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "The expense has been created!",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExpenseCreatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "message": "Invalid parameters",
+                                    "code": "400",
+                                    "error": "Bad Request"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/expenses/shared": {
+            "get": {
+                "description": "Gets shared expenses",
+                "operationId": "getSharedExpenses",
+                "parameters": [
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/searchDate"
+                        },
+                        "required": false
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/searchDate"
+                        },
+                        "required": false
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/limit"
+                        },
+                        "required": false
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/offset"
+                        },
+                        "required": false
+                    },
+                    {
+                        "name": "orderBy",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/orderBy"
+                        },
+                        "required": false
+                    },
+                    {
+                        "name": "orderType",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/orderType"
+                        },
+                        "required": false
+                    },
+                    {
+                        "name": "filterBy",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/filterBy"
+                        }
+                    },
+                    {
+                        "name": "filterValue",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/filterValue"
+                        }
+                    },
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of shared expenses",
+                        "headers": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ExpensesHeaderResponse"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SharedExpensesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "message": "Invalid parameters",
+                                    "code": "400",
+                                    "error": "Bad Request"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/expenses/personal": {
+            "get": {
+                "description": "Gets personal expenses",
+                "operationId": "getPersonalExpenses",
+                "parameters": [
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/searchDate"
+                        },
+                        "required": false
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/searchDate"
+                        },
+                        "required": false
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/limit"
+                        },
+                        "required": false
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/offset"
+                        },
+                        "required": false
+                    },
+                    {
+                        "name": "orderBy",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/orderBy"
+                        },
+                        "required": false
+                    },
+                    {
+                        "name": "orderType",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/orderType"
+                        },
+                        "required": false
+                    },
+                    {
+                        "name": "filterBy",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/filterBy"
+                        }
+                    },
+                    {
+                        "name": "filterValue",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/filterValue"
+                        }
+                    },
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of personal expenses",
+                        "headers": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ExpensesHeaderResponse"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PersonalExpensesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "message": "Invalid parameters",
+                                    "code": "400",
+                                    "error": "Bad Request"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/categories": {
+            "post": {
+                "description": "Creates a new category",
+                "operationId": "createCategory",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Category"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "The category has been created!",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoryCreatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "message": "Invalid parameters",
+                                    "code": "400",
+                                    "error": "Bad Request"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "description": "List categories",
+                "operationId": "listCategories",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "List of categories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ListCategoriesResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Updates a category",
+                "operationId": "updateCategory",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Category"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "204": {
+                        "description": "The category has been updated!"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a category",
+                "operationId": "deleteCategory",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "The category has been deleted!"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/paymentType": {
+            "post": {
+                "description": "Create a new payment type",
+                "operationId": "createPaymentType",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PaymentType"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "The payment type has been created!",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaymentTypeCreatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "message": "Invalid parameters",
+                                    "code": "400",
+                                    "error": "Bad Request"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "description": "List payment types or gets by Id",
+                "operationId": "listPaymentTypes",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment Type updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ListPaymentTypesResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Updates a payment type",
+                "operationId": "updatePaymentType",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PaymentType"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "204": {
+                        "description": "The payment type has been updated!"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a payment type",
+                "operationId": "deletePaymentType",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "The payment type has been deleted!"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/balance": {
+            "get": {
+                "description": "Gets balance",
+                "operationId": "getBalance",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "path",
+                        "schema": {
+                            "$ref": "#/components/schemas/searchDate"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Balance for provided user token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BalanceResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "message": "Invalid parameters",
+                                    "code": "400",
+                                    "error": "Bad Request"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/balance/consolidated": {
+            "get": {
+                "description": "Gets shared balance",
+                "operationId": "getSharedBalance",
+                "parameters": [
+                    {
+                        "name": "month",
+                        "in": "path",
+                        "schema": {
+                            "$ref": "#/components/schemas/month"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Balance for provided user token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SharedBalance"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "message": "Invalid parameters",
+                                    "code": "400",
+                                    "error": "Bad Request"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/banks": {
+            "post": {
+                "description": "Creates a new bank",
+                "operationId": "createBank",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Bank"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "The bank has been created!",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BankCreatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "message": "Invalid parameters",
+                                    "code": "400",
+                                    "error": "Bad Request"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "description": "List banks",
+                "operationId": "listBanks",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "List of banks",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ListBanksResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Updates a bank",
+                "operationId": "updateBank",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Bank"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "204": {
+                        "description": "The bank has been updated!"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a bank",
+                "operationId": "deleteBank",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "The bank has been deleted!"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/stores": {
+            "post": {
+                "description": "Creates a new store",
+                "operationId": "createStore",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Store"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "The store has been created!",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StoreCreatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "message": "Invalid parameters",
+                                    "code": "400",
+                                    "error": "Bad Request"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "description": "List stores",
+                "operationId": "listStores",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "List of stores",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ListStoresResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Updates a store",
+                "operationId": "updateStore",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Store"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "204": {
+                        "description": "The store has been updated!"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a store",
+                "operationId": "deleteStore",
+                "parameters": [
+                    {
+                        "name": "x-access-token",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/jwtToken"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "The store has been deleted!"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "status": "error",
+                                    "message": "JWT token is missing",
+                                    "code": "401",
+                                    "error": "Unauthorized"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "jwtToken": {
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTdmZTQ0YzQzYWQwYjAwMThmOGQ5ZmQiLCJuYW1lIjoiV2FsZGVtYXIgTmV0byIsImVtYWlsIjoid2FsZGVtYXJudEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRsUlZjWkc5d0dIVWJXcHF2TnJNR0F1SnNoWWJTR1RLSElQL3NycDlmTlkzZENFZDBJQjN6TyIsImlhdCI6MTU4NTQ0MDUxNywiZXhwIjoxNTg1NDYwNTE3fQ.JNtzLgCKGTAU9_-QjYUNxtM7X4nMU_pPIsNXDsEM-vP"
+            },
+            "name": {
+                "type": "string",
+                "example": "John Doe"
+            },
+            "email": {
+                "type": "string",
+                "example": "john@mail.com"
+            },
+            "password": {
+                "type": "string",
+                "example": "12345#@$$%"
+            },
+            "description": {
+                "type": "string",
+                "example": "Copacabana beach"
+            },
+            "category_id": {
+                "type": "string",
+                "example": "17dfch7f-8fea-4a0e-8a18-072d9e07d939"
+            },
+            "date": {
+                "type": "string",
+                "example": "2021-01-01"
+            },
+            "owner_id": {
+                "type": "string",
+                "example": "17dfch7f-8fea-4a0e-8a18-072d9e07d939"
+            },
+            "amount": {
+                "type": "number",
+                "example": 45.69
+            },
+            "personal": {
+                "type": "boolean",
+                "example": true
+            },
+            "split": {
+                "type": "boolean",
+                "example": true
+            },
+            "payment_type_id": {
+                "type": "string",
+                "example": "17dfch7f-8fea-4a0e-8a18-072d9e07d939"
+            },
+            "hasStatement": {
+                "type": "boolean",
+                "example": true
+            },
+            "bank_id": {
+                "type": "string",
+                "example": "17dfch7f-8fea-4a0e-8a18-072d9e07d939"
+            },
+            "id": {
+                "type": "string",
+                "example": "17dfch7f-8fea-4a0e-8a18-072d9e07d939"
+            },
+            "dateTime": {
+                "type": "string",
+                "example": "2021-01-01T06:00:01.260Z"
+            },
+            "searchDate": {
+                "type": "string",
+                "example": "2021-01-01"
+            },
+            "month": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 12
+            },
+            "limit": {
+                "type": "integer",
+                "example": 20
+            },
+            "offset": {
+                "type": "integer",
+                "example": 1
+            },
+            "orderBy": {
+                "type": "string",
+                "enum": [
+                    "description",
+                    "amount",
+                    "date",
+                    "due_date",
+                    "category",
+                    "payment_type",
+                    "bank",
+                    "store"
+                ]
+            },
+            "orderType": {
+                "type": "string",
+                "enum": [
+                    "asc",
+                    "desc"
+                ]
+            },
+            "filterBy": {
+                "type": "string",
+                "enum": [
+                    "category",
+                    "payment_type",
+                    "bank",
+                    "store"
+                ]
+            },
+            "filterValue": {
+                "type": "string",
+                "example": "17dfch7f-8fea-4a0e-8a18-072d9e07d939"
+            },
+            "category": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/id"
+                    },
+                    "description": {
+                        "$ref": "#/components/schemas/description"
+                    }
+                }
+            },
+            "type": {
+                "type": "string",
+                "enum": [
+                    "outcome",
+                    "income"
+                ]
+            },
+            "payment_type": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/id"
+                    },
+                    "description": {
+                        "$ref": "#/components/schemas/description"
+                    }
+                }
+            },
+            "bank": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/id"
+                    },
+                    "name": {
+                        "$ref": "#/components/schemas/name"
+                    }
+                }
+            },
+            "store": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/id"
+                    },
+                    "name": {
+                        "$ref": "#/components/schemas/name"
+                    }
+                }
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "$ref": "#/components/schemas/name"
+                    },
+                    "email": {
+                        "$ref": "#/components/schemas/email"
+                    },
+                    "password": {
+                        "$ref": "#/components/schemas/password"
+                    }
+                }
+            },
+            "Session": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "$ref": "#/components/schemas/email"
+                    },
+                    "password": {
+                        "$ref": "#/components/schemas/password"
+                    }
+                }
+            },
+            "Expense": {
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "$ref": "#/components/schemas/description"
+                    },
+                    "category_id": {
+                        "$ref": "#/components/schemas/category_id"
+                    },
+                    "date": {
+                        "$ref": "#/components/schemas/date"
+                    },
+                    "amount": {
+                        "$ref": "#/components/schemas/amount"
+                    },
+                    "personal": {
+                        "$ref": "#/components/schemas/personal"
+                    },
+                    "split": {
+                        "$ref": "#/components/schemas/split"
+                    },
+                    "payment_type_id": {
+                        "$ref": "#/components/schemas/payment_type_id"
+                    },
+                    "bank_id": {
+                        "$ref": "#/components/schemas/bank_id"
+                    }
+                },
+                "required": [
+                    "description",
+                    "category_id",
+                    "date",
+                    "amount",
+                    "personal",
+                    "split",
+                    "payment_type_id"
+                ]
+            },
+            "Category": {
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "$ref": "#/components/schemas/description"
+                    }
+                }
+            },
+            "PaymentType": {
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "$ref": "#/components/schemas/description"
+                    },
+                    "hasStatement": {
+                        "$ref": "#/components/schemas/hasStatement"
+                    }
+                }
+            },
+            "Bank": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "$ref": "#/components/schemas/name"
+                    }
+                }
+            },
+            "Store": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "$ref": "#/components/schemas/name"
+                    }
+                }
+            },
+            "UserCreatedResponse": {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "$ref": "#/components/schemas/name"
+                            },
+                            "email": {
+                                "$ref": "#/components/schemas/email"
+                            }
+                        }
+                    }
+                }
+            },
+            "SessionCreatedResponse": {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "$ref": "#/components/schemas/id"
+                            },
+                            "name": {
+                                "$ref": "#/components/schemas/name"
+                            },
+                            "email": {
+                                "$ref": "#/components/schemas/email"
+                            },
+                            "created_at": {
+                                "$ref": "#/components/schemas/dateTime"
+                            },
+                            "updated_at": {
+                                "$ref": "#/components/schemas/dateTime"
+                            }
+                        }
+                    },
+                    "token": {
+                        "$ref": "#/components/schemas/jwtToken"
+                    }
+                }
+            },
+            "ExpenseCreatedResponse": {
+                "type": "object",
+                "properties": {
+                    "owner_id": {
+                        "$ref": "#/components/schemas/owner_id"
+                    },
+                    "category_id": {
+                        "$ref": "#/components/schemas/category_id"
+                    },
+                    "payment_type_id": {
+                        "$ref": "#/components/schemas/payment_type_id"
+                    },
+                    "description": {
+                        "$ref": "#/components/schemas/description"
+                    },
+                    "date": {
+                        "$ref": "#/components/schemas/date"
+                    },
+                    "due_date": {
+                        "$ref": "#/components/schemas/date"
+                    },
+                    "amount": {
+                        "$ref": "#/components/schemas/amount"
+                    },
+                    "split": {
+                        "$ref": "#/components/schemas/split"
+                    },
+                    "personal": {
+                        "$ref": "#/components/schemas/personal"
+                    },
+                    "id": {
+                        "$ref": "#/components/schemas/id"
+                    },
+                    "created_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "updated_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    }
+                }
+            },
+            "ExpensesHeaderResponse": {
+                "type": "object",
+                "properties": {
+                    "X-Total-Count": {
+                        "type": "integer",
+                        "example": "10"
+                    }
+                }
+            },
+            "SharedExpensesResponse": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "owner_id": {
+                            "$ref": "#/components/schemas/owner_id"
+                        },
+                        "description": {
+                            "$ref": "#/components/schemas/description"
+                        },
+                        "category": {
+                            "$ref": "#/components/schemas/category"
+                        },
+                        "amount": {
+                            "$ref": "#/components/schemas/amount"
+                        },
+                        "date": {
+                            "$ref": "#/components/schemas/date"
+                        },
+                        "due_date": {
+                            "$ref": "#/components/schemas/date"
+                        },
+                        "type": {
+                            "$ref": "#/components/schemas/type"
+                        },
+                        "payment_type": {
+                            "$ref": "#/components/schemas/payment_type"
+                        },
+                        "bank": {
+                            "$ref": "#/components/schemas/bank"
+                        },
+                        "store": {
+                            "$ref": "#/components/schemas/store"
+                        }
+                    }
+                }
+            },
+            "PersonalExpensesResponse": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "owner_id": {
+                            "$ref": "#/components/schemas/owner_id"
+                        },
+                        "description": {
+                            "$ref": "#/components/schemas/description"
+                        },
+                        "category": {
+                            "$ref": "#/components/schemas/category"
+                        },
+                        "amount": {
+                            "$ref": "#/components/schemas/amount"
+                        },
+                        "date": {
+                            "$ref": "#/components/schemas/date"
+                        },
+                        "payment_type": {
+                            "$ref": "#/components/schemas/type"
+                        },
+                        "bank": {
+                            "$ref": "#/components/schemas/bank"
+                        },
+                        "store": {
+                            "$ref": "#/components/schemas/store"
+                        }
+                    }
+                }
+            },
+            "CategoryCreatedResponse": {
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "$ref": "#/components/schemas/description"
+                    },
+                    "id": {
+                        "$ref": "#/components/schemas/id"
+                    },
+                    "created_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "updated_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    }
+                }
+            },
+            "ListCategoriesResponse": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "description": {
+                            "$ref": "#/components/schemas/description"
+                        },
+                        "id": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "created_at": {
+                            "$ref": "#/components/schemas/dateTime"
+                        },
+                        "updated_at": {
+                            "$ref": "#/components/schemas/dateTime"
+                        }
+                    }
+                }
+            },
+            "PaymentTypeCreatedResponse": {
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "$ref": "#/components/schemas/description"
+                    },
+                    "id": {
+                        "$ref": "#/components/schemas/id"
+                    },
+                    "created_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "updated_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "hasStatement": {
+                        "$ref": "#/components/schemas/hasStatement"
+                    }
+                }
+            },
+            "ListPaymentTypesResponse": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "description": {
+                            "$ref": "#/components/schemas/description"
+                        },
+                        "id": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "created_at": {
+                            "$ref": "#/components/schemas/dateTime"
+                        },
+                        "updated_at": {
+                            "$ref": "#/components/schemas/dateTime"
+                        }
+                    }
+                }
+            },
+            "BankCreatedResponse": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "$ref": "#/components/schemas/name"
+                    },
+                    "id": {
+                        "$ref": "#/components/schemas/id"
+                    },
+                    "created_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "updated_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    }
+                }
+            },
+            "ListBanksResponse": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "$ref": "#/components/schemas/name"
+                        },
+                        "id": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "created_at": {
+                            "$ref": "#/components/schemas/dateTime"
+                        },
+                        "updated_at": {
+                            "$ref": "#/components/schemas/dateTime"
+                        }
+                    }
+                }
+            },
+            "StoreCreatedResponse": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "$ref": "#/components/schemas/name"
+                    },
+                    "id": {
+                        "$ref": "#/components/schemas/id"
+                    },
+                    "created_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "updated_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    }
+                }
+            },
+            "ListStoresResponse": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "$ref": "#/components/schemas/name"
+                        },
+                        "id": {
+                            "$ref": "#/components/schemas/id"
+                        },
+                        "created_at": {
+                            "$ref": "#/components/schemas/dateTime"
+                        },
+                        "updated_at": {
+                            "$ref": "#/components/schemas/dateTime"
+                        }
+                    }
+                }
+            },
+            "BalanceResponse": {
+                "type": "object",
+                "properties": {
+                    "personalBalance": {
+                        "$ref": "#/components/schemas/amount"
+                    },
+                    "sharedBalance": {
+                        "type": "object",
+                        "properties": {
+                            "total": {
+                                "$ref": "#/components/schemas/amount"
+                            },
+                            "paying": {
+                                "$ref": "#/components/schemas/amount"
+                            },
+                            "payed": {
+                                "$ref": "#/components/schemas/amount"
+                            }
+                        }
+                    }
+                }
+            },
+            "SharedBalance": {
+                "type": "object",
+                "properties": {
+                    "requester": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "$ref": "#/components/schemas/owner_id"
+                            },
+                            "name": {
+                                "$ref": "#/components/schemas/name"
+                            },
+                            "payments": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "$ref": "#/components/schemas/id"
+                                        },
+                                        "description": {
+                                            "$ref": "#/components/schemas/description"
+                                        },
+                                        "banks": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "$ref": "#/components/schemas/id"
+                                                    },
+                                                    "name": {
+                                                        "$ref": "#/components/schemas/name"
+                                                    },
+                                                    "total": {
+                                                        "$ref": "#/components/schemas/amount"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "total": {
+                                            "$ref": "#/components/schemas/amount"
+                                        }
+                                    }
+                                }
+                            },
+                            "categories": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "$ref": "#/components/schemas/id"
+                                        },
+                                        "description": {
+                                            "$ref": "#/components/schemas/description"
+                                        },
+                                        "total": {
+                                            "$ref": "#/components/schemas/amount"
+                                        }
+                                    }
+                                }
+                            },
+                            "total": {
+                                "$ref": "#/components/schemas/amount"
+                            }
+                        }
+                    },
+                    "partner": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "$ref": "#/components/schemas/owner_id"
+                            },
+                            "name": {
+                                "$ref": "#/components/schemas/name"
+                            },
+                            "payments": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "$ref": "#/components/schemas/id"
+                                        },
+                                        "description": {
+                                            "$ref": "#/components/schemas/description"
+                                        },
+                                        "banks": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "$ref": "#/components/schemas/id"
+                                                    },
+                                                    "name": {
+                                                        "$ref": "#/components/schemas/name"
+                                                    },
+                                                    "total": {
+                                                        "$ref": "#/components/schemas/amount"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "total": {
+                                            "$ref": "#/components/schemas/amount"
+                                        }
+                                    }
+                                }
+                            },
+                            "categories": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "$ref": "#/components/schemas/id"
+                                        },
+                                        "description": {
+                                            "$ref": "#/components/schemas/description"
+                                        },
+                                        "total": {
+                                            "$ref": "#/components/schemas/amount"
+                                        }
+                                    }
+                                }
+                            },
+                            "total": {
+                                "$ref": "#/components/schemas/amount"
+                            }
+                        }
+                    },
+                    "balance": {
+                        "$ref": "#/components/schemas/amount"
+                    }
+                }
+            },
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "code": {
+                        "type": "number"
+                    },
+                    "error": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
