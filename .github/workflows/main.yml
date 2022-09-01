@@ -34,14 +34,14 @@ jobs:
           source: "., !node_modules"
           target: "~/app/expenses"
       
-      - name: Run migrations
-        uses: appleboy/scp-action@master
+      - name: ls -a via OPEN SSH Private Key
+        uses: garygrossgarten/github-action-ssh@release
         with:
+          command: ls -a
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.SSH_KEY }}
-          script: whoami
+          privateKey: ${{ secrets.SSH_KEY }}
 
       
       
