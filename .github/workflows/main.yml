@@ -24,13 +24,27 @@ jobs:
       - name: Build
         run: npm run build
         
+      - name: Deploy application
       - uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
-          source: "."
+          source: "., !node_modules"
           target: "~/app/expenses"
+      
+      - name: Run migrations
+      - uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/app/expenses
+            npm install
+            npm run prod:migrate
+            pm2 restart expenses-api
       
       
