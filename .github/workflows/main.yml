@@ -37,11 +37,12 @@ jobs:
       - name: Run SSH command
         uses: fifsky/ssh-action@master
         with:
-          command: ls -la
+          command: |
+            cd ~/app/expenses
+            npm install
+            npm run prod:migrate
+            pm2 restart expenses-api
           host: ${{ secrets.SSH_HOST }}
           user: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
-
-      
-      
