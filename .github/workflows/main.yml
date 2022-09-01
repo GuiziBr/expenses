@@ -24,7 +24,8 @@ jobs:
       - name: Build and Deploy
         run: npm run build
         
-      - uses: appleboy/scp-action@master
+      - name: Deploy
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -34,7 +35,7 @@ jobs:
           target: "~/app/expenses"
       
       - name: Run migrations
-      - uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
