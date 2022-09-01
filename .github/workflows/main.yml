@@ -41,7 +41,13 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
-          script: cd ~/app/expenses && ls -la
+          script: |
+            export NVM_DIR=~./nvm
+            source ~/.nvm/nvm.sh
+            cd ~/app/expenses
+            npm install
+            npm run prod:migrate
+            pm2 restart expenses-api
 
       
       
