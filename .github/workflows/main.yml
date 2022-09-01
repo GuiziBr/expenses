@@ -44,10 +44,7 @@ jobs:
           script: |
             sudo export NVM_DIR=~./nvm
             sudo source ~/.nvm/nvm.sh
-            cd ~/app/expenses
-            sudo npm install
-            sudo npm run prod:migrate
-            sudo pm2 restart expenses-api
+            ls -la
 
       
       
