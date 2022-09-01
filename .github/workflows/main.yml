@@ -34,14 +34,14 @@ jobs:
           source: "., !node_modules"
           target: "~/app/expenses"
       
-      - name: ls -a via OPEN SSH Private Key
-        uses: garygrossgarten/github-action-ssh@release
+      - name: Run SSH command
+        uses: fifsky/ssh-action@master
         with:
-          command: ls -a
+          command: ls -la
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
-          privateKey: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_KEY }}
 
       
       
