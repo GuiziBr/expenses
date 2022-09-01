@@ -41,10 +41,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
-          script: |
-            sudo export NVM_DIR=~./nvm
-            sudo source ~/.nvm/nvm.sh
-            ls -la
+          script: ls -la
 
       
       
