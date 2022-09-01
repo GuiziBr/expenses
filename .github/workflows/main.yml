@@ -42,12 +42,12 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            export NVM_DIR=~./nvm
-            source ~/.nvm/nvm.sh
+            sudo export NVM_DIR=~./nvm
+            sudo source ~/.nvm/nvm.sh
             cd ~/app/expenses
-            npm install
-            npm run prod:migrate
-            pm2 restart expenses-api
+            sudo npm install
+            sudo npm run prod:migrate
+            sudo pm2 restart expenses-api
 
       
       
