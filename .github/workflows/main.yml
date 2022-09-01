@@ -38,8 +38,6 @@ jobs:
         uses: fifsky/ssh-action@master
         with:
           command: |
-            export NVM_DIR=~/.nvm
-            source ~/.nvm/nvm/sh
             cd ~/app/expenses
             npm install
             npm run prod:migrate
