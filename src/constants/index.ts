@@ -46,7 +46,7 @@ const constants = {
     'https://expenses-portal.herokuapp.com',
     'http://localhost:3000',
     'https://expenses-portal.vercel.app',
-    'https://expenses.guizi.ca'
+    'https://portal-expenses.guizi.ca'
   ],
   cronJobTime: '0 0 9 28-31 * *',
   cronJobTimeZone: 'America/Sao_Paulo',
