@@ -4,20 +4,23 @@ import { isLastDayOfMonth } from 'date-fns'
 import dotenv from 'dotenv'
 import express, { NextFunction, Request, Response } from 'express'
 import 'express-async-errors'
-import 'reflect-metadata'
-import swaggerUi from 'swagger-ui-express'
 import { OpenApiValidator } from 'express-openapi-validator'
 import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types'
+import 'reflect-metadata'
+import swaggerUi from 'swagger-ui-express'
 import apiSchema from './api.schema.json'
 import uploadConfig from './config/upload'
 import constants from './constants'
 import './database'
 import AppError from './errors/AppError'
+import rateLimiter from './middlewares/rateLimiter'
 import routes from './routes'
 import ReportService from './services/report/ReportService'
 
 dotenv.config()
 const app = express()
+
+app.use(rateLimiter)
 
 app.use(cors({
   origin: constants.corsOrigins,
