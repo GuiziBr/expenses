@@ -6,8 +6,3 @@ services:
       - 5432:5432
     environment:
       POSTGRES_PASSWORD: docker
-
-  redis:
-    image: redis:alpine
-    ports:
-      - 6379:6379

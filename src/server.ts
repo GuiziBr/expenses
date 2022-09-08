@@ -15,14 +15,11 @@ import uploadConfig from './config/upload'
 import constants from './constants'
 import './database'
 import AppError from './errors/AppError'
-import rateLimiter from './middlewares/rateLimiter'
 import routes from './routes'
 import ReportService from './services/report/ReportService'
 
 dotenv.config()
 const app = express()
-
-app.use(rateLimiter)
 
 if (process.env.LOCAL === 'false') {
   Sentry.init({
