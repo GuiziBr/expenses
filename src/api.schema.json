@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "3.0.1",
+    "version": "4.0.0",
     "title": "Expenses",
     "description": "Expenses API",
     "license": {
@@ -11,7 +11,7 @@
   },
   "servers": [
     {
-      "url": "https://food-expenses.netlify.app/doc/",
+      "url": "https://expenses.guizi.ca/doc/",
       "description": "Production Server"
     },
     {
