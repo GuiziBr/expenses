@@ -55,4 +55,4 @@ The backend is built with nodejs + typescript containing the following features:
 
 ## How to use the back-end api's
 
-For API documentation refer to [Swagger](https://food-expenses.herokuapp.com/doc/)
+For API documentation refer to [Swagger](https://expenses.guizi.ca/doc/)
