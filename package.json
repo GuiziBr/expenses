@@ -2,7 +2,7 @@
   "name": "expenses",
   "version": "2.0.0",
   "engines": {
-    "node": "14.x"
+    "node": "16.x"
   },
   "description": "App to manage food expenses along the month",
   "main": "dist/server.js",
