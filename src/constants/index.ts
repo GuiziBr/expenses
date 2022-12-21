@@ -12,7 +12,8 @@ const constants = {
     categoryRequired: 'category_id is required',
     paymentTypeRequired: 'payment_type_id is required',
     monthRequired: 'month is required',
-    bankRequired: 'bank_id is required'
+    bankRequired: 'bank_id is required',
+    yearRequired: 'year ir required'
   },
   errorMessages: {
     incorrectLogin: 'Incorrect email/password combination',

@@ -132,7 +132,10 @@ export async function validateName({ body }: Request, _response: Response, next:
 
 export async function validateGetSharedBalance({ params }: Request, _response: Response, next: NextFunction): Promise<void> {
   try {
-    const schema = Yup.object().shape({ month: Yup.number().min(1).max(12).required(constants.schemaValidationErrors.monthRequired) })
+    const schema = Yup.object().shape({
+      year: Yup.number().min(2022).required(constants.schemaValidationErrors.yearRequired),
+      month: Yup.number().min(1).max(12).required(constants.schemaValidationErrors.monthRequired)
+    })
     await schema.validate(params)
   } catch (err) {
     if (err instanceof Yup.ValidationError) throw new AppError(err.message)

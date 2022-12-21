@@ -101,13 +101,12 @@ class ConsolidateSharedExpensesService {
     }
   }
 
-  public async consolidate(userId: string, month: number): Promise<IConsolidateResponse> {
+  public async consolidate(userId: string, month: number, year: number): Promise<IConsolidateResponse> {
     const statementPeriodRepository = getRepository(StatementPeriod)
     const statementPeriods = await statementPeriodRepository.find()
     if (statementPeriods.length === 0) throw new AppError(constants.errorMessages.statementPeriodToConsolidate)
 
-    const currentYear = getYear(new Date())
-    const initialDate = new Date(currentYear, month, 1)
+    const initialDate = new Date(year, month, 1)
 
     const initialDateString = this.getStringDate(initialDate)
     const finalDateString = this.getStringDate(endOfMonth(initialDate))
