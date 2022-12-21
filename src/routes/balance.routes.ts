@@ -26,12 +26,13 @@ balanceRouter.get('/', validateGetBalance, async ({ user, query }, response) => 
   return response.json(balance)
 })
 
-balanceRouter.get('/consolidated/:month', validateGetSharedBalance, async ({ user, params }, response) => {
+balanceRouter.get('/consolidated/:year/:month', validateGetSharedBalance, async ({ user, params }, response) => {
   const { id: owner_id } = user
-  const { month } = params
+  const { year, month } = params
   const consolidateSharedExpensesService = new ConsolidateSharedExpensesService()
   const monthValue = Number(month) - 1
-  const SharedBalance = await consolidateSharedExpensesService.consolidate(owner_id, monthValue)
+  const yearValue = Number(year)
+  const SharedBalance = await consolidateSharedExpensesService.consolidate(owner_id, monthValue, yearValue)
   return response.json(SharedBalance)
 })
 
