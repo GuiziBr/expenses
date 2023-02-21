@@ -53,23 +53,23 @@ jobs:
           source: "., !node_modules"
           target: "~/app/expenses"
 
-      - name: Run migrations
-        uses: fifsky/ssh-action@master
-        with:
-          command: |
-            cd ~/app/expenses
-            npm install
-            ./node_modules/.bin/typeorm migration:run
-            pm2 restart expenses_api
-          host: ${{ secrets.SSH_HOST }}
-          user: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.SSH_KEY }}
+#       - name: Run migrations
+#         uses: fifsky/ssh-action@master
+#         with:
+#           command: |
+#             cd ~/app/expenses
+#             npm install
+#             ./node_modules/.bin/typeorm migration:run
+#             pm2 restart expenses_api
+#           host: ${{ secrets.SSH_HOST }}
+#           user: ${{ secrets.SSH_USER }}
+#           port: ${{ secrets.SSH_PORT }}
+#           key: ${{ secrets.SSH_KEY }}
 
-      - name: Revoke runner ip address
-        run: |
-          aws ec2 revoke-security-group-ingress \
-            --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} \
-            --protocol tcp \
-            --port 22 \
-            --cidr ${{ steps.ip.outputs.ipv4 }}/32
+#       - name: Revoke runner ip address
+#         run: |
+#           aws ec2 revoke-security-group-ingress \
+#             --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} \
+#             --protocol tcp \
+#             --port 22 \
+#             --cidr ${{ steps.ip.outputs.ipv4 }}/32
